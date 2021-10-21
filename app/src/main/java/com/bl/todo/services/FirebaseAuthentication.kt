@@ -17,6 +17,9 @@ object FirebaseAuthentication {
     fun logOut() = firebaseAuth.signOut()
 
     fun signUpWithEmailAndPassword(email : String, password : String, listener : (Boolean,FirebaseUser?) -> Unit) {
+        if(getCurrentUser()!=null){
+            listener(true, getCurrentUser())
+        }
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
             if(it.isSuccessful){
                 Log.i("Auth","Successful")

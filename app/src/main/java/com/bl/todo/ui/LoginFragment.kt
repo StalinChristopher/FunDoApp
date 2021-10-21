@@ -16,17 +16,20 @@ import com.bl.todo.util.Utilities
 class LoginFragment : Fragment(R.layout.login_fragment){
     private lateinit var binding: LoginFragmentBinding
     private lateinit var dialog  : Dialog
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        checkUser()
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = LoginFragmentBinding.bind(view)
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_loading)
-
         binding.loginRegister.setOnClickListener {
             Toast.makeText(requireContext(),"button pressed",Toast.LENGTH_SHORT).show()
             requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId , SignUpFragment()).commit()
         }
-
         binding.loginSubmit.setOnClickListener {
             dialog.show()
             login()
@@ -36,6 +39,17 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
     }
 
+    private fun checkUser() {
+        var user = FirebaseAuthentication.getCurrentUser()
+        if( user != null){
+            FirebaseDatabase.getUserData(user.uid){status,bundle->
+                var profileObj = ProfileFragment()
+                profileObj.arguments = bundle
+                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,profileObj).commit()
+            }
+        }
+    }
+
     private fun login() {
         var email = binding.loginEmail
         var password = binding.loginPassword
@@ -43,7 +57,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
             FirebaseAuthentication.loginWithEmailAndPassword(email.text.toString(),password.text.toString()){status, user ->
                 if(!status){
                     dialog.dismiss()
-                    Toast.makeText(requireContext(),"Account has not been created",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),"Incorrect Email or Password",Toast.LENGTH_SHORT).show()
                 }else{
                     FirebaseDatabase.getUserData(user!!.uid){status,bundle ->
                         if(!status){

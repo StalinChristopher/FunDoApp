@@ -29,4 +29,17 @@ object FirebaseAuthentication {
             }
         }
     }
+
+    fun loginWithEmailAndPassword(email: String, password: String, listener: (Boolean, FirebaseUser?) -> Unit) {
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+            if(it.isSuccessful){
+                Log.i("Auth","Successful login")
+                listener(true, getCurrentUser())
+            }else {
+                Log.i("Auth","Login failed")
+                Log.i("Auth",it.exception.toString())
+                listener(false, getCurrentUser())
+            }
+        }
+    }
 }

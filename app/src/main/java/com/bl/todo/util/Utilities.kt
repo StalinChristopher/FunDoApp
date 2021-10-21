@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
+import com.google.android.material.textfield.TextInputEditText
 import java.util.regex.Pattern
 
 object Utilities {
@@ -17,12 +18,35 @@ object Utilities {
         fragmentTransaction.commit()
     }
 
-    fun validateEmailPassword(email: String, password: String, view: View){
-        var binding: LoginFragmentBinding = LoginFragmentBinding.bind(view)
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            binding.loginEmail.error = "Invalid email format"
-        }else if( TextUtils.isEmpty(password)){
-            binding.loginPassword.error = "Invalid password format"
+    fun signUpCredentialsValidator(
+       userName : TextInputEditText,
+       email : TextInputEditText,
+       phone : TextInputEditText,
+       password : TextInputEditText,
+       confirmPassword : TextInputEditText
+    ) : Boolean{
+        var status : Boolean = true
+        if(userName.text.toString().isEmpty()){
+            userName.error = "Username cannot be empty"
+            status = false
         }
+        if(!Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()){
+            email.error = "Invalid email format"
+            status = false
+        }
+        if(phone.text.toString().length<10){
+            phone.error = "Invalid mobile number"
+            status = false
+        }
+        if(password.text.toString() != confirmPassword.text.toString()){
+            confirmPassword.error = "Passwords doesn't match"
+            status = false
+        }
+        if(password.text.toString().length < 6){
+            password.error = "Password length cannot be less than 6 characters"
+            status = false
+        }
+        return status
     }
+
 }

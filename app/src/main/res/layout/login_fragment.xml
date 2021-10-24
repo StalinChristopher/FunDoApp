@@ -106,4 +106,28 @@
     </RelativeLayout>
 
 
+
+    <TextView
+        android:id="@+id/loginOR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutDontHave"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="OR"
+        android:textStyle="bold"/>
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/loginFacebookButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginOR"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp" />
+
+
+
+
 </RelativeLayout>

@@ -2,16 +2,17 @@ package com.bl.todo.services
 
 import android.os.Bundle
 import com.bl.todo.models.UserDetails
+import com.bl.todo.util.Utilities
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-object FirebaseDatabase {
+object Database {
    private var db : DatabaseReference = Firebase.database.reference
 
    fun addUserInfoDatabase(user : UserDetails, listener : (Boolean)-> Unit){
-      var userId =FirebaseAuthentication.getCurrentUser()?.uid.toString()
+      var userId =Authentication.getCurrentUser()?.uid.toString()
       db.child("users").child(userId).setValue(user).addOnCompleteListener {
          if(it.isSuccessful){
             listener(true)
@@ -27,9 +28,11 @@ object FirebaseDatabase {
       db.child("users").child(uid).get().addOnCompleteListener {
          if(it.isSuccessful){
             result = it.result!!
-            bundle.putString("name", result.child("userName").value.toString())
-            bundle.putString("email",result.child("email").value.toString())
-            bundle.putString("phone",result.child("phone").value.toString())
+            var username = result.child("userName").value.toString()
+            var email = result.child("email").value.toString()
+            var phone = result.child("phone").value.toString()
+            var user = UserDetails(username,email,phone,true)
+            bundle = Utilities.addInfoToBundle(user)
             listener(true,bundle)
          }else{
             listener(false, null)

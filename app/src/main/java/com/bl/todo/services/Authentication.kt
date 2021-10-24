@@ -1,7 +1,10 @@
 package com.bl.todo.services
 
 import android.util.Log
+import android.widget.Toast
 import com.bl.todo.models.UserDetails
+import com.facebook.AccessToken
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -9,7 +12,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-object FirebaseAuthentication {
+object Authentication {
     private val firebaseAuth: FirebaseAuth = Firebase.auth
 
     fun getCurrentUser() = firebaseAuth.currentUser
@@ -44,5 +47,21 @@ object FirebaseAuthentication {
                 listener(false, getCurrentUser())
             }
         }
+    }
+
+    fun handleFacebookLogin(token : AccessToken, listener: (Boolean, FirebaseUser?) -> Unit){
+        Log.d("FacebookAccessToken", "handleFacebookAccessToken:$token")
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener{ task ->
+                if (task.isSuccessful) {
+                    Log.d("FacebookAuth", "signInWithCredential:success")
+                    listener(true, getCurrentUser())
+                } else {
+                    Log.w("FacebookAuth", "signInWithCredential:failure", task.exception)
+                    listener(false, getCurrentUser())
+                }
+            }
+
     }
 }

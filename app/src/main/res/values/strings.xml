@@ -2,4 +2,8 @@
     <string name="app_name">ToDoApp</string>
     <string name="login">Login</string>
     <string name="signUp">Sign Up</string>
+    <string name="facebook_app_id">1560891924260880</string>
+    <string name="fb_login_protocol_scheme">fb1560891924260880</string>
+
+
 </resources>

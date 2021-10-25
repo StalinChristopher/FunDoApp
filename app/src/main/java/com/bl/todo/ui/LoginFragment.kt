@@ -33,8 +33,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         binding = LoginFragmentBinding.bind(view)
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_loading)
-        sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java]
-//        checkUser()
+        sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java] //        checkUser()
         callbackManager = CallbackManager.Factory.create()
         binding.loginRegister.setOnClickListener {
             Toast.makeText(requireContext(),"button pressed",Toast.LENGTH_SHORT).show()
@@ -47,6 +46,10 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
         binding.loginFacebookButton.setOnClickListener {
             facebookLogin()
+        }
+
+        binding.forgotPasswordClick.setOnClickListener {
+            sharedViewModel.setForgotPasswordPageStatus(true)
         }
     }
 

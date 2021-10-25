@@ -10,12 +10,14 @@ class SharedViewModel : ViewModel(){
     private val _gotoLoginPageStatus = MutableLiveData<Boolean>()
     private val _gotoSplashScreenStatus = MutableLiveData<Boolean>()
     private val _gotoSignupPageStatus = MutableLiveData<Boolean>()
+    private val _gotoForgotPasswordStatus = MutableLiveData<Boolean>()
 
 
     val gotoHomePageStatus = _gotoHomePageStatus as LiveData<Boolean>
     val gotoLoginPageStatus = _gotoLoginPageStatus as LiveData<Boolean>
     val gotoSplashScreenStatus = _gotoSplashScreenStatus as LiveData<Boolean>
     val gotoSignupPageStatus = _gotoSignupPageStatus as LiveData<Boolean>
+    val gotoForgotPasswordStatus = _gotoForgotPasswordStatus as LiveData<Boolean>
 
     fun setGotoHomePageStatus(status: Boolean){
         _gotoHomePageStatus.value = status
@@ -31,6 +33,10 @@ class SharedViewModel : ViewModel(){
 
     fun setSignupPageStatus(status: Boolean){
         _gotoSignupPageStatus.value = status
+    }
+
+    fun setForgotPasswordPageStatus(status: Boolean){
+        _gotoForgotPasswordStatus.value = status
     }
 
 }

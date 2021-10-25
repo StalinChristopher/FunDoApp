@@ -2,6 +2,7 @@ package com.bl.todo.services
 
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.BoolRes
 import com.bl.todo.models.UserDetails
 import com.facebook.AccessToken
 import com.facebook.login.LoginManager
@@ -67,5 +68,15 @@ object Authentication {
                 }
             }
 
+    }
+
+    fun resetPassword(email: String, listener: (Boolean,String) -> Unit){
+        firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener {
+            if(it.isSuccessful){
+                listener(true,"Email has been sent to reset the password")
+            }else{
+                listener(false,"No account is associated with the given email")
+            }
+        }
     }
 }

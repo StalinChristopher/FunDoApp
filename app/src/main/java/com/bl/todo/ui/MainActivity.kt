@@ -45,6 +45,12 @@ class MainActivity : AppCompatActivity() {
                 gotoSplashScreen()
             }
         })
+
+        sharedViewModel.gotoForgotPasswordStatus.observe(this@MainActivity, {
+            if(it){
+                gotoForgotPasswordScreen()
+            }
+        })
     }
 
     private fun gotoLoginPage(){
@@ -61,6 +67,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun gotoSplashScreen(){
         Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,SplashScreen())
+    }
+
+    private fun gotoForgotPasswordScreen(){
+        Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,ResetPassword())
     }
 
 

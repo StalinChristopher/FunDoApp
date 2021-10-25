@@ -67,14 +67,24 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/forgotPasswordClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layoutLoginPassword"
+        android:layout_marginTop="10dp"
+        android:text="Forgot password?"
+        android:textColor="@color/purple_700"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
     <Button
         android:id="@+id/loginSubmit"
-        android:layout_below="@id/layoutLoginPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/forgotPasswordClick"
         android:layout_marginTop="20dp"
-        android:text="LOGIN">
-    </Button>
+        android:text="LOGIN"></Button>
 
     <RelativeLayout
         android:id="@+id/layoutDontHave"

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/profileLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:textSize="30sp"
+        android:layout_marginTop="30dp"
+        android:padding="10sp"
+        android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profileLabel"
+        android:padding="20dp"
+        android:orientation="vertical">
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/profileViewName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textSize="18sp"
+            android:layout_below="@id/profileLabel"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/profileViewEmail"
+            android:layout_below="@id/profileViewName"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_centerHorizontal="true" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/profileViewPhone"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textSize="18sp"
+            android:layout_marginTop="30dp"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profileLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profileViewEmail"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center"
+            android:text="LOGOUT"/>
+    </LinearLayout>
+
+</RelativeLayout>

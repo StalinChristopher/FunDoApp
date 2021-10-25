@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ToDoApp</string>
+    <string name="login">Login</string>
+    <string name="signUp">Sign Up</string>
+    <string name="facebook_app_id">1560891924260880</string>
+    <string name="fb_login_protocol_scheme">fb1560891924260880</string>
+    <string name="resetPasswordMessage">Enter your registered email address where the reset password link will be sent</string>
+
+
+</resources>

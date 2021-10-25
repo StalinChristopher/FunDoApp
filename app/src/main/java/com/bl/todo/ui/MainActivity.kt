@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun gotoHomePage() {
-        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, ProfileFragment())
+        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, HomeFragment())
     }
 
     private fun gotoSplashScreen(){

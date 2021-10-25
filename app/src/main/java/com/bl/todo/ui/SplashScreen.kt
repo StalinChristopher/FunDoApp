@@ -20,7 +20,7 @@ class SplashScreen : Fragment(R.layout.splash_screen) {
             var user = Authentication.getCurrentUser()
             if( user != null){
                 Database.getUserData(user.uid){ status, bundle->
-                    var profileObj = ProfileFragment()
+                    var profileObj = HomeFragment()
                     profileObj.arguments = bundle
                     requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,profileObj).commit()
                 }

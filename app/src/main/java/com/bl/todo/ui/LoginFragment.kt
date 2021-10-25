@@ -62,7 +62,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         var user = Authentication.getCurrentUser()
         if( user != null){
             Database.getUserData(user.uid){ status, bundle->
-                var profileObj = ProfileFragment()
+                var profileObj = HomeFragment()
                 profileObj.arguments = bundle
                 requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,profileObj).commit()
             }

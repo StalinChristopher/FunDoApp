@@ -28,7 +28,7 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         dialog.setContentView(R.layout.dialog_loading)
         sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java]
         binding.signupLogin.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,LoginFragment()).commit()
+            sharedViewModel.setLoginPageStatus(true)
         }
 
         binding.signupSubmit.setOnClickListener {
@@ -52,7 +52,7 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
                         if(it){
                             Toast.makeText(requireContext(),"Account created successfully",Toast.LENGTH_SHORT).show()
                             dialog.dismiss()
-                            sharedViewModel.setGotoHomePageStatus(newUser)
+                            sharedViewModel.setGotoHomePageStatus(true)
 //                            bundle = Utilities.addInfoToBundle(newUser)
 //                            var profileObj = ProfileFragment()
 //                            profileObj.arguments = bundle

@@ -18,17 +18,31 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         sharedViewModel = ViewModelProvider(this@MainActivity, SharedViewModelFactory())[SharedViewModel::class.java]
         observeAppNavigation()
-//        gotoLoginPage()
-        Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,SplashScreen())
+        gotoSplashScreen()
     }
 
     private fun observeAppNavigation(){
         sharedViewModel.gotoHomePageStatus.observe(this@MainActivity,{
-            if(it.loginStatus){
-                var bundle = Utilities.addInfoToBundle(it)
-                var profileFragment = ProfileFragment()
-                profileFragment.arguments = bundle
-                gotoHomePage(profileFragment)
+            if(it){
+                gotoHomePage()
+            }
+        })
+
+        sharedViewModel.gotoLoginPageStatus.observe(this@MainActivity,{
+            if(it){
+                gotoLoginPage()
+            }
+        })
+
+        sharedViewModel.gotoSignupPageStatus.observe(this@MainActivity, {
+            if(it){
+                gotoRegistrationPage()
+            }
+        })
+
+        sharedViewModel.gotoSplashScreenStatus.observe(this@MainActivity,{
+            if(it){
+                gotoSplashScreen()
             }
         })
     }
@@ -41,8 +55,12 @@ class MainActivity : AppCompatActivity() {
         Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, SignUpFragment())
     }
 
-    private fun gotoHomePage(profileFragment: ProfileFragment) {
-        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, profileFragment)
+    private fun gotoHomePage() {
+        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, ProfileFragment())
+    }
+
+    private fun gotoSplashScreen(){
+        Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,SplashScreen())
     }
 
 

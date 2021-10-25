@@ -7,12 +7,15 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
 import com.bl.todo.models.UserDetails
 import com.bl.todo.services.Authentication
 import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
+import com.bl.todo.viewmodels.SharedViewModel
+import com.bl.todo.viewmodels.SharedViewModelFactory
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -22,6 +25,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
     private lateinit var binding: LoginFragmentBinding
     private lateinit var dialog  : Dialog
     private lateinit var callbackManager: CallbackManager
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -29,11 +33,12 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         binding = LoginFragmentBinding.bind(view)
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_loading)
+        sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java]
 //        checkUser()
         callbackManager = CallbackManager.Factory.create()
         binding.loginRegister.setOnClickListener {
             Toast.makeText(requireContext(),"button pressed",Toast.LENGTH_SHORT).show()
-            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId , SignUpFragment()).commit()
+            sharedViewModel.setSignupPageStatus(true)
         }
         binding.loginSubmit.setOnClickListener {
             dialog.show()
@@ -75,10 +80,9 @@ class LoginFragment : Fragment(R.layout.login_fragment){
                             Log.e("DatabaseError","read failed")
                             dialog.dismiss()
                         }else{
-                            var profileObj = ProfileFragment()
-                            profileObj.arguments = bundle
                             dialog.dismiss()
-                            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,profileObj).commit()
+                            sharedViewModel.setGotoHomePageStatus(true)
+
                         }
                     }
                 }
@@ -101,37 +105,33 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
             override fun onSuccess(result: LoginResult) {
                 Log.d("Facebook-OAuth", "facebook:onSuccess:$result")
-                Authentication.handleFacebookLogin(result.accessToken) { status,firebaseUser ->
-                    if(!status){
-                        Toast.makeText(requireContext(),"Authentication failed",Toast.LENGTH_SHORT).show()
+                Authentication.handleFacebookLogin(result.accessToken) { status, firebaseUser ->
+                    if (!status) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Authentication failed",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         dialog.dismiss()
-                    }else{
+                    } else {
                         var username = Authentication.getCurrentUser()?.displayName
                         var email = Authentication.getCurrentUser()?.email
                         var phone = Authentication.getCurrentUser()?.phoneNumber
-                        var user = UserDetails(username, email,
-                            phone)
-                        Database.addUserInfoDatabase(user){
-                            if(it){
-                                Log.i("DB","info added to database")
-                            }else{
-                                Log.i("DB","info not added to database")
+                        var user = UserDetails(
+                            username, email,
+                            phone
+                        )
+                        Database.addUserInfoDatabase(user) {
+                            if (it) {
+                                Log.i("DB", "info added to database")
+                            } else {
+                                Log.i("DB", "info not added to database")
                             }
                         }
-                        Database.getUserData(firebaseUser!!.uid){ status, bundle ->
-                            if(!status){
-                                Log.e("DatabaseError","read failed")
-                                dialog.dismiss()
-                            }else{
-                                var profileObj = ProfileFragment()
-                                profileObj.arguments = bundle
-                                Log.i("bundle","${bundle?.get("email")}")
-                                dialog.dismiss()
-                                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,profileObj).commit()
-                            }
-                        }
+                        sharedViewModel.setGotoHomePageStatus(true)
 
                     }
+
                 }
             }
         })

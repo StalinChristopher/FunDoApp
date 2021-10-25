@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import com.bl.todo.models.UserDetails
 import com.facebook.AccessToken
+import com.facebook.login.LoginManager
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -17,7 +18,10 @@ object Authentication {
 
     fun getCurrentUser() = firebaseAuth.currentUser
 
-    fun logOut() = firebaseAuth.signOut()
+    fun logOut(){
+        LoginManager.getInstance().logOut()
+        firebaseAuth.signOut()
+    }
 
     fun signUpWithEmailAndPassword(email : String, password : String, listener : (Boolean,FirebaseUser?) -> Unit) {
         if(getCurrentUser()!=null){

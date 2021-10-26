@@ -73,4 +73,8 @@ object Utilities {
 
     }
 
+    fun createUserFromHashMap(userMap:HashMap<*,*>):UserDetails {
+        return UserDetails(userMap["name"].toString(),userMap["email"].toString(),userMap["phone"].toString())
+    }
+
 }

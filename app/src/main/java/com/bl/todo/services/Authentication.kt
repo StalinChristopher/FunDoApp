@@ -24,58 +24,73 @@ object Authentication {
         firebaseAuth.signOut()
     }
 
-    fun signUpWithEmailAndPassword(email : String, password : String, listener : (Boolean,FirebaseUser?) -> Unit) {
+    fun signUpWithEmailAndPassword(email : String, password : String, listener : (UserDetails) -> Unit) {
         if(getCurrentUser()!=null){
-            listener(true, getCurrentUser())
+            var user = UserDetails(getCurrentUser()?.displayName.toString(), getCurrentUser()?.email.toString(),
+                getCurrentUser()?.email.toString(), true)
+            listener(user)
         }
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
+            var user : UserDetails? = null
             if(it.isSuccessful){
                 Log.i("Auth","Successful")
-                listener(true, getCurrentUser())
+                user = UserDetails(getCurrentUser()?.displayName.toString(), getCurrentUser()?.email.toString(),
+                    getCurrentUser()?.phoneNumber.toString(), true)
+                listener(user)
             }
             else{
                 Log.i("Auth","Failed")
                 Log.i("Auth",it.exception.toString())
-                listener(false, getCurrentUser())
+                user = UserDetails("","","", false)
+                listener(user)
             }
         }
     }
 
-    fun loginWithEmailAndPassword(email: String, password: String, listener: (Boolean, FirebaseUser?) -> Unit) {
+    fun loginWithEmailAndPassword(email: String, password: String, listener: (UserDetails) -> Unit) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+            var user : UserDetails? = null
             if(it.isSuccessful){
                 Log.i("Auth","Successful login")
-                listener(true, getCurrentUser())
+                user = UserDetails(
+                    getCurrentUser()?.displayName.toString(), getCurrentUser()?.email.toString(),
+                    getCurrentUser()?.phoneNumber.toString(),true)
+                listener(user)
             }else {
                 Log.i("Auth","Login failed")
                 Log.i("Auth",it.exception.toString())
-                listener(false, getCurrentUser())
+                user = UserDetails("","","",false)
+                listener(user)
             }
         }
     }
 
-    fun handleFacebookLogin(token : AccessToken, listener: (Boolean, FirebaseUser?) -> Unit){
+    fun handleFacebookLogin(token : AccessToken, listener: (UserDetails) -> Unit){
         Log.d("FacebookAccessToken", "handleFacebookAccessToken:$token")
         val credential = FacebookAuthProvider.getCredential(token.token)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener{ task ->
+                var user : UserDetails? = null
                 if (task.isSuccessful) {
                     Log.d("FacebookAuth", "signInWithCredential:success")
-                    listener(true, getCurrentUser())
+                    user = UserDetails(getCurrentUser()?.displayName.toString(), getCurrentUser()?.email.toString(),
+                        getCurrentUser()?.phoneNumber.toString(),true)
+                    listener(user)
                 } else {
                     Log.w("FacebookAuth", "signInWithCredential:failure", task.exception)
-                    listener(false, getCurrentUser())
+                    user = UserDetails("","","",false)
+                    listener(user)
                 }
             }
 
     }
 
-    fun resetPassword(email: String, listener: (Boolean,String) -> Unit){
+    fun resetPassword(email: String, listener: (Boolean) -> Unit){
         firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener {
             if(it.isSuccessful){
-                listener(true,"Email has been sent to reset the password")
+                listener(true)
             }else{
-                listener(false,"No account is associated with the given email")
+                listener(false)
             }
         }
     }

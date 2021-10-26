@@ -24,14 +24,7 @@ class ResetPassword : Fragment(R.layout.resetpassword_fragment){
         sharedViewModel = ViewModelProvider(requireActivity(),SharedViewModelFactory())[SharedViewModel::class.java]
         binding.resetSendButton.setOnClickListener {
             var email = binding.resetPasswordEditText.text.toString()
-            Authentication.resetPassword(email){ status,message ->
-                if(status){
-                    Toast.makeText(requireContext(),message,Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                }
-
-            }
+            sharedViewModel.resetPasswordWithEmail(email)
         }
 
         binding.resetBackButton.setOnClickListener {

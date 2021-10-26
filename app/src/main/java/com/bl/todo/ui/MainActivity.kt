@@ -2,9 +2,14 @@ package com.bl.todo.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.ActivityMainBinding
+import com.bl.todo.models.DatabaseUser
+import com.bl.todo.models.UserDetails
+import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
 import com.bl.todo.viewmodels.SharedViewModel
 import com.bl.todo.viewmodels.SharedViewModelFactory
@@ -18,7 +23,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         sharedViewModel = ViewModelProvider(this@MainActivity, SharedViewModelFactory())[SharedViewModel::class.java]
         observeAppNavigation()
-        gotoSplashScreen()
+        sharedViewModel.setSplashScreenStatus(true)
+        loginObservers()
+        resetPasswordObserver()
+        signUpObservers()
     }
 
     private fun observeAppNavigation(){
@@ -71,6 +79,84 @@ class MainActivity : AppCompatActivity() {
 
     private fun gotoForgotPasswordScreen(){
         Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,ResetPassword())
+    }
+
+    private fun loginObservers(){
+        sharedViewModel.loginStatus.observe(this@MainActivity){ user ->
+            if(user.loginStatus){
+                Toast.makeText(this@MainActivity,"User logged in ", Toast.LENGTH_SHORT).show()
+                LoginFragment.dialog.dismiss()
+                Database.getUserData {
+                    var user = Utilities.createUserFromHashMap(it)
+//                    TODO("adding user data to sharedPref")
+                }
+                sharedViewModel.setGotoHomePageStatus(true)
+            }else {
+                Toast.makeText(this@MainActivity,"Sign in failed", Toast.LENGTH_SHORT).show()
+                LoginFragment.dialog.dismiss()
+            }
+        }
+
+        sharedViewModel.facebookLoginStatus.observe(this@MainActivity){ user ->
+            if(user.loginStatus){
+                Toast.makeText(this@MainActivity,"User logged in", Toast.LENGTH_SHORT).show()
+                var userDb = DatabaseUser(user.userName,user.email,user.phone)
+                Database.addUserInfoDatabase(userDb){
+                        status ->
+                    if(!status){
+                        Log.e("DatabaseError","write failed")
+                        LoginFragment.dialog.dismiss()
+                    }else{
+//                        TODO("add user object in sharedPref")
+                        LoginFragment.dialog.dismiss()
+                    }
+                }
+                sharedViewModel.setGotoHomePageStatus(true)
+            }else {
+                Toast.makeText(this@MainActivity,"Facebook login unsuccessful", Toast.LENGTH_SHORT).show()
+                LoginFragment.dialog.dismiss()
+            }
+
+        }
+    }
+
+    private fun resetPasswordObserver() {
+        sharedViewModel.resetPasswordStatus.observe(this@MainActivity){
+            if(it){
+                Toast.makeText(this@MainActivity,"Email has been sent to reset the password",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this@MainActivity,"No account is associated with the given email",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun signUpObservers() {
+        sharedViewModel.signUpStatus.observe(this@MainActivity){
+            SignUpFragment.userName = SignUpFragment.binding.signupUsername
+            SignUpFragment.email = SignUpFragment.binding.signupEmail
+            SignUpFragment.phone = SignUpFragment.binding.signupMobile
+            var user = DatabaseUser(
+                SignUpFragment.userName.text.toString(),
+                SignUpFragment.email.text.toString(),
+                SignUpFragment.phone.text.toString())
+            if(it.loginStatus){
+                Toast.makeText(this@MainActivity,"User signed up",Toast.LENGTH_SHORT).show()
+                Database.addUserInfoDatabase(user){status ->
+                    if(!status){
+                        Log.e("DatabaseError","write failed")
+                        SignUpFragment.dialog.dismiss()
+                    }else{
+//                        TODO("add user object in sharedPref")
+                        sharedViewModel.setGotoHomePageStatus(true)
+                        SignUpFragment.dialog.dismiss()
+                    }
+                }
+            }
+            else{
+                Toast.makeText(this@MainActivity,"Account not created",Toast.LENGTH_SHORT).show()
+                SignUpFragment.dialog.dismiss()
+            }
+        }
     }
 
 

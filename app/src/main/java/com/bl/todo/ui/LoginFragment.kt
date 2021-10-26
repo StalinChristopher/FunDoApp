@@ -4,14 +4,14 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
-import com.bl.todo.models.UserDetails
-import com.bl.todo.services.Authentication
 import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
 import com.bl.todo.viewmodels.SharedViewModel
@@ -23,17 +23,19 @@ import com.facebook.login.LoginResult
 
 class LoginFragment : Fragment(R.layout.login_fragment){
     private lateinit var binding: LoginFragmentBinding
-    private lateinit var dialog  : Dialog
     private lateinit var callbackManager: CallbackManager
     private lateinit var sharedViewModel: SharedViewModel
 
+    companion object{
+       lateinit var dialog  : Dialog
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
         binding = LoginFragmentBinding.bind(view)
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_loading)
-        sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java] //        checkUser()
+        sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java]
         callbackManager = CallbackManager.Factory.create()
         binding.loginRegister.setOnClickListener {
             Toast.makeText(requireContext(),"button pressed",Toast.LENGTH_SHORT).show()
@@ -51,6 +53,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         binding.forgotPasswordClick.setOnClickListener {
             sharedViewModel.setForgotPasswordPageStatus(true)
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -58,38 +61,11 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         callbackManager.onActivityResult(requestCode,resultCode,data)
     }
 
-    private fun checkUser() {
-        var user = Authentication.getCurrentUser()
-        if( user != null){
-            Database.getUserData(user.uid){ status, bundle->
-                var profileObj = HomeFragment()
-                profileObj.arguments = bundle
-                requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,profileObj).commit()
-            }
-        }
-    }
-
     private fun login() {
         var email = binding.loginEmail
         var password = binding.loginPassword
-        if(Utilities.loginCredentialsValidator(email,password)){
-            Authentication.loginWithEmailAndPassword(email.text.toString(),password.text.toString()){ status, user ->
-                if(!status){
-                    dialog.dismiss()
-                    Toast.makeText(requireContext(),"Incorrect Email or Password",Toast.LENGTH_SHORT).show()
-                }else{
-                    Database.getUserData(user!!.uid){ status, bundle ->
-                        if(!status){
-                            Log.e("DatabaseError","read failed")
-                            dialog.dismiss()
-                        }else{
-                            dialog.dismiss()
-                            sharedViewModel.setGotoHomePageStatus(true)
-
-                        }
-                    }
-                }
-            }
+        if(Utilities.loginCredentialsValidator(email,password)) {
+            sharedViewModel.loginWithEmailAndPassword(email.text.toString(), password.text.toString())
         }
     }
 
@@ -108,34 +84,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
             override fun onSuccess(result: LoginResult) {
                 Log.d("Facebook-OAuth", "facebook:onSuccess:$result")
-                Authentication.handleFacebookLogin(result.accessToken) { status, firebaseUser ->
-                    if (!status) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Authentication failed",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        dialog.dismiss()
-                    } else {
-                        var username = Authentication.getCurrentUser()?.displayName
-                        var email = Authentication.getCurrentUser()?.email
-                        var phone = Authentication.getCurrentUser()?.phoneNumber
-                        var user = UserDetails(
-                            username, email,
-                            phone
-                        )
-                        Database.addUserInfoDatabase(user) {
-                            if (it) {
-                                Log.i("DB", "info added to database")
-                            } else {
-                                Log.i("DB", "info not added to database")
-                            }
-                        }
-                        sharedViewModel.setGotoHomePageStatus(true)
-
-                    }
-
-                }
+                sharedViewModel.loginWithFacebook(result.accessToken)
             }
         })
     }

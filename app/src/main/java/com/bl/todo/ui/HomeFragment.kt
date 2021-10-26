@@ -40,6 +40,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             Toast.makeText(requireContext(),"Navigation drawer button clicked", Toast.LENGTH_SHORT).show()
         }
 
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

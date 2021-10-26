@@ -15,12 +15,20 @@ import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
 import com.bl.todo.viewmodels.SharedViewModel
 import com.bl.todo.viewmodels.SharedViewModelFactory
+import com.google.android.material.textfield.TextInputEditText
+import org.w3c.dom.Text
 
 
 class SignUpFragment : Fragment(R.layout.signup_fragment) {
-    private lateinit var binding : SignupFragmentBinding
-    private lateinit var dialog  : Dialog
     private lateinit var sharedViewModel: SharedViewModel
+
+    companion object{
+        lateinit var dialog  : Dialog
+        lateinit var userName : TextInputEditText
+        lateinit var email : TextInputEditText
+        lateinit var phone : TextInputEditText
+        lateinit var binding : SignupFragmentBinding
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = SignupFragmentBinding.bind(view)
@@ -45,30 +53,11 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         var confirmPassword = binding.signupConfirmPassword
         var bundle : Bundle
         if(Utilities.signUpCredentialsValidator(userName, email, phone, password, confirmPassword)){
-            Authentication.signUpWithEmailAndPassword(email.text.toString(),password.text.toString()){ status, user->
-                if(status){
-                    val newUser : UserDetails = UserDetails(userName.text.toString() , email.text.toString(), phone.text.toString(),loginStatus = true)
-                    Database.addUserInfoDatabase(newUser){
-                        if(it){
-                            Toast.makeText(requireContext(),"Account created successfully",Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                            sharedViewModel.setGotoHomePageStatus(true)
-//                            bundle = Utilities.addInfoToBundle(newUser)
-//                            var profileObj = ProfileFragment()
-//                            profileObj.arguments = bundle
-//                            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,profileObj).commit()
-                        }
-                        else{
-                            Log.e("DatabaseError","write failed")
-                            dialog.dismiss()
-                        }
-                    }
-                }else{
-                    dialog.dismiss()
-                    Toast.makeText(requireContext(),"Account has not been created",Toast.LENGTH_SHORT).show()
-                }
-
-            }
+            sharedViewModel.signUpWithEmailAndPassword(email.text.toString(),password.text.toString())
+        }else{
+            dialog.dismiss()
         }
     }
+
+
 }

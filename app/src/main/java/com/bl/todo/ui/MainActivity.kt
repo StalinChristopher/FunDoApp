@@ -2,6 +2,7 @@ package com.bl.todo.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.ActivityMainBinding
@@ -17,10 +18,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.homeToolbar)
         SharedPref.initializePref(this)
         sharedViewModel = ViewModelProvider(this@MainActivity, SharedViewModelFactory())[SharedViewModel::class.java]
         observeAppNavigation()
         sharedViewModel.setSplashScreenStatus(true)
+
+        binding.homeToolbar.setNavigationOnClickListener {
+            Toast.makeText(this,"Navigation drawer button clicked", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun observeAppNavigation(){

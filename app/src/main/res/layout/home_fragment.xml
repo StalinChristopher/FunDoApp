@@ -5,76 +5,14 @@
     android:padding="7dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/homeToolbarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/toolbar"
-        app:elevation="0dp">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/homeToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:navigationIcon="@drawable/toolbar_navicon"
-            app:title="FunDo"
-            app:titleTextColor="@color/grey"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/toolbar"/>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/profileLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Profile"
+        android:text="Home"
         android:textSize="30sp"
         android:layout_marginTop="30dp"
         android:padding="10sp"
-        android:layout_below="@id/homeToolbarLayout"
         android:layout_centerHorizontal="true"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/profileLabel"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/profileViewName"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/profileLabel"
-            android:textSize="18sp" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/profileViewEmail"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/profileViewName"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:textSize="18sp" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/profileViewPhone"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="30dp"
-            android:textSize="18sp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/profileLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/profileViewEmail"
-            android:layout_gravity="center"
-            android:layout_marginTop="60dp"
-            android:text="LOGOUT" />
-    </LinearLayout>
 
 </RelativeLayout>

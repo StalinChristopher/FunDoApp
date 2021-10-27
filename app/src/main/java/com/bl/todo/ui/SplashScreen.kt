@@ -8,9 +8,9 @@ import com.bl.todo.R
 import com.bl.todo.databinding.SplashScreenBinding
 import com.bl.todo.services.Authentication
 import com.bl.todo.services.Database
-import com.bl.todo.util.Utilities
-import com.bl.todo.viewmodels.SharedViewModel
-import com.bl.todo.viewmodels.SharedViewModelFactory
+import com.bl.todo.util.SharedPref
+import com.bl.todo.viewmodels.sharedView.SharedViewModel
+import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
 
 class SplashScreen : Fragment(R.layout.splash_screen) {
     private lateinit var binding: SplashScreenBinding
@@ -25,12 +25,9 @@ class SplashScreen : Fragment(R.layout.splash_screen) {
             var user = Authentication.getCurrentUser()
             if( user != null){
                 Database.getUserData {
-                    var user = Utilities.createUserFromHashMap(it)
-//                    TODO("add user data to sharedPref")
                 }
                 sharedViewModel.setGotoHomePageStatus(true)
             }else{
-//                Utilities.replaceFragment(requireActivity().supportFragmentManager,R.id.fragmentContainerId,LoginFragment())
                 sharedViewModel.setLoginPageStatus(true)
             }
         }

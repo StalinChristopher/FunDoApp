@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
+import com.bl.todo.models.DatabaseUser
 import com.bl.todo.models.UserDetails
 import com.google.android.material.textfield.TextInputEditText
 import java.util.regex.Pattern
@@ -70,11 +71,18 @@ object Utilities {
         bundle.putString("email",newUser.email)
         bundle.putString("phone",newUser.phone)
         return bundle
-
     }
 
-    fun createUserFromHashMap(userMap:HashMap<*,*>):UserDetails {
-        return UserDetails(userMap["name"].toString(),userMap["email"].toString(),userMap["phone"].toString())
+    fun createUserFromHashMap(userMap:HashMap<*,*>):DatabaseUser {
+        return DatabaseUser(userMap["userName"].toString(),userMap["email"].toString(),userMap["phone"].toString())
     }
+
+    fun addUserInfoToSharedPref(user : DatabaseUser){
+        SharedPref.addKeyValue("userName",user.userName)
+        SharedPref.addKeyValue("email",user.email)
+        SharedPref.addKeyValue("Phone",user.phone)
+    }
+
+
 
 }

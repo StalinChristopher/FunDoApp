@@ -9,25 +9,28 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SignupFragmentBinding
+import com.bl.todo.models.DatabaseUser
 import com.bl.todo.models.UserDetails
-import com.bl.todo.services.Authentication
 import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
-import com.bl.todo.viewmodels.SharedViewModel
-import com.bl.todo.viewmodels.SharedViewModelFactory
+import com.bl.todo.viewmodels.sharedView.SharedViewModel
+import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
+import com.bl.todo.viewmodels.registerPage.SignUpViewModel
+import com.bl.todo.viewmodels.registerPage.SignUpViewModelFactory
 import com.google.android.material.textfield.TextInputEditText
-import org.w3c.dom.Text
 
 
 class SignUpFragment : Fragment(R.layout.signup_fragment) {
+    private lateinit var dialog  : Dialog
+    private lateinit var userName : TextInputEditText
+    private lateinit var email : TextInputEditText
+    private lateinit var phone : TextInputEditText
+    private lateinit var binding : SignupFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var signUpViewModel: SignUpViewModel
 
     companion object{
-        lateinit var dialog  : Dialog
-        lateinit var userName : TextInputEditText
-        lateinit var email : TextInputEditText
-        lateinit var phone : TextInputEditText
-        lateinit var binding : SignupFragmentBinding
+
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,6 +38,7 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_loading)
         sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java]
+        signUpViewModel = ViewModelProvider(this,SignUpViewModelFactory())[SignUpViewModel::class.java]
         binding.signupLogin.setOnClickListener {
             sharedViewModel.setLoginPageStatus(true)
         }
@@ -43,6 +47,8 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
             dialog.show()
             signup()
         }
+
+        signUpObservers()
     }
 
     private fun signup() {
@@ -51,11 +57,27 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         var phone  = binding.signupMobile
         var password = binding.signupPassword
         var confirmPassword = binding.signupConfirmPassword
-        var bundle : Bundle
+        var user = UserDetails(userName.text.toString(),email.text.toString(),phone.text.toString())
         if(Utilities.signUpCredentialsValidator(userName, email, phone, password, confirmPassword)){
-            sharedViewModel.signUpWithEmailAndPassword(email.text.toString(),password.text.toString())
+            signUpViewModel.signUpWithEmailAndPassword(user,password.text.toString(),phone.text.toString())
         }else{
             dialog.dismiss()
+        }
+    }
+
+    private fun signUpObservers() {
+        signUpViewModel.signUpStatus.observe(viewLifecycleOwner){
+            if(it){
+                Toast.makeText(requireContext(),"User signed up",Toast.LENGTH_SHORT).show()
+//                Database.addUserInfoDatabase(user){
+//                }
+                dialog.dismiss()
+                sharedViewModel.setGotoHomePageStatus(true)
+            }
+            else{
+                Toast.makeText(requireContext(),"Account not created",Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
         }
     }
 

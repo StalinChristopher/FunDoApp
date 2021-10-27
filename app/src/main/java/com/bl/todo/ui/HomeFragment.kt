@@ -8,31 +8,36 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.HomeFragmentBinding
-import com.bl.todo.services.Authentication
-import com.bl.todo.viewmodels.SharedViewModel
-import com.bl.todo.viewmodels.SharedViewModelFactory
+import com.bl.todo.util.SharedPref
+import com.bl.todo.viewmodels.sharedView.SharedViewModel
+import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
+import com.bl.todo.viewmodels.homePage.HomeViewModel
+import com.bl.todo.viewmodels.homePage.HomeViewModelFactory
+import com.facebook.share.Share
 
 class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var homeViewModel: HomeViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = HomeFragmentBinding.bind(view)
         sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java]
+        homeViewModel = ViewModelProvider(this, HomeViewModelFactory())[HomeViewModel::class.java]
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.homeToolbar)
         setHasOptionsMenu(true)
 
-        var emailValue :String = arguments?.get("email").toString()
-        var name = arguments?.get("name").toString()
-        var phone = arguments?.get("phone").toString()
+        var emailValue :String? = SharedPref.getValue("email")
+        var name = SharedPref.getValue("userName")
+        var phone = SharedPref.getValue("Phone")
 
 
         binding.profileViewEmail.text = "Email : $emailValue"
         binding.profileViewName.text = "Name : $name"
         binding.profileViewPhone.text = "Phone : $phone"
         binding.profileLogout.setOnClickListener {
-            Authentication.logOut()
+            homeViewModel.logOutFromHomePage()
             sharedViewModel.setLoginPageStatus(true)
         }
 

@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.BoolRes
 import com.bl.todo.models.UserDetails
+import com.bl.todo.util.SharedPref
 import com.facebook.AccessToken
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FacebookAuthProvider
@@ -20,20 +21,22 @@ object Authentication {
     fun getCurrentUser() = firebaseAuth.currentUser
 
     fun logOut(){
+        SharedPref.clearAll()
         LoginManager.getInstance().logOut()
         firebaseAuth.signOut()
     }
 
-    fun signUpWithEmailAndPassword(email : String, password : String, listener : (UserDetails) -> Unit) {
+    fun signUpWithEmailAndPassword(email : String, password : String, phone : String, listener : (UserDetails) -> Unit) {
         if(getCurrentUser()!=null){
             var user = UserDetails(getCurrentUser()?.displayName.toString(), getCurrentUser()?.email.toString(),
-                getCurrentUser()?.email.toString(), true)
+                getCurrentUser()?.phoneNumber.toString(), true)
             listener(user)
         }
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
             var user : UserDetails? = null
             if(it.isSuccessful){
                 Log.i("Auth","Successful")
+                Log.i("AuthUser","${getCurrentUser()?.displayName.toString()}")
                 user = UserDetails(getCurrentUser()?.displayName.toString(), getCurrentUser()?.email.toString(),
                     getCurrentUser()?.phoneNumber.toString(), true)
                 listener(user)

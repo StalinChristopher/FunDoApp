@@ -4,18 +4,20 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
+import com.bl.todo.models.DatabaseUser
+import com.bl.todo.models.UserDataDbStatus
 import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
-import com.bl.todo.viewmodels.SharedViewModel
-import com.bl.todo.viewmodels.SharedViewModelFactory
+import com.bl.todo.viewmodels.loginPage.LoginViewModel
+import com.bl.todo.viewmodels.loginPage.LoginViewModelFactory
+import com.bl.todo.viewmodels.sharedView.SharedViewModel
+import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -25,10 +27,9 @@ class LoginFragment : Fragment(R.layout.login_fragment){
     private lateinit var binding: LoginFragmentBinding
     private lateinit var callbackManager: CallbackManager
     private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var loginViewModel : LoginViewModel
+    private lateinit var dialog  : Dialog
 
-    companion object{
-       lateinit var dialog  : Dialog
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
@@ -36,9 +37,9 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_loading)
         sharedViewModel = ViewModelProvider(requireActivity(), SharedViewModelFactory())[SharedViewModel::class.java]
+        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())[LoginViewModel::class.java]
         callbackManager = CallbackManager.Factory.create()
         binding.loginRegister.setOnClickListener {
-            Toast.makeText(requireContext(),"button pressed",Toast.LENGTH_SHORT).show()
             sharedViewModel.setSignupPageStatus(true)
         }
         binding.loginSubmit.setOnClickListener {
@@ -53,6 +54,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         binding.forgotPasswordClick.setOnClickListener {
             sharedViewModel.setForgotPasswordPageStatus(true)
         }
+        loginObservers()
 
     }
 
@@ -65,7 +67,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         var email = binding.loginEmail
         var password = binding.loginPassword
         if(Utilities.loginCredentialsValidator(email,password)) {
-            sharedViewModel.loginWithEmailAndPassword(email.text.toString(), password.text.toString())
+            loginViewModel.loginWithEmailAndPassword(email.text.toString(), password.text.toString())
         }
     }
 
@@ -84,8 +86,34 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
             override fun onSuccess(result: LoginResult) {
                 Log.d("Facebook-OAuth", "facebook:onSuccess:$result")
-                sharedViewModel.loginWithFacebook(result.accessToken)
+                loginViewModel.loginWithFacebook(result.accessToken)
             }
         })
     }
+
+    private fun loginObservers(){
+        loginViewModel.loginStatus.observe(viewLifecycleOwner){
+            if(it){
+                Toast.makeText(requireContext(),"User logged in ", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                sharedViewModel.setGotoHomePageStatus(true)
+            }else {
+                Toast.makeText(requireContext(),"Sign in failed", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+
+        loginViewModel.facebookLoginStatus.observe(viewLifecycleOwner){
+            if(it){
+                Toast.makeText(requireContext(),"User logged in", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                sharedViewModel.setGotoHomePageStatus(true)
+            }else {
+                Toast.makeText(requireContext(),"Facebook login unsuccessful", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+
+        }
+    }
+
 }

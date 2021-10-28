@@ -44,6 +44,10 @@ class SharedViewModel : ViewModel(){
         _gotoForgotPasswordStatus.value = status
     }
 
+    fun logOutFromApp(){
+        Authentication.logOut()
+    }
+
 
 
 

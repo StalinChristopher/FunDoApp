@@ -32,7 +32,6 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 
-
 class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
@@ -64,7 +63,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     private fun observers() {
         homeViewModel.userProfilePic.observe(viewLifecycleOwner){
             val profileImageButton = profileDialogView.findViewById<ImageButton>(R.id.profile_image)
-            Log.i("ImageSet","Reached")
             profileImageButton.setImageBitmap(it)
 
             val item = menu?.findItem(R.id.profileIcon)
@@ -109,9 +107,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
                 ActivityCompat.requestPermissions(requireActivity(),
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
             }
-
         }
-
     }
 
     private fun selectImageFromGallery(){
@@ -135,7 +131,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             pleaseWaitDialog.show()
             var imageUri = data.data
             var bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver,imageUri)
-            Log.i("Point","beforeSetting")
             homeViewModel.setProfilePic(bitmap)
         }
     }

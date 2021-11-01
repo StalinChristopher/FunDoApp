@@ -95,7 +95,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
     private fun loginObservers(){
         loginViewModel.loginStatus.observe(viewLifecycleOwner){
-            if(it){
+            if(it.loginStatus){
                 Toast.makeText(requireContext(),"User logged in ", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)
@@ -106,7 +106,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         }
 
         loginViewModel.facebookLoginStatus.observe(viewLifecycleOwner){
-            if(it){
+            if(it.loginStatus){
                 Toast.makeText(requireContext(),"User logged in", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)

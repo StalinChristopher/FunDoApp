@@ -4,13 +4,18 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bl.todo.models.NewNote
 import com.bl.todo.services.Authentication
+import com.bl.todo.services.Database
 import com.bl.todo.services.Storage
 
 class HomeViewModel : ViewModel() {
 
     private val _userProfilePic  = MutableLiveData<Bitmap>()
     val userProfilePic = _userProfilePic as LiveData<Bitmap>
+
+    private val _userNotes = MutableLiveData<ArrayList<NewNote>>()
+    val userNotes = _userNotes as LiveData<ArrayList<NewNote>>
 
     fun logOutFromHomePage(){
         Authentication.logOut()
@@ -28,6 +33,14 @@ class HomeViewModel : ViewModel() {
         Storage.getProfileImage {
             if(it != null){
                 _userProfilePic.value = it
+            }
+        }
+    }
+
+    fun getNotesFromUser(){
+        Database.getUserNotes {
+            if(it != null){
+                _userNotes.value = it
             }
         }
     }

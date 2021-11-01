@@ -31,6 +31,12 @@ import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bl.todo.adapter.MyAdapter
+import com.bl.todo.models.NewNote
+import com.bl.todo.services.Database
 
 class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
@@ -40,10 +46,13 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var alertDialog: AlertDialog
     private lateinit var pleaseWaitDialog : Dialog
     private var menu : Menu? = null
+    private lateinit var recyclerView : RecyclerView
+    private lateinit var myAdapter: MyAdapter
 
     companion object{
         const val STORAGE_PERMISSION_CODE = 111
         const val IMAGE_FROM_GALLERY_CODE = 100
+        private var noteList : ArrayList<NewNote> = ArrayList<NewNote>()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,6 +65,15 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         homeViewModel = ViewModelProvider(this, HomeViewModelFactory())[HomeViewModel::class.java]
         setHasOptionsMenu(true)
         profileDialog()
+
+        binding.homePageFloatingButton.setOnClickListener{
+            sharedViewModel.setNoteFragmentPageStatus(true)
+        }
+        myAdapter = MyAdapter(noteList)
+        recyclerView = binding.HomeRecyclerView
+        recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
+        recyclerView.adapter = myAdapter
+        homeViewModel.getNotesFromUser()
         observers()
 
     }
@@ -69,6 +87,15 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             item?.icon = BitmapDrawable(it)
 
             pleaseWaitDialog.dismiss()
+        }
+
+        homeViewModel.userNotes.observe(viewLifecycleOwner){
+            if(it != null){
+                noteList.clear()
+                noteList.addAll(it)
+                myAdapter.notifyDataSetChanged()
+                Log.i("Reached","random")
+            }
         }
     }
 
@@ -86,13 +113,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         email.text = SharedPref.getValue("email")
         phone.text = SharedPref.getValue("Phone")
 
-        val profileDialogLogout = profileDialogView.findViewById<MaterialButton>(R.id.profileDialogButton)
-        profileDialogLogout.setOnClickListener{
-            homeViewModel.logOutFromHomePage()
-            sharedViewModel.setLoginPageStatus(true)
-            alertDialog.dismiss()
-        }
-
         val closeProfile = profileDialogView.findViewById<ImageView>(R.id.profileDialogClose)
         closeProfile.setOnClickListener{
             alertDialog.dismiss()
@@ -107,6 +127,13 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
                 ActivityCompat.requestPermissions(requireActivity(),
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
             }
+        }
+
+        val profileDialogLogout = profileDialogView.findViewById<MaterialButton>(R.id.profileDialogButton)
+        profileDialogLogout.setOnClickListener{
+            homeViewModel.logOutFromHomePage()
+            sharedViewModel.setLoginPageStatus(true)
+            alertDialog.dismiss()
         }
     }
 

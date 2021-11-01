@@ -93,6 +93,17 @@ class MainActivity : AppCompatActivity() {
                 gotoForgotPasswordScreen()
             }
         })
+
+        sharedViewModel.gotoNoteFragmentStatus.observe(this@MainActivity, {
+            if(it){
+                gotoNotePage()
+            }
+
+        })
+    }
+
+    private fun gotoNotePage() {
+        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, NoteFragment())
     }
 
     private fun gotoLoginPage(){

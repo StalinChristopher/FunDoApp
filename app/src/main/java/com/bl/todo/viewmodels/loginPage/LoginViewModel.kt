@@ -11,29 +11,41 @@ import com.bl.todo.services.Database
 import com.facebook.AccessToken
 
 class LoginViewModel : ViewModel() {
-    private val _loginStatus = MutableLiveData<Boolean>()
-    val loginStatus = _loginStatus as LiveData<Boolean>
+    private val _loginStatus = MutableLiveData<UserDetails>()
+    val loginStatus = _loginStatus as LiveData<UserDetails>
 
-    private val _facebookLoginStatus = MutableLiveData<Boolean>()
-    val facebookLoginStatus = _facebookLoginStatus as LiveData<Boolean>
+    private val _facebookLoginStatus = MutableLiveData<UserDetails>()
+    val facebookLoginStatus = _facebookLoginStatus as LiveData<UserDetails>
 
     private val _userData = MutableLiveData<Boolean>()
     val userData = _userData as LiveData<Boolean>
 
     fun loginWithEmailAndPassword(email : String, password : String){
-        Authentication.loginWithEmailAndPassword(email, password){
-            Database.getUserData {
-                _loginStatus.value = it
+        Authentication.loginWithEmailAndPassword(email, password){ user->
+            if(user.loginStatus){
+                Database.getUserData {
+                    if(it){
+                        _loginStatus.value = user
+                    }
+                }
+            }else{
+                _loginStatus.value = user
             }
+
         }
     }
 
     fun loginWithFacebook(token : AccessToken){
         Authentication.handleFacebookLogin(token){ user->
             var userDb = DatabaseUser(user.userName,user.email,user.phone)
-            Database.addUserInfoDatabase(userDb){
-                _facebookLoginStatus.value = it
+            if(user.loginStatus){
+                Database.addUserInfoDatabase(userDb){
+                    _facebookLoginStatus.value = user
+                }
+            }else{
+                _facebookLoginStatus.value = user
             }
+
 
 
         }

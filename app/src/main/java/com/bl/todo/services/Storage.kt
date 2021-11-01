@@ -10,12 +10,12 @@ import java.io.ByteArrayOutputStream
 
 object Storage {
     private var storageRef = Firebase.storage.reference
-    private var profileImageRef = storageRef.child("images").child("users").child(Authentication.getCurrentUser()?.uid.toString())
-        .child("profile.webp")
-
 
     fun addProfileImage(bitmap: Bitmap, listener :(Boolean) -> Unit){
+        var profileImageRef = storageRef.child("images").child("users").child(Authentication.getCurrentUser()?.uid.toString())
+            .child("profile.webp")
         val baos = ByteArrayOutputStream()
+
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
@@ -31,7 +31,11 @@ object Storage {
     }
 
     fun getProfileImage(listener: (Bitmap?) -> Unit){
+
+        var profileImageRef = storageRef.child("images").child("users").child(Authentication.getCurrentUser()?.uid.toString())
+            .child("profile.webp")
         val oneMegabyte: Long = 1024 * 1024
+
         profileImageRef.getBytes(oneMegabyte).addOnSuccessListener {
             Log.i("Storage","Image download successful")
             val bitmap = BitmapFactory.decodeByteArray(it,0,it.size)

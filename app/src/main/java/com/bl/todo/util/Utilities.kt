@@ -12,6 +12,7 @@ import com.bl.todo.databinding.LoginFragmentBinding
 import com.bl.todo.models.DatabaseUser
 import com.bl.todo.models.UserDetails
 import com.google.android.material.textfield.TextInputEditText
+import java.util.HashMap
 import java.util.regex.Pattern
 
 object Utilities {
@@ -82,7 +83,5 @@ object Utilities {
         SharedPref.addKeyValue("email",user.email)
         SharedPref.addKeyValue("Phone",user.phone)
     }
-
-
 
 }

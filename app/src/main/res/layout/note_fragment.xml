@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <ImageButton
+        android:id="@+id/notBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/back_key"
+        android:background="@color/blue_200"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/noteTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Title"
+        android:layout_below="@id/notBackButton"
+        android:textSize="25sp"
+        android:layout_marginTop="30dp"
+        android:background="@color/blue_200"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/noteNotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/noteTitle"
+        android:textSize="16sp"
+        android:layout_marginTop="17dp"
+        android:hint="Note"
+        android:background="@color/blue_200"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/noteSaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Save"
+        android:textColor="@color/white"
+        app:icon="@drawable/add_icon"
+        app:iconTint="@color/white"/>
+
+</RelativeLayout>

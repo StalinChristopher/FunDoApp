@@ -9,6 +9,7 @@ import com.bl.todo.services.Database
 import com.facebook.AccessToken
 
 class SharedViewModel : ViewModel(){
+
     private val _gotoHomePageStatus = MutableLiveData<Boolean>()
     val gotoHomePageStatus = _gotoHomePageStatus as LiveData<Boolean>
 
@@ -23,6 +24,9 @@ class SharedViewModel : ViewModel(){
 
     private val _gotoForgotPasswordStatus = MutableLiveData<Boolean>()
     val gotoForgotPasswordStatus = _gotoForgotPasswordStatus as LiveData<Boolean>
+
+    private val _gotoNoteFragmentStatus = MutableLiveData<Boolean>()
+    val gotoNoteFragmentStatus = _gotoNoteFragmentStatus as LiveData<Boolean>
 
     fun setGotoHomePageStatus(status: Boolean){
         _gotoHomePageStatus.value = status
@@ -42,6 +46,10 @@ class SharedViewModel : ViewModel(){
 
     fun setForgotPasswordPageStatus(status: Boolean){
         _gotoForgotPasswordStatus.value = status
+    }
+
+    fun setNoteFragmentPageStatus(status: Boolean){
+        _gotoNoteFragmentStatus.value = status
     }
 
     fun logOutFromApp(){

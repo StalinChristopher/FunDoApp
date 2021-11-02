@@ -31,9 +31,11 @@ import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatToggleButton
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bl.todo.adapter.MyAdapter
 import com.bl.todo.models.NewNote
 import com.bl.todo.services.Database
@@ -71,7 +73,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         }
         myAdapter = MyAdapter(noteList)
         recyclerView = binding.HomeRecyclerView
-        recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2,1)
+        recyclerView.setHasFixedSize(true)
         recyclerView.adapter = myAdapter
         homeViewModel.getNotesFromUser()
         observers()
@@ -94,7 +97,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
                 noteList.clear()
                 noteList.addAll(it)
                 myAdapter.notifyDataSetChanged()
-                Log.i("Reached","random")
             }
         }
     }
@@ -166,6 +168,17 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         super.onCreateOptionsMenu(menu, inflater)
         this.menu = menu
         inflater.inflate(R.menu.toolbar_menu,menu)
+
+        var toggleItem = menu.getItem(0)
+        var view = toggleItem.actionView
+        var button = view.findViewById<AppCompatToggleButton>(R.id.toggle_button)
+        button.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+            }else{
+                recyclerView.layoutManager = StaggeredGridLayoutManager(2,1)
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

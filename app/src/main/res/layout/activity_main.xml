@@ -29,7 +29,10 @@
                 app:title="FunDo"
                 app:titleTextColor="@color/grey"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/toolbar"/>
+                android:background="@drawable/toolbar">
+
+
+            </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 

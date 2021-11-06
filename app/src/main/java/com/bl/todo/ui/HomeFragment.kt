@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.appcompat.widget.SearchView
 import com.bl.todo.adapter.MyAdapter
 import com.bl.todo.models.NewNote
 import com.bl.todo.services.Database
@@ -55,6 +56,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         const val STORAGE_PERMISSION_CODE = 111
         const val IMAGE_FROM_GALLERY_CODE = 100
         private var noteList : ArrayList<NewNote> = ArrayList<NewNote>()
+        private var filteredArrayList = ArrayList<NewNote>()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,14 +73,18 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         binding.homePageFloatingButton.setOnClickListener{
             sharedViewModel.setNoteFragmentPageStatus(true)
         }
-        myAdapter = MyAdapter(noteList)
+        initializeRecyclerView()
+        observers()
+
+    }
+
+    private fun initializeRecyclerView() {
+        myAdapter = MyAdapter(filteredArrayList)
         recyclerView = binding.HomeRecyclerView
         recyclerView.layoutManager = StaggeredGridLayoutManager(2,1)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = myAdapter
         homeViewModel.getNotesFromUser()
-        observers()
-
     }
 
     private fun observers() {
@@ -96,6 +102,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             if(it != null){
                 noteList.clear()
                 noteList.addAll(it)
+                filteredArrayList.clear()
+                filteredArrayList.addAll(it)
                 myAdapter.notifyDataSetChanged()
             }
         }
@@ -168,11 +176,46 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         super.onCreateOptionsMenu(menu, inflater)
         this.menu = menu
         inflater.inflate(R.menu.toolbar_menu,menu)
+        changeLayoutRecyclerView()
+        searchRecyclerView()
 
-        var toggleItem = menu.getItem(0)
-        var view = toggleItem.actionView
-        var button = view.findViewById<AppCompatToggleButton>(R.id.toggle_button)
-        button.setOnCheckedChangeListener { _, isChecked ->
+
+    }
+
+    private fun searchRecyclerView() {
+        val searchItem = menu?.getItem(0)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.setOnQueryTextListener( object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filteredArrayList.clear()
+                val searchText = newText!!.lowercase()
+                if(searchText.isNotEmpty()){
+
+                    noteList.forEach{
+                        if(it.title.lowercase().contains(searchText) || it.content.lowercase().contains(searchText)){
+                            filteredArrayList.add(it)
+                        }
+                    }
+                    myAdapter.notifyDataSetChanged()
+                }else{
+                    filteredArrayList.clear()
+                    filteredArrayList.addAll(noteList)
+                    myAdapter.notifyDataSetChanged()
+                }
+                return false
+            }
+        })
+    }
+
+    private fun changeLayoutRecyclerView() {
+        var toggleItem = menu?.getItem(1)
+        var view = toggleItem?.actionView
+        var button = view?.findViewById<AppCompatToggleButton>(R.id.toggle_button)
+        button?.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
             }else{

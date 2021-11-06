@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/searchViewToolbar"
+        android:title="Search"
+        android:icon="@drawable/search_icon"
+        app:showAsAction="always|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
     <item android:id="@+id/toggle_gridLinear_view"
         android:title="Toggle"
         app:actionLayout="@layout/toggle_menu_item"

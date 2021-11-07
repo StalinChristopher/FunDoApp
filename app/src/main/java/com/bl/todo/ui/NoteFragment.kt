@@ -16,6 +16,7 @@ import com.bl.todo.viewmodels.notePage.NoteViewModel
 import com.bl.todo.viewmodels.notePage.NoteViewModelFactory
 import com.bl.todo.viewmodels.sharedView.SharedViewModel
 import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
+import com.bl.todo.wrapper.NoteInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -23,6 +24,9 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     private lateinit var binding : NoteFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var noteViewModel: NoteViewModel
+    private  var bundleTitle : String? = null
+    private  var bundleContent : String? = null
+    private  var bundleKey : String? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,10 +41,12 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     }
 
     private fun setNoteContentFromBundle() {
-        var title = arguments?.getString("title")
-        var content = arguments?.getString("content")
-        binding.noteTitle.setText(title)
-        binding.noteNotes.setText(content)
+        bundleTitle = arguments?.getString("title")
+        bundleContent = arguments?.getString("content")
+        bundleKey = arguments?.getString("noteKey")
+        binding.noteTitle.setText(bundleTitle)
+        binding.noteNotes.setText(bundleContent)
+        Log.i("FromNote","$bundleKey")
     }
 
     private fun observers() {
@@ -49,6 +55,14 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                 sharedViewModel.setGotoHomePageStatus(true)
             }else{
                 Toast.makeText(requireContext(),"Note not created",Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        noteViewModel.updateNoteStatus.observe(viewLifecycleOwner){
+            if(it){
+                sharedViewModel.setGotoHomePageStatus(true)
+            }else{
+                Toast.makeText(requireContext(),"Update note failed",Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -63,8 +77,13 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             var title = binding.noteTitle.text.toString()
             var content = binding.noteNotes.text.toString()
             var formattedDateTime = getCurrentDateTime()
-            var note = NewNote(title,content)
-            noteViewModel.addNoteToDb(note,formattedDateTime)
+            if(bundleKey == null){
+                var note = NewNote(title,content)
+                noteViewModel.addNoteToDb(note,formattedDateTime)
+            }else{
+                var noteInfo = NoteInfo(title,content,bundleKey!!)
+                noteViewModel.updateNoteToDb(noteInfo,formattedDateTime)
+            }
         }
     }
 

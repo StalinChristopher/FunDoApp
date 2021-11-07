@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.todo.R
 import com.bl.todo.models.NewNote
+import com.bl.todo.wrapper.NoteInfo
 import com.google.android.material.textview.MaterialTextView
 import kotlin.collections.ArrayList
 
-class MyAdapter( private val notesList : ArrayList<NewNote>) : RecyclerView.Adapter<MyAdapter.MyViewHolder>()  {
+class MyAdapter( private val notesList : ArrayList<NoteInfo>) : RecyclerView.Adapter<MyAdapter.MyViewHolder>()  {
 
     private lateinit var mListener : OnItemClickListener
 

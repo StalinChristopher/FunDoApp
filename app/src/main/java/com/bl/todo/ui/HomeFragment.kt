@@ -35,6 +35,7 @@ import androidx.appcompat.widget.SearchView
 import com.bl.todo.adapter.MyAdapter
 import com.bl.todo.models.NewNote
 import com.bl.todo.util.Utilities
+import com.bl.todo.wrapper.NoteInfo
 
 class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
@@ -50,8 +51,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     companion object{
         const val STORAGE_PERMISSION_CODE = 111
         const val IMAGE_FROM_GALLERY_CODE = 100
-        private var noteList : ArrayList<NewNote> = ArrayList<NewNote>()
-        private var filteredArrayList = ArrayList<NewNote>()
+        private var noteList : ArrayList<NoteInfo> = ArrayList<NoteInfo>()
+        private var filteredArrayList = ArrayList<NoteInfo>()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,6 +79,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
                 var bundle = Bundle()
                 bundle.putString("title",note.title)
                 bundle.putString("content",note.content)
+                bundle.putString("noteKey",note.noteKey)
                 var noteFragment = NoteFragment()
                 noteFragment.arguments = bundle
                 Utilities.replaceFragment(requireActivity().supportFragmentManager,R.id.fragmentContainerId,noteFragment)
@@ -186,8 +188,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         inflater.inflate(R.menu.toolbar_menu,menu)
         changeLayoutRecyclerView()
         searchRecyclerView()
-
-
     }
 
     private fun searchRecyclerView() {

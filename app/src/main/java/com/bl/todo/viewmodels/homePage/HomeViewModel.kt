@@ -8,14 +8,15 @@ import com.bl.todo.models.NewNote
 import com.bl.todo.services.Authentication
 import com.bl.todo.services.Database
 import com.bl.todo.services.Storage
+import com.bl.todo.wrapper.NoteInfo
 
 class HomeViewModel : ViewModel() {
 
     private val _userProfilePic  = MutableLiveData<Bitmap>()
     val userProfilePic = _userProfilePic as LiveData<Bitmap>
 
-    private val _userNotes = MutableLiveData<ArrayList<NewNote>>()
-    val userNotes = _userNotes as LiveData<ArrayList<NewNote>>
+    private val _userNotes = MutableLiveData<ArrayList<NoteInfo>>()
+    val userNotes = _userNotes as LiveData<ArrayList<NoteInfo>>
 
     fun logOutFromHomePage(){
         Authentication.logOut()

@@ -2,7 +2,6 @@ package com.bl.todo.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -10,13 +9,11 @@ import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.ActivityMainBinding
-import com.bl.todo.services.Authentication
 import com.bl.todo.util.SharedPref
 import com.bl.todo.util.Utilities
-import com.bl.todo.viewmodels.homePage.HomeViewModel
-import com.bl.todo.viewmodels.homePage.HomeViewModelFactory
 import com.bl.todo.viewmodels.sharedView.SharedViewModel
 import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
+import com.bl.todo.wrapper.NoteInfo
 import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity() {
@@ -100,6 +97,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
+        sharedViewModel.gotoExistingNoteFragmentStatus.observe(this@MainActivity,{
+            gotoExistingNotePage(it)
+        })
     }
 
     private fun gotoNotePage() {
@@ -124,6 +125,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun gotoForgotPasswordScreen(){
         Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,ResetPassword())
+    }
+
+    private fun gotoExistingNotePage(noteInfo: NoteInfo){
+        var noteFragment = NoteFragment()
+        var bundle = Utilities.addNoteInfoToBundle(noteInfo)
+        noteFragment.arguments = bundle
+        Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,noteFragment)
     }
 
 

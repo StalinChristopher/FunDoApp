@@ -11,6 +11,7 @@ import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
 import com.bl.todo.models.DatabaseUser
 import com.bl.todo.models.UserDetails
+import com.bl.todo.wrapper.NoteInfo
 import com.google.android.material.textfield.TextInputEditText
 import java.util.HashMap
 import java.util.regex.Pattern
@@ -82,6 +83,14 @@ object Utilities {
         SharedPref.addKeyValue("userName",user.userName)
         SharedPref.addKeyValue("email",user.email)
         SharedPref.addKeyValue("Phone",user.phone)
+    }
+
+    fun addNoteInfoToBundle(noteInfo: NoteInfo) : Bundle{
+        var bundle = Bundle()
+        bundle.putString("title",noteInfo.title)
+        bundle.putString("content",noteInfo.content)
+        bundle.putString("noteKey",noteInfo.noteKey)
+        return bundle
     }
 
 }

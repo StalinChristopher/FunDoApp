@@ -75,15 +75,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         myAdapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
                 var note = filteredArrayList[position]
-                var bundle = Bundle()
-                bundle.putString("title",note.title)
-                bundle.putString("content",note.content)
-                bundle.putString("noteKey",note.noteKey)
-                var noteFragment = NoteFragment()
-                noteFragment.arguments = bundle
-                Utilities.replaceFragment(requireActivity().supportFragmentManager,R.id.fragmentContainerId,noteFragment)
+                sharedViewModel.setExistingNoteFragmentStatus(note)
             }
-
         })
     }
 

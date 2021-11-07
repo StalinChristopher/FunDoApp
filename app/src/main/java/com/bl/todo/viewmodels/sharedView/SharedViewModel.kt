@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.bl.todo.models.UserDetails
 import com.bl.todo.services.Authentication
 import com.bl.todo.services.Database
+import com.bl.todo.wrapper.NoteInfo
 import com.facebook.AccessToken
 
 class SharedViewModel : ViewModel(){
@@ -27,6 +28,9 @@ class SharedViewModel : ViewModel(){
 
     private val _gotoNoteFragmentStatus = MutableLiveData<Boolean>()
     val gotoNoteFragmentStatus = _gotoNoteFragmentStatus as LiveData<Boolean>
+
+    private val _gotoExistingNoteFragmentStatus = MutableLiveData<NoteInfo>()
+    val gotoExistingNoteFragmentStatus = _gotoExistingNoteFragmentStatus as LiveData<NoteInfo>
 
     fun setGotoHomePageStatus(status: Boolean){
         _gotoHomePageStatus.value = status
@@ -50,6 +54,10 @@ class SharedViewModel : ViewModel(){
 
     fun setNoteFragmentPageStatus(status: Boolean){
         _gotoNoteFragmentStatus.value = status
+    }
+
+    fun setExistingNoteFragmentStatus(noteInfo: NoteInfo){
+        _gotoExistingNoteFragmentStatus.value = noteInfo
     }
 
     fun logOutFromApp(){

@@ -65,6 +65,14 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                 Toast.makeText(requireContext(),"Update note failed",Toast.LENGTH_SHORT).show()
             }
         }
+
+        noteViewModel.deleteNoteStatus.observe(viewLifecycleOwner){
+            if(it){
+                sharedViewModel.setGotoHomePageStatus(true)
+            }else{
+                Toast.makeText(requireContext(),"Delete note failed",Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -78,11 +86,25 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             var content = binding.noteNotes.text.toString()
             var formattedDateTime = getCurrentDateTime()
             if(bundleKey == null){
-                var note = NewNote(title,content)
-                noteViewModel.addNoteToDb(note,formattedDateTime)
+                if(title.isEmpty() || content.isEmpty()){
+                    Toast.makeText(requireContext(),"Empty note discarded",Toast.LENGTH_SHORT).show()
+                    sharedViewModel.setGotoHomePageStatus(true)
+                }else{
+                    var note = NewNote(title,content)
+                    noteViewModel.addNoteToDb(note,formattedDateTime)
+                }
             }else{
                 var noteInfo = NoteInfo(title,content,bundleKey!!)
                 noteViewModel.updateNoteToDb(noteInfo,formattedDateTime)
+            }
+        }
+
+        binding.noteDeleteButton.setOnClickListener{
+            if(bundleKey == null){
+                Toast.makeText(requireContext(),"Create a new note first",Toast.LENGTH_SHORT).show()
+            }else{
+                val noteInfo = NoteInfo(bundleTitle!!,bundleContent!!,bundleKey!!)
+                noteViewModel.deleteNoteToDb(noteInfo)
             }
         }
     }

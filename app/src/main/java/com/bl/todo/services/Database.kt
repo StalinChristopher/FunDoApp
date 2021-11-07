@@ -105,5 +105,18 @@ object Database {
       }
    }
 
+   fun deleteUserNotes(noteInfo: NoteInfo,listener: (Boolean) -> Unit){
+      var userId = Authentication.getCurrentUser()?.uid.toString()
+      db.child("Notes").child(userId).child(noteInfo.noteKey).removeValue().addOnCompleteListener {
+         if(it.isSuccessful){
+            listener(true)
+         }else{
+            Log.e("Database","Delete note failed")
+            Log.e("Database",it.exception.toString())
+            listener(false)
+         }
+      }
+   }
+
 
 }

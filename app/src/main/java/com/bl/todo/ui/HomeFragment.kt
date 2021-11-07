@@ -75,7 +75,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         myAdapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
                 var note = filteredArrayList[position]
-                Toast.makeText(requireContext(),"${note.title}",Toast.LENGTH_SHORT).show()
                 var bundle = Bundle()
                 bundle.putString("title",note.title)
                 bundle.putString("content",note.content)

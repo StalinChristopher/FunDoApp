@@ -7,22 +7,37 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <ImageButton
-        android:id="@+id/notBackButton"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/noteToolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/back_key"
-        android:background="@color/blue_200"/>
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/notBackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_200"
+            android:src="@drawable/back_key" />
+
+        <ImageButton
+            android:id="@+id/noteDeleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_200"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/delete_icon" />
+    </RelativeLayout>
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/noteTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title"
-        android:layout_below="@id/notBackButton"
-        android:textSize="25sp"
+        android:layout_below="@id/noteToolbar"
         android:layout_marginTop="30dp"
-        android:background="@color/blue_200"/>
+        android:background="@color/blue_200"
+        android:hint="Title"
+        android:textSize="25sp" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/noteNotes"

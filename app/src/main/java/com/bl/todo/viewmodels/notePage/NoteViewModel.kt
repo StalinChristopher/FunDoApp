@@ -14,6 +14,9 @@ class NoteViewModel : ViewModel() {
     private val _updateNoteStatus = MutableLiveData<Boolean>()
     val updateNoteStatus = _updateNoteStatus as LiveData<Boolean>
 
+    private val _deleteNoteStatus = MutableLiveData<Boolean>()
+    val deleteNoteStatus = _deleteNoteStatus as LiveData<Boolean>
+
     fun addNoteToDb(note : NewNote, dateTime : String){
         Database.addNewNote(note, dateTime){
             if(it){
@@ -26,6 +29,14 @@ class NoteViewModel : ViewModel() {
         Database.updateUserNotes(noteInfo,dateTime){
             if(it){
                 _updateNoteStatus.value = it
+            }
+        }
+    }
+
+    fun deleteNoteToDb(noteInfo: NoteInfo){
+        Database.deleteUserNotes(noteInfo){
+            if(it){
+                _deleteNoteStatus.value = it
             }
         }
     }

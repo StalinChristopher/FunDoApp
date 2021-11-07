@@ -31,22 +31,19 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         noteViewModel =  ViewModelProvider(this,NoteViewModelFactory())[NoteViewModel::class.java]
         binding = NoteFragmentBinding.bind(view)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        allListeners()
+        observers()
+        setNoteContentFromBundle()
+    }
 
-        binding.notBackButton.setOnClickListener{
-            sharedViewModel.setGotoHomePageStatus(true)
-        }
+    private fun setNoteContentFromBundle() {
+        var title = arguments?.getString("title")
+        var content = arguments?.getString("content")
+        binding.noteTitle.setText(title)
+        binding.noteNotes.setText(content)
+    }
 
-        binding.noteSaveButton.setOnClickListener{
-            var title = binding.noteTitle.text.toString()
-            var content = binding.noteNotes.text.toString()
-            var curDateTime = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss")
-            var formattedDateAndTime = curDateTime.format(formatter)
-            Log.i("Date","$formattedDateAndTime")
-            var note = NewNote(title,content)
-            noteViewModel.addNoteToDb(note,formattedDateAndTime)
-        }
-
+    private fun observers() {
         noteViewModel.addNewNoteStatus.observe(viewLifecycleOwner){
             if(it){
                 sharedViewModel.setGotoHomePageStatus(true)
@@ -54,5 +51,29 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                 Toast.makeText(requireContext(),"Note not created",Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun allListeners() {
+        binding.notBackButton.setOnClickListener{
+            sharedViewModel.setGotoHomePageStatus(true)
+        }
+
+        binding.noteSaveButton.setOnClickListener{
+            var title = binding.noteTitle.text.toString()
+            var content = binding.noteNotes.text.toString()
+            var formattedDateTime = getCurrentDateTime()
+            var note = NewNote(title,content)
+            noteViewModel.addNoteToDb(note,formattedDateTime)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCurrentDateTime(): String {
+        var curDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss")
+        var formattedDateAndTime = curDateTime.format(formatter)
+        Log.i("Date","$formattedDateAndTime")
+        return formattedDateAndTime
     }
 }

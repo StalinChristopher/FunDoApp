@@ -21,25 +21,20 @@ import com.bl.todo.viewmodels.homePage.HomeViewModel
 import com.bl.todo.viewmodels.homePage.HomeViewModelFactory
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
-
 import android.content.Intent
-
 import androidx.core.app.ActivityCompat
-
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatToggleButton
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.SearchView
 import com.bl.todo.adapter.MyAdapter
 import com.bl.todo.models.NewNote
-import com.bl.todo.services.Database
+import com.bl.todo.util.Utilities
 
 class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
@@ -76,6 +71,19 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         initializeRecyclerView()
         observers()
 
+        myAdapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener{
+            override fun onItemClick(position: Int) {
+                var note = filteredArrayList[position]
+                Toast.makeText(requireContext(),"${note.title}",Toast.LENGTH_SHORT).show()
+                var bundle = Bundle()
+                bundle.putString("title",note.title)
+                bundle.putString("content",note.content)
+                var noteFragment = NoteFragment()
+                noteFragment.arguments = bundle
+                Utilities.replaceFragment(requireActivity().supportFragmentManager,R.id.fragmentContainerId,noteFragment)
+            }
+
+        })
     }
 
     private fun initializeRecyclerView() {

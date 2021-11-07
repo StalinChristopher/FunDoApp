@@ -11,10 +11,21 @@ import kotlin.collections.ArrayList
 
 class MyAdapter( private val notesList : ArrayList<NewNote>) : RecyclerView.Adapter<MyAdapter.MyViewHolder>()  {
 
+    private lateinit var mListener : OnItemClickListener
+
+    interface OnItemClickListener{
+
+        fun onItemClick(position: Int)
+    }
+
+    fun setOnItemClickListener( listener: OnItemClickListener){
+        mListener = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.single_list_item_layout,
             parent,false)
-        return MyViewHolder((itemView))
+        return MyViewHolder((itemView),mListener)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -28,9 +39,15 @@ class MyAdapter( private val notesList : ArrayList<NewNote>) : RecyclerView.Adap
         return notesList.size
     }
 
-    class MyViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+    class MyViewHolder(itemView : View, listener : OnItemClickListener) : RecyclerView.ViewHolder(itemView){
 
         val title : MaterialTextView = itemView.findViewById(R.id.cardTitle)
         val content : MaterialTextView = itemView.findViewById(R.id.cardContent)
+
+        init {
+            itemView.setOnClickListener {
+                listener.onItemClick(adapterPosition)
+            }
+        }
     }
 }

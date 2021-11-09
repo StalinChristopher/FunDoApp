@@ -2,7 +2,6 @@ package com.bl.todo.ui
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,9 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SignupFragmentBinding
-import com.bl.todo.models.DatabaseUser
 import com.bl.todo.models.UserDetails
-import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
 import com.bl.todo.viewmodels.sharedView.SharedViewModel
 import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory

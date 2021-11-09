@@ -8,8 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SplashScreenBinding
 import com.bl.todo.services.Authentication
-import com.bl.todo.services.Database
-import com.bl.todo.util.SharedPref
+import com.bl.todo.services.FirebaseDatabaseService
 import com.bl.todo.viewmodels.sharedView.SharedViewModel
 import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
 
@@ -26,7 +25,7 @@ class SplashScreen : Fragment(R.layout.splash_screen) {
         binding.splashIcon.animate().setDuration(1500).alpha(1f).withEndAction {
             var user = Authentication.getCurrentUser()
             if( user != null){
-                Database.getUserData {
+                FirebaseDatabaseService.getUserData {
                 }
                 sharedViewModel.setGotoHomePageStatus(true)
             }else{

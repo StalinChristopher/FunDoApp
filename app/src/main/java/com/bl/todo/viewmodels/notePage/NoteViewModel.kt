@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bl.todo.models.NewNote
-import com.bl.todo.services.Database
+import com.bl.todo.services.DatabaseService
+import com.bl.todo.services.FirebaseDatabaseService
 import com.bl.todo.wrapper.NoteInfo
 
 class NoteViewModel : ViewModel() {
@@ -18,7 +19,7 @@ class NoteViewModel : ViewModel() {
     val deleteNoteStatus = _deleteNoteStatus as LiveData<Boolean>
 
     fun addNoteToDb(note : NewNote, dateTime : String){
-        Database.addNewNote(note, dateTime){
+        DatabaseService.addNewNote(note, dateTime){
             if(it){
                 _addNewNoteStatus.value = it
             }
@@ -26,7 +27,7 @@ class NoteViewModel : ViewModel() {
     }
 
     fun updateNoteToDb(noteInfo: NoteInfo,dateTime: String){
-        Database.updateUserNotes(noteInfo,dateTime){
+        DatabaseService.updateUserNotes(noteInfo,dateTime){
             if(it){
                 _updateNoteStatus.value = it
             }
@@ -34,7 +35,7 @@ class NoteViewModel : ViewModel() {
     }
 
     fun deleteNoteToDb(noteInfo: NoteInfo){
-        Database.deleteUserNotes(noteInfo){
+        DatabaseService.deleteUserNotes(noteInfo){
             if(it){
                 _deleteNoteStatus.value = it
             }

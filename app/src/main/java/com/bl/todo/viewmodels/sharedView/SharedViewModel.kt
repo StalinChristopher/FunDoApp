@@ -3,11 +3,8 @@ package com.bl.todo.viewmodels.sharedView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bl.todo.models.UserDetails
 import com.bl.todo.services.Authentication
-import com.bl.todo.services.Database
 import com.bl.todo.wrapper.NoteInfo
-import com.facebook.AccessToken
 
 class SharedViewModel : ViewModel(){
 

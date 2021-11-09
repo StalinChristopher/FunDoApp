@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import com.bl.todo.models.DatabaseUser
 import com.bl.todo.models.UserDetails
 import com.bl.todo.services.Authentication
-import com.bl.todo.services.Database
+import com.bl.todo.services.DatabaseService
+import com.bl.todo.services.FirebaseDatabaseService
 
 class SignUpViewModel : ViewModel() {
     private val _signUpStatus = MutableLiveData<Boolean>()
@@ -15,7 +16,7 @@ class SignUpViewModel : ViewModel() {
     fun signUpWithEmailAndPassword(userDetails: UserDetails, password: String, phone : String){
         Authentication.signUpWithEmailAndPassword(userDetails.email,password, phone){
             var userDB = DatabaseUser(userDetails.userName,userDetails.email,userDetails.phone)
-            Database.addUserInfoDatabase(userDB){
+            DatabaseService.addUserInfoDatabase(userDB){
                 _signUpStatus.value = it
             }
 

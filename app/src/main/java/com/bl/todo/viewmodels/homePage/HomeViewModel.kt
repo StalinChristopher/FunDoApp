@@ -4,9 +4,9 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bl.todo.models.NewNote
 import com.bl.todo.services.Authentication
-import com.bl.todo.services.Database
+import com.bl.todo.services.DatabaseService
+import com.bl.todo.services.FirebaseDatabaseService
 import com.bl.todo.services.Storage
 import com.bl.todo.wrapper.NoteInfo
 
@@ -39,7 +39,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun getNotesFromUser(){
-        Database.getUserNotes {
+        DatabaseService.getUserNotes {
             if(it != null){
                 _userNotes.value = it
             }

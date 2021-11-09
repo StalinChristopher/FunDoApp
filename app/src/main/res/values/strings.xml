@@ -38,7 +38,7 @@
     <string name="error_invalidMobile">Invalid mobile number</string>
     <string name="error_differentPassword">Passwords doesn\'t match</string>
     <string name="error_storage_access_denied">Storage access required to upload</string>
-    <string name="toast_userLoggedIn_message">\"User logged in \"</string>
+    <string name="toast_userLoggedIn_message">User logged in</string>
     <string name="toastError_loginFailed_message">Sign in failed</string>
     <string name="toastError_facebookLogin_error">Facebook login unsuccessful</string>
     <string name="toast_emptyNoteDiscarded">Empty note discarded</string>

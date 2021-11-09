@@ -11,7 +11,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-object Database {
+object FirebaseDatabaseService {
    private var db : DatabaseReference = Firebase.database.reference
 
    fun addUserInfoDatabase(user : DatabaseUser, listener : (Boolean)-> Unit){

@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bl.todo.models.DatabaseUser
-import com.bl.todo.models.UserDataDbStatus
 import com.bl.todo.models.UserDetails
 import com.bl.todo.services.Authentication
-import com.bl.todo.services.Database
+import com.bl.todo.services.DatabaseService
+import com.bl.todo.services.FirebaseDatabaseService
 import com.facebook.AccessToken
 
 class LoginViewModel : ViewModel() {
@@ -23,7 +23,7 @@ class LoginViewModel : ViewModel() {
     fun loginWithEmailAndPassword(email : String, password : String){
         Authentication.loginWithEmailAndPassword(email, password){ user->
             if(user.loginStatus){
-                Database.getUserData {
+                DatabaseService.getUserData {
                     if(it){
                         _loginStatus.value = user
                     }
@@ -39,7 +39,7 @@ class LoginViewModel : ViewModel() {
         Authentication.handleFacebookLogin(token){ user->
             var userDb = DatabaseUser(user.userName,user.email,user.phone)
             if(user.loginStatus){
-                Database.addUserInfoDatabase(userDb){
+                DatabaseService.addUserInfoDatabase(userDb){
                     _facebookLoginStatus.value = user
                 }
             }else{
@@ -52,7 +52,7 @@ class LoginViewModel : ViewModel() {
     }
 
     fun getUserInfoFromDB(){
-        Database.getUserData {
+        DatabaseService.getUserData {
             _userData.value = it
         }
     }

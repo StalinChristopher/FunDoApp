@@ -11,9 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
-import com.bl.todo.models.DatabaseUser
-import com.bl.todo.models.UserDataDbStatus
-import com.bl.todo.services.Database
 import com.bl.todo.util.Utilities
 import com.bl.todo.viewmodels.loginPage.LoginViewModel
 import com.bl.todo.viewmodels.loginPage.LoginViewModelFactory

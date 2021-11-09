@@ -159,7 +159,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == STORAGE_PERMISSION_CODE && grantResults.isNotEmpty()){
             if(grantResults[0] != PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(requireContext(),"Storage access required to upload",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.error_storage_access_denied),Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -184,6 +184,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
 
     private fun searchRecyclerView() {
         val searchItem = menu?.getItem(0)
+        var toggleItem = menu?.getItem(1)
+        var profileIcon = menu?.getItem(2)
         val searchView = searchItem?.actionView as SearchView
         searchView.setOnQueryTextListener( object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {

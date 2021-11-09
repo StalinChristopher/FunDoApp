@@ -17,7 +17,7 @@
             android:id="@+id/cardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Title"
+            android:text="@string/note_title"
             android:textSize="23sp" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/cardTitle"
             android:layout_marginTop="15dp"
-            android:text="Notes"
+            android:text="@string/note_content_note"
             android:textSize="16sp" />
 
 

@@ -14,7 +14,7 @@
         android:padding="10dp"
         android:layout_marginBottom="30dp"
         android:textSize="30dp"
-        android:text="Login"
+        android:text="@string/login_textView"
         android:textAlignment="center"
         android:layout_gravity="center"
         android:textColor="@color/black"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:hint="Enter your email"
+        android:hint="@string/enter_your_email_editText"
         app:hintTextColor="@color/black"
         app:endIconMode="clear_text">
 
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:hint="Enter your password"
+        android:hint="@string/enter_your_password_editText"
         app:hintTextColor="@color/black"
         app:endIconMode="password_toggle">
 
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/layoutLoginPassword"
         android:layout_marginTop="10dp"
-        android:text="Forgot password?"
+        android:text="@string/login_forgot_password_editText"
         android:textColor="@color/purple_700"
         android:textSize="13sp"
         android:textStyle="bold" />
@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/forgotPasswordClick"
         android:layout_marginTop="20dp"
-        android:text="LOGIN"></Button>
+        android:text="@string/login"></Button>
 
     <RelativeLayout
         android:id="@+id/layoutDontHave"
@@ -98,7 +98,7 @@
             android:id="@+id/loginRegisterMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Don't have any account?"
+            android:text="@string/login_noAccount_message"
             android:textColor="@color/black"></com.google.android.material.textview.MaterialTextView>
 
         <com.google.android.material.textview.MaterialTextView
@@ -107,14 +107,13 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_toRightOf="@+id/loginRegisterMessage"
-            android:text="Register"
+            android:text="@string/register_button_message"
             android:clickable="true"
             android:textStyle="bold"
             android:gravity="center"
             android:textColor="@color/purple_700">
         </com.google.android.material.textview.MaterialTextView>
     </RelativeLayout>
-
 
 
     <TextView
@@ -124,8 +123,8 @@
         android:layout_below="@id/layoutDontHave"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="OR"
-        android:textStyle="bold"/>
+        android:text="@string/or"
+        android:textStyle="bold" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/loginFacebookButton"

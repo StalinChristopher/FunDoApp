@@ -1,5 +1,6 @@
 package com.bl.todo.util
 
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
@@ -28,40 +29,41 @@ object Utilities {
        email : TextInputEditText,
        phone : TextInputEditText,
        password : TextInputEditText,
-       confirmPassword : TextInputEditText
+       confirmPassword : TextInputEditText,
+       context: Context
     ) : Boolean{
         var status : Boolean = true
         if(userName.text.toString().isEmpty()){
-            userName.error = "Username cannot be empty"
+            userName.error = context.getString(R.string.invalid_userName_message)
             status = false
         }
         if(!Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()){
-            email.error = "Invalid email format"
+            email.error = context.getString(R.string.error_invalidEmail)
             status = false
         }
         if(phone.text.toString().length<10){
-            phone.error = "Invalid mobile number"
+            phone.error = context.getString(R.string.error_invalidMobile)
             status = false
         }
         if(password.text.toString() != confirmPassword.text.toString()){
-            confirmPassword.error = "Passwords doesn't match"
+            confirmPassword.error = context.getString(R.string.error_differentPassword)
             status = false
         }
         if(password.text.toString().length < 6){
-            password.error = "Password should be of minimum 6 characters"
+            password.error = context.getString(R.string.error_password_minimum_6_characters)
             status = false
         }
         return status
     }
 
-    fun loginCredentialsValidator(email: TextInputEditText, password: TextInputEditText): Boolean {
+    fun loginCredentialsValidator(email: TextInputEditText, password: TextInputEditText,context: Context): Boolean {
         var state = true
         if(!Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()){
-            email.error = "Invalid email format"
+            email.error = context.getString(R.string.error_invalidEmail)
             state = false
         }
         if(password.text.toString().length < 6){
-            password.error = "Password should be of minimum 6 characters"
+            password.error = context.getString(R.string.error_password_minimum_6_characters)
             state = false
         }
         return state

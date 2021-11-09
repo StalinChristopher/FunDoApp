@@ -39,9 +39,9 @@ class ResetPassword : Fragment(R.layout.resetpassword_fragment){
     private fun resetPasswordObserver() {
         resetPasswordViewModel.resetPasswordStatus.observe(viewLifecycleOwner){
             if(it){
-                Toast.makeText(requireContext(),"Email has been sent to reset the password",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toast_emailSent_resetPassword),Toast.LENGTH_SHORT).show()
             }else{
-                Toast.makeText(requireContext(),"No account is associated with the given email",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toastError_noAccountAssociated),Toast.LENGTH_SHORT).show()
             }
         }
     }

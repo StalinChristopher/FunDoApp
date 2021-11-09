@@ -60,7 +60,7 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         var password = binding.signupPassword
         var confirmPassword = binding.signupConfirmPassword
         var user = UserDetails(userName.text.toString(),email.text.toString(),phone.text.toString())
-        if(Utilities.signUpCredentialsValidator(userName, email, phone, password, confirmPassword)){
+        if(Utilities.signUpCredentialsValidator(userName, email, phone, password, confirmPassword,requireContext())){
             signUpViewModel.signUpWithEmailAndPassword(user,password.text.toString(),phone.text.toString())
         }else{
             dialog.dismiss()
@@ -70,14 +70,12 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
     private fun signUpObservers() {
         signUpViewModel.signUpStatus.observe(viewLifecycleOwner){
             if(it){
-                Toast.makeText(requireContext(),"User signed up",Toast.LENGTH_SHORT).show()
-//                Database.addUserInfoDatabase(user){
-//                }
+                Toast.makeText(requireContext(),getString(R.string.toast_userSignedUp),Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)
             }
             else{
-                Toast.makeText(requireContext(),"Account not created",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toastError_account_not_created),Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
         }

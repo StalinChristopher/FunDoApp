@@ -17,14 +17,13 @@
             android:id="@+id/signupLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:textSize="30dp"
-            android:text="Sign Up"
-            android:textAlignment="center"
             android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:text="@string/sign_up_textView"
+            android:textAlignment="center"
             android:textColor="@color/black"
-            android:textFontWeight="@integer/material_motion_duration_long_2">
-        </com.google.android.material.textview.MaterialTextView>
+            android:textFontWeight="@integer/material_motion_duration_long_2"
+            android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutUsername"
@@ -33,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Enter your name"
+            android:hint="@string/enterName_editText"
             app:hintTextColor="@color/black"
             app:endIconMode="clear_text">
 
@@ -56,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Enter your email"
+            android:hint="@string/enter_your_email_editText"
             app:hintTextColor="@color/black"
             app:endIconMode="clear_text">
 
@@ -79,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Enter your mobile number"
+            android:hint="@string/enter_mobileNum_editText"
             app:hintTextColor="@color/black"
             app:endIconMode="clear_text">
 
@@ -102,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Enter your password"
+            android:hint="@string/enter_your_password_editText"
             app:hintTextColor="@color/black"
             app:endIconMode="password_toggle">
 
@@ -125,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="Confirm password"
+            android:hint="@string/confirm_password_editText"
             app:hintTextColor="@color/black"
             app:endIconMode="password_toggle">
 
@@ -148,7 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/layoutConfirmPassword"
             android:layout_marginTop="20dp"
-            android:text="REGISTER"></Button>
+            android:text="@string/register_button_text"></Button>
 
         <RelativeLayout
             android:id="@+id/layoutAlreadyAcc"
@@ -162,7 +161,7 @@
                 android:id="@+id/signupLoginMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Already have any account?"
+                android:text="@string/already_have_any_account_text"
                 android:textColor="@color/black"></com.google.android.material.textview.MaterialTextView>
 
             <com.google.android.material.textview.MaterialTextView
@@ -173,7 +172,7 @@
                 android:layout_toRightOf="@+id/signupLoginMessage"
                 android:clickable="true"
                 android:gravity="center"
-                android:text="Login"
+                android:text="@string/login"
                 android:textColor="@color/purple_700"
                 android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
         </RelativeLayout>

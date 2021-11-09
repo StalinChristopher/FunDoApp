@@ -68,7 +68,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
     private fun login() {
         var email = binding.loginEmail
         var password = binding.loginPassword
-        if(Utilities.loginCredentialsValidator(email,password)) {
+        if(Utilities.loginCredentialsValidator(email,password,requireContext())) {
             loginViewModel.loginWithEmailAndPassword(email.text.toString(), password.text.toString())
         }
     }
@@ -96,22 +96,22 @@ class LoginFragment : Fragment(R.layout.login_fragment){
     private fun loginObservers(){
         loginViewModel.loginStatus.observe(viewLifecycleOwner){
             if(it.loginStatus){
-                Toast.makeText(requireContext(),"User logged in ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toast_userLoggedIn_message), Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)
             }else {
-                Toast.makeText(requireContext(),"Sign in failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toastError_loginFailed_message), Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
         }
 
         loginViewModel.facebookLoginStatus.observe(viewLifecycleOwner){
             if(it.loginStatus){
-                Toast.makeText(requireContext(),"User logged in", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toast_userLoggedIn_message), Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)
             }else {
-                Toast.makeText(requireContext(),"Facebook login unsuccessful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toastError_facebookLogin_error), Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
 

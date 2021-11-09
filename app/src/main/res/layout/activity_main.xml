@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:navigationIcon="@drawable/toolbar_navicon"
-                app:title="FunDo"
+                app:title="@string/appName_toolbar"
                 app:titleTextColor="@color/grey"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/toolbar">

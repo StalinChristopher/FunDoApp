@@ -54,7 +54,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             if(it){
                 sharedViewModel.setGotoHomePageStatus(true)
             }else{
-                Toast.makeText(requireContext(),"Note not created",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toastError_noteNotCreated),Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -62,7 +62,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             if(it){
                 sharedViewModel.setGotoHomePageStatus(true)
             }else{
-                Toast.makeText(requireContext(),"Update note failed",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toastError_updateNoteFailed),Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -70,7 +70,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             if(it){
                 sharedViewModel.setGotoHomePageStatus(true)
             }else{
-                Toast.makeText(requireContext(),"Delete note failed",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toastError_deleteNoteFailed),Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -87,7 +87,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             var formattedDateTime = getCurrentDateTime()
             if(bundleKey == null){
                 if(title.isEmpty() || content.isEmpty()){
-                    Toast.makeText(requireContext(),"Empty note discarded",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),getString(R.string.toast_emptyNoteDiscarded),Toast.LENGTH_SHORT).show()
                     sharedViewModel.setGotoHomePageStatus(true)
                 }else{
                     var note = NewNote(title,content)
@@ -101,7 +101,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
 
         binding.noteDeleteButton.setOnClickListener{
             if(bundleKey == null){
-                Toast.makeText(requireContext(),"Create a new note first",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.toast_create_a_note_first_message),Toast.LENGTH_SHORT).show()
             }else{
                 val noteInfo = NoteInfo(bundleTitle!!,bundleContent!!,bundleKey!!)
                 noteViewModel.deleteNoteToDb(noteInfo)

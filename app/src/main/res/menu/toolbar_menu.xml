@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/searchViewToolbar"
-        android:title="Search"
+        android:title="@string/search_buttonText"
         android:icon="@drawable/search_icon"
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
     <item android:id="@+id/toggle_gridLinear_view"
-        android:title="Toggle"
+        android:title="@string/toggle_buttonText"
         app:actionLayout="@layout/toggle_menu_item"
         app:showAsAction="always"/>
 
     <item android:id="@+id/profileIcon"
-        android:title="Profile"
+        android:title="@string/profile_buttonText"
         android:icon="@drawable/profile_button"
         app:showAsAction="always" />
 

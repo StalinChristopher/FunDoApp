@@ -2,20 +2,15 @@ package com.bl.todo.util
 
 import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Patterns
-import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import com.bl.todo.R
-import com.bl.todo.databinding.LoginFragmentBinding
-import com.bl.todo.models.DatabaseUser
-import com.bl.todo.models.UserDetails
-import com.bl.todo.wrapper.NoteInfo
+import com.bl.todo.data.models.DatabaseUser
+import com.bl.todo.data.wrapper.UserDetails
+import com.bl.todo.data.wrapper.NoteInfo
 import com.google.android.material.textfield.TextInputEditText
 import java.util.HashMap
-import java.util.regex.Pattern
 
 object Utilities {
     fun replaceFragment(fragmentManager: FragmentManager,fromFragment : Int,toFragment: Fragment) {

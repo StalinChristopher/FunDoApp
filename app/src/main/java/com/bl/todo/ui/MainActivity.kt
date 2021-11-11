@@ -16,7 +16,7 @@ import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
 import com.bl.todo.wrapper.NoteInfo
 import com.google.android.material.textview.MaterialTextView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),SplashScreen.InteractionListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var toggle : ActionBarDrawerToggle
@@ -28,7 +28,10 @@ class MainActivity : AppCompatActivity() {
         SharedPref.initializePref(this)
         sharedViewModel = ViewModelProvider(this@MainActivity, SharedViewModelFactory())[SharedViewModel::class.java]
         observeAppNavigation()
-        sharedViewModel.setSplashScreenStatus(true)
+//        sharedViewModel.setSplashScreenStatus(true)
+        if(savedInstanceState == null){
+            gotoSplashScreen()
+        }
         navDrawer()
     }
 
@@ -79,11 +82,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        sharedViewModel.gotoSplashScreenStatus.observe(this@MainActivity,{
-            if(it){
-                gotoSplashScreen()
-            }
-        })
+//        sharedViewModel.gotoSplashScreenStatus.observe(this@MainActivity,{
+//            if(it){
+//                gotoSplashScreen()
+//            }
+//        })
 
         sharedViewModel.gotoForgotPasswordStatus.observe(this@MainActivity, {
             if(it){
@@ -134,7 +137,13 @@ class MainActivity : AppCompatActivity() {
         Utilities.replaceFragment(supportFragmentManager,R.id.fragmentContainerId,noteFragment)
     }
 
-
+    override fun onSplashScreenExit(loggedIn: Boolean) {
+        if(loggedIn){
+            gotoHomePage()
+        }else{
+            gotoLoginPage()
+        }
+    }
 
 
 }

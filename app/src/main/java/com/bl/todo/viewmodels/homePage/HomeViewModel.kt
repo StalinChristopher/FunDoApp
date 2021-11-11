@@ -1,14 +1,18 @@
 package com.bl.todo.viewmodels.homePage
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bl.todo.services.Authentication
 import com.bl.todo.services.DatabaseService
 import com.bl.todo.services.FirebaseDatabaseService
 import com.bl.todo.services.Storage
 import com.bl.todo.wrapper.NoteInfo
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class HomeViewModel : ViewModel() {
 
@@ -23,25 +27,34 @@ class HomeViewModel : ViewModel() {
     }
 
     fun setProfilePic(bitmap: Bitmap){
-        Storage.addProfileImage(bitmap){
-            if(it) {
-                _userProfilePic.value = bitmap
+        viewModelScope.launch {
+            try{
+                Storage.addProfileImage(bitmap)
+                Log.i("Storage","Add profile image successful")
+                _userProfilePic.postValue(bitmap)
+            }catch (e : Exception){
+                Log.e("Storage","Add profile image failed")
+                e.printStackTrace()
             }
         }
     }
 
     fun getProfilePic(){
-        Storage.getProfileImage {
-            if(it != null){
-                _userProfilePic.value = it
+        viewModelScope.launch {
+            try{
+                var resultBitmap = Storage.getProfileImage()
+                _userProfilePic.postValue(resultBitmap)
+            }catch (e : Exception){
+                Log.e("Storage","Get profile image failed")
             }
         }
     }
 
     fun getNotesFromUser(){
-        DatabaseService.getUserNotes {
-            if(it != null){
-                _userNotes.value = it
+        viewModelScope.launch {
+            var resultNotes = DatabaseService.getUserNotes()
+            if(resultNotes != null){
+                _userNotes.postValue(resultNotes)
             }
         }
     }

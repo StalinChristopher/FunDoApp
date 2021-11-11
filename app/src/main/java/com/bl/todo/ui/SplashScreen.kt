@@ -1,5 +1,6 @@
 package com.bl.todo.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ import com.bl.todo.viewmodels.sharedView.SharedViewModelFactory
 class SplashScreen : Fragment(R.layout.splash_screen) {
     private lateinit var binding: SplashScreenBinding
     private lateinit var sharedViewModel : SharedViewModel
+    private var interactionListener :InteractionListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -25,13 +27,25 @@ class SplashScreen : Fragment(R.layout.splash_screen) {
         binding.splashIcon.animate().setDuration(1500).alpha(1f).withEndAction {
             var user = Authentication.getCurrentUser()
             if( user != null){
-                FirebaseDatabaseService.getUserData {
-                }
-                sharedViewModel.setGotoHomePageStatus(true)
+                interactionListener?.onSplashScreenExit(true)
             }else{
-                sharedViewModel.setLoginPageStatus(true)
+                interactionListener?.onSplashScreenExit(false)
             }
         }
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.splashIcon.clearAnimation()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        interactionListener = context as? InteractionListener
+
+    }
+
+    interface InteractionListener {
+        fun onSplashScreenExit(loggedIn : Boolean)
     }
 }

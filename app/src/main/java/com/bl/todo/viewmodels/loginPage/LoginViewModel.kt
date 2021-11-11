@@ -3,12 +3,14 @@ package com.bl.todo.viewmodels.loginPage
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bl.todo.models.DatabaseUser
 import com.bl.todo.models.UserDetails
 import com.bl.todo.services.Authentication
 import com.bl.todo.services.DatabaseService
 import com.bl.todo.services.FirebaseDatabaseService
 import com.facebook.AccessToken
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     private val _loginStatus = MutableLiveData<UserDetails>()
@@ -23,15 +25,13 @@ class LoginViewModel : ViewModel() {
     fun loginWithEmailAndPassword(email : String, password : String){
         Authentication.loginWithEmailAndPassword(email, password){ user->
             if(user.loginStatus){
-                DatabaseService.getUserData {
-                    if(it){
-                        _loginStatus.value = user
-                    }
+                viewModelScope.launch {
+                    DatabaseService.getUserData()
+                    _loginStatus.postValue(user)
                 }
             }else{
                 _loginStatus.value = user
             }
-
         }
     }
 
@@ -39,8 +39,9 @@ class LoginViewModel : ViewModel() {
         Authentication.handleFacebookLogin(token){ user->
             var userDb = DatabaseUser(user.userName,user.email,user.phone)
             if(user.loginStatus){
-                DatabaseService.addUserInfoDatabase(userDb){
-                    _facebookLoginStatus.value = user
+                viewModelScope.launch {
+                    DatabaseService.addUserInfoDatabase(userDb)
+                    _facebookLoginStatus.postValue(user)
                 }
             }else{
                 _facebookLoginStatus.value = user
@@ -51,9 +52,4 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun getUserInfoFromDB(){
-        DatabaseService.getUserData {
-            _userData.value = it
-        }
-    }
 }

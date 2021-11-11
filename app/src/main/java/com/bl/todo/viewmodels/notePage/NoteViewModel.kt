@@ -3,10 +3,12 @@ package com.bl.todo.viewmodels.notePage
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bl.todo.models.NewNote
 import com.bl.todo.services.DatabaseService
 import com.bl.todo.services.FirebaseDatabaseService
 import com.bl.todo.wrapper.NoteInfo
+import kotlinx.coroutines.launch
 
 class NoteViewModel : ViewModel() {
     private val _addNewNoteStatus = MutableLiveData<Boolean>()
@@ -19,26 +21,28 @@ class NoteViewModel : ViewModel() {
     val deleteNoteStatus = _deleteNoteStatus as LiveData<Boolean>
 
     fun addNoteToDb(note : NewNote, dateTime : String){
-        DatabaseService.addNewNote(note, dateTime){
-            if(it){
-                _addNewNoteStatus.value = it
+        viewModelScope.launch {
+            var result = DatabaseService.addNewNote(note, dateTime)
+            if(result) {
+                _addNewNoteStatus.postValue(result)
             }
         }
     }
 
     fun updateNoteToDb(noteInfo: NoteInfo,dateTime: String){
-        DatabaseService.updateUserNotes(noteInfo,dateTime){
-            if(it){
-                _updateNoteStatus.value = it
+        viewModelScope.launch {
+            var resultStatus = DatabaseService.updateUserNotes(noteInfo,dateTime)
+            if(resultStatus){
+                _updateNoteStatus.postValue(resultStatus)
             }
         }
     }
 
     fun deleteNoteToDb(noteInfo: NoteInfo){
-        DatabaseService.deleteUserNotes(noteInfo){
-            if(it){
-                _deleteNoteStatus.value = it
-            }
+        viewModelScope.launch {
+            var status = DatabaseService.deleteUserNotes(noteInfo)
+            if(status)
+                _deleteNoteStatus.postValue(status)
         }
     }
 }

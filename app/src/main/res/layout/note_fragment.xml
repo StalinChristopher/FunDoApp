@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <RelativeLayout
+        android:id="@+id/noteToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/notBackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_200"
+            android:src="@drawable/back_key" />
+
+        <ImageButton
+            android:id="@+id/noteDeleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_200"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/delete_icon" />
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/noteTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/noteToolbar"
+        android:layout_marginTop="30dp"
+        android:background="@color/blue_200"
+        android:hint="@string/note_title"
+        android:textSize="25sp" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/noteNotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/noteTitle"
+        android:textSize="16sp"
+        android:layout_marginTop="17dp"
+        android:hint="@string/note_content_note"
+        android:background="@color/blue_200"/>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/noteSaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/save_button_text"
+        android:textColor="@color/white"
+        app:icon="@drawable/add_icon"
+        app:iconTint="@color/white"/>
+
+</RelativeLayout>

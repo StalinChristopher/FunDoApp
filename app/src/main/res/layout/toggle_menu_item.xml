@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatToggleButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toggle_button"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:textOn=""
+    android:textOff=""
+    android:background="@drawable/toggle_selector">
+
+</androidx.appcompat.widget.AppCompatToggleButton>

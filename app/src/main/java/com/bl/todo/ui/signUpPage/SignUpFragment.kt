@@ -17,9 +17,6 @@ import com.google.android.material.textfield.TextInputEditText
 
 class SignUpFragment : Fragment(R.layout.signup_fragment) {
     private lateinit var dialog  : Dialog
-    private lateinit var userName : TextInputEditText
-    private lateinit var email : TextInputEditText
-    private lateinit var phone : TextInputEditText
     private lateinit var binding : SignupFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var signUpViewModel: SignUpViewModel
@@ -53,9 +50,10 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         var phone  = binding.signupMobile
         var password = binding.signupPassword
         var confirmPassword = binding.signupConfirmPassword
-        var user = UserDetails(userName.text.toString(),email.text.toString(),phone.text.toString())
+        var user = UserDetails(userName = userName.text.toString(),email = email.text.toString(),
+            phone = phone.text.toString(), fUid = null)
         if(Utilities.signUpCredentialsValidator(userName, email, phone, password, confirmPassword,requireContext())){
-            signUpViewModel.signUpWithEmailAndPassword(user,password.text.toString(),phone.text.toString())
+            signUpViewModel.signUpWithEmailAndPassword(user,password.text.toString())
         }else{
             dialog.dismiss()
         }

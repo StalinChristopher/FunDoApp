@@ -7,15 +7,16 @@
     <RelativeLayout
         android:id="@+id/profileDialogParent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp">
 
         <ImageButton
             android:id="@+id/profile_image"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/profile_person"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:src="@drawable/profile_person" />
 
         <ImageView
             android:id="@+id/profileDialogClose"
@@ -32,34 +33,27 @@
         android:id="@+id/profileDialogName"
         android:layout_width="match_parent"
         android:layout_height="30dp"
+        android:layout_below="@id/profileDialogParent"
+        android:layout_marginTop="5dp"
+        android:text="name"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:layout_below="@id/profileDialogParent"
-        android:layout_marginTop="5dp" />
+        android:visibility="visible" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/profileDialogEmail"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
         android:layout_below="@id/profileDialogName"
-        android:layout_marginTop="5dp" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/profileDialogPhone"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
         android:textAlignment="center"
-        android:textSize="20sp"
-        android:layout_below="@id/profileDialogEmail"
-        android:layout_marginTop="5dp" />
+        android:textSize="20sp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/profileDialogButton"
         android:layout_width="150dp"
         android:layout_height="40dp"
-        android:layout_below="@id/profileDialogPhone"
+        android:layout_below="@id/profileDialogEmail"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="@string/logout_buttonText" />

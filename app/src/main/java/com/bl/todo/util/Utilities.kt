@@ -2,11 +2,13 @@ package com.bl.todo.util
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bl.todo.R
 import com.bl.todo.data.models.DatabaseUser
+import com.bl.todo.data.room.DateTypeConverters
 import com.bl.todo.data.wrapper.UserDetails
 import com.bl.todo.data.wrapper.NoteInfo
 import com.google.android.material.textfield.TextInputEditText
@@ -84,9 +86,13 @@ object Utilities {
 
     fun addNoteInfoToBundle(noteInfo: NoteInfo) : Bundle{
         var bundle = Bundle()
+        var dateTIme = DateTypeConverters().fromOffsetDateTime(noteInfo.dateModified)
+        Log.i("Util","$noteInfo")
         bundle.putString("title",noteInfo.title)
         bundle.putString("content",noteInfo.content)
-        bundle.putString("noteKey",noteInfo.noteKey)
+        bundle.putString("noteKey",noteInfo.fnid)
+        bundle.putLong("sqlNid",noteInfo.nid)
+        bundle.putString("dateModified",dateTIme)
         return bundle
     }
 

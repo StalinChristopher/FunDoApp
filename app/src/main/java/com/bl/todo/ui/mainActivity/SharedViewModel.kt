@@ -1,10 +1,13 @@
 package com.bl.todo.ui.mainActivity
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bl.todo.authService.Authentication
 import com.bl.todo.data.wrapper.NoteInfo
+import kotlinx.coroutines.launch
 
 class SharedViewModel : ViewModel(){
 
@@ -57,8 +60,11 @@ class SharedViewModel : ViewModel(){
         _gotoExistingNoteFragmentStatus.value = noteInfo
     }
 
-    fun logOutFromApp(){
-        Authentication.logOut()
+    fun logOutFromApp(context : Context){
+        viewModelScope.launch {
+            Authentication.logOut(context)
+        }
+
     }
 
 

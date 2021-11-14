@@ -8,6 +8,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
+import com.bl.todo.data.services.DatabaseService
 import com.bl.todo.databinding.ActivityMainBinding
 import com.bl.todo.ui.homePage.HomeFragment
 import com.bl.todo.ui.loginPage.LoginFragment
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
             gotoSplashScreen()
         }
         navDrawer()
+        DatabaseService.initializeDbService(this)
     }
 
     private fun navDrawer(){
@@ -45,7 +47,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
                 super.onDrawerOpened(drawerView)
                 var navHeader = binding.navView.getHeaderView(0)
                 var navHeaderName = navHeader.findViewById<MaterialTextView>(R.id.nav_profile_name)
-                navHeaderName.text = SharedPref.getValue("userName")
+                navHeaderName.text = getString(R.string.navHeader)
             }
         }
 
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
             when(it.itemId){
                 R.id.nav_notes_item -> Toast.makeText(this,"Notes button clicked",Toast.LENGTH_SHORT).show()
                 R.id.nav_remainders_item -> Toast.makeText(this,"reminder button clicked",Toast.LENGTH_SHORT).show()
-                R.id.nav_logout_item -> { sharedViewModel.logOutFromApp()
+                R.id.nav_logout_item -> { sharedViewModel.logOutFromApp(this)
                     sharedViewModel.setLoginPageStatus(true)
                 }
             }

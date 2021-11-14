@@ -1,5 +1,6 @@
 package com.bl.todo.ui.loginPage
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.bl.todo.data.models.DatabaseUser
 import com.bl.todo.data.wrapper.UserDetails
 import com.bl.todo.authService.Authentication
 import com.bl.todo.data.services.DatabaseService
+import com.bl.todo.util.SharedPref
 import com.facebook.AccessToken
 import kotlinx.coroutines.launch
 
@@ -25,8 +27,12 @@ class LoginViewModel : ViewModel() {
         Authentication.loginWithEmailAndPassword(email, password){ user->
             if(user.loginStatus){
                 viewModelScope.launch {
-                    DatabaseService.getUserData()
-                    _loginStatus.postValue(user)
+                    var user = DatabaseService.addUserInfoDatabase(user)
+                    if(user != null){
+                        SharedPref.addUserId(user.uid)
+                        DatabaseService.addCloudDataToLocalDB(user)
+                        _loginStatus.postValue(user)
+                    }
                 }
             }else{
                 _loginStatus.value = user
@@ -36,18 +42,19 @@ class LoginViewModel : ViewModel() {
 
     fun loginWithFacebook(token : AccessToken){
         Authentication.handleFacebookLogin(token){ user->
-            var userDb = DatabaseUser(user.userName,user.email,user.phone)
             if(user.loginStatus){
                 viewModelScope.launch {
-                    DatabaseService.addUserInfoDatabase(userDb)
-                    _facebookLoginStatus.postValue(user)
+                    Log.i("Facebook","Reached")
+                    var user = DatabaseService.addUserInfoDatabase(user)
+                    if(user != null){
+                        SharedPref.addUserId(user.uid)
+                        DatabaseService.addCloudDataToLocalDB(user)
+                        _facebookLoginStatus.postValue(user)
+                    }
                 }
             }else{
                 _facebookLoginStatus.value = user
             }
-
-
-
         }
     }
 

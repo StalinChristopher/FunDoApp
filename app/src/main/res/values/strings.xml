@@ -50,6 +50,7 @@
     <string name="toastError_noAccountAssociated">No account is associated with the given email</string>
     <string name="toast_userSignedUp">User signed up</string>
     <string name="toastError_account_not_created">Account not created</string>
+    <string name="navHeader">FunDo</string>
 
 
 </resources>

@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatToggleButton
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.SearchView
 import com.bl.todo.ui.homePage.adapter.MyAdapter
 import com.bl.todo.data.wrapper.NoteInfo
+import com.bl.todo.data.wrapper.UserDetails
 
 class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
@@ -42,12 +44,15 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     private var menu : Menu? = null
     private lateinit var recyclerView : RecyclerView
     private lateinit var myAdapter: MyAdapter
+    private var userId = 0L
 
     companion object{
         const val STORAGE_PERMISSION_CODE = 111
         const val IMAGE_FROM_GALLERY_CODE = 100
         private var noteList : ArrayList<NoteInfo> = ArrayList<NoteInfo>()
         private var filteredArrayList = ArrayList<NoteInfo>()
+
+        var currentUser : UserDetails = UserDetails("name","email","phone",fUid = null)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,19 +65,24 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         setHasOptionsMenu(true)
         profileDialog()
+        userId = SharedPref.getUserId()
 
         binding.homePageFloatingButton.setOnClickListener{
             sharedViewModel.setNoteFragmentPageStatus(true)
         }
         initializeRecyclerView()
         observers()
+        setUserDetails()
 
         myAdapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
                 var note = filteredArrayList[position]
+                Log.i("HomeNote","$note")
                 sharedViewModel.setExistingNoteFragmentStatus(note)
             }
         })
+        homeViewModel.getUserData(userId)
+
     }
 
     private fun initializeRecyclerView() {
@@ -104,6 +114,11 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
                 myAdapter.notifyDataSetChanged()
             }
         }
+
+        homeViewModel.profileData.observe(viewLifecycleOwner){
+            currentUser = it
+            setUserDetails()
+        }
     }
 
     private fun profileDialog() {
@@ -112,13 +127,10 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         homeViewModel.getProfilePic()
 
-        val userName  = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogName)
-        val email = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogEmail)
-        val phone = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogPhone)
-
-        userName.text = SharedPref.getValue("userName")
-        email.text = SharedPref.getValue("email")
-        phone.text = SharedPref.getValue("Phone")
+//        val userName  = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogName)
+//        val email = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogEmail)
+//        userName.text = currentUser?.userName
+//        email.text = currentUser?.email
 
         val closeProfile = profileDialogView.findViewById<ImageView>(R.id.profileDialogClose)
         closeProfile.setOnClickListener{
@@ -139,10 +151,17 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
 
         val profileDialogLogout = profileDialogView.findViewById<MaterialButton>(R.id.profileDialogButton)
         profileDialogLogout.setOnClickListener{
-            homeViewModel.logOutFromHomePage()
+            homeViewModel.logOutFromHomePage(requireContext())
             sharedViewModel.setLoginPageStatus(true)
             alertDialog.dismiss()
         }
+    }
+
+    private fun setUserDetails() {
+        val userName  = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogName)
+        val email = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogEmail)
+        userName.text = currentUser?.userName
+        email.text = currentUser?.email
     }
 
     private fun selectImageFromGallery(){

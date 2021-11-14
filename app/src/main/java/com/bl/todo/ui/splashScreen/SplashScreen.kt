@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SplashScreenBinding
 import com.bl.todo.authService.Authentication
+import com.bl.todo.data.services.DatabaseService
 import com.bl.todo.ui.mainActivity.SharedViewModel
+import com.bl.todo.util.SharedPref
 
 class SplashScreen : Fragment(R.layout.splash_screen) {
     private lateinit var binding: SplashScreenBinding
@@ -24,7 +26,8 @@ class SplashScreen : Fragment(R.layout.splash_screen) {
         binding.splashIcon.alpha = 0f
         binding.splashIcon.animate().setDuration(1500).alpha(1f).withEndAction {
             var user = Authentication.getCurrentUser()
-            if( user != null){
+            var userId = SharedPref.getUserId()
+            if( userId > 0L){
                 interactionListener?.onSplashScreenExit(true)
             }else{
                 interactionListener?.onSplashScreenExit(false)

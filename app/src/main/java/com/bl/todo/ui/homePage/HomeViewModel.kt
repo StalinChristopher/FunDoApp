@@ -1,5 +1,6 @@
 package com.bl.todo.ui.homePage
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -10,6 +11,7 @@ import com.bl.todo.authService.Authentication
 import com.bl.todo.data.services.DatabaseService
 import com.bl.todo.data.services.Storage
 import com.bl.todo.data.wrapper.NoteInfo
+import com.bl.todo.data.wrapper.UserDetails
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -21,8 +23,14 @@ class HomeViewModel : ViewModel() {
     private val _userNotes = MutableLiveData<ArrayList<NoteInfo>>()
     val userNotes = _userNotes as LiveData<ArrayList<NoteInfo>>
 
-    fun logOutFromHomePage(){
-        Authentication.logOut()
+    private val _profileData = MutableLiveData<UserDetails>()
+    val profileData = _profileData as LiveData<UserDetails>
+
+    fun logOutFromHomePage(context : Context){
+        viewModelScope.launch {
+            Authentication.logOut(context)
+        }
+
     }
 
     fun setProfilePic(bitmap: Bitmap){
@@ -54,6 +62,15 @@ class HomeViewModel : ViewModel() {
             var resultNotes = DatabaseService.getUserNotes()
             if(resultNotes != null){
                 _userNotes.postValue(resultNotes)
+            }
+        }
+    }
+
+    fun getUserData(uid : Long){
+        viewModelScope.launch {
+            var userDetails = DatabaseService.getUserData(uid)
+            if(userDetails != null){
+                _profileData.postValue(userDetails)
             }
         }
     }

@@ -18,6 +18,15 @@ object SharedPref {
         sharedPrefEdit.apply()
     }
 
+    fun addUserId(value : Long){
+        sharedPrefEdit.putLong("uid",value)
+        sharedPrefEdit.apply()
+    }
+
+    fun getUserId() : Long{
+        return sharedPreferences.getLong("uid", 0L)
+    }
+
     fun getValue(key : String) : String? {
         return sharedPreferences.getString(key, key)
     }

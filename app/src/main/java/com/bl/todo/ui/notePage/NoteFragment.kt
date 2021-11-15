@@ -27,8 +27,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     private lateinit var noteViewModel: NoteViewModel
     private  var bundleTitle : String? = null
     private  var bundleContent : String? = null
-    private  var bundleKey : String? = null
-    private var bundleFnid : String? = null
+    private var bundleFnid : String = ""
     private var bundleDateModified : Date? = null
     private var bundleNid : Long? = null
     private var userId = 0L
@@ -54,7 +53,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         bundleNid = arguments?.getLong("sqlNid")
         bundleTitle = arguments?.getString("title")
         bundleContent = arguments?.getString("content")
-        bundleFnid = arguments?.getString("noteKey")
+        bundleFnid = arguments?.getString("noteKey").toString()
         var dateTime = DateTypeConverters().toOffsetDateTime(arguments?.getString("dateModified"))
         bundleDateModified = dateTime
         binding.noteTitle.setText(bundleTitle)
@@ -100,13 +99,13 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             var title = binding.noteTitle.text.toString()
             var content = binding.noteNotes.text.toString()
             if(bundleNid == null){
-                if(title.isEmpty() || content.isEmpty()){
+                if(title.isEmpty() && content.isEmpty()){
                     Toast.makeText(requireContext(),getString(R.string.toast_emptyNoteDiscarded),Toast.LENGTH_SHORT).show()
                     sharedViewModel.setGotoHomePageStatus(true)
                 }else{
                     var note = NoteInfo(title = title,
-                        content = content, fnid = null, dateModified = null)
-                    noteViewModel.addNoteToDb(note,currentUser)
+                        content = content, dateModified = null)
+                    noteViewModel.addNoteToDb( requireContext(), note, currentUser)
                 }
             }else{
                 var noteInfo = NoteInfo(
@@ -114,7 +113,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                     fnid = bundleFnid,dateModified = bundleDateModified,
                     nid = bundleNid!!
                 )
-                noteViewModel.updateNoteToDb(noteInfo,currentUser)
+                noteViewModel.updateNoteToDb( requireContext(), noteInfo,currentUser)
             }
         }
 
@@ -122,9 +121,10 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             if(bundleNid == null){
                 Toast.makeText(requireContext(),getString(R.string.toast_create_a_note_first_message),Toast.LENGTH_SHORT).show()
             }else{
+                Log.i("Note","$bundleNid, $bundleFnid, $bundleTitle, $bundleContent")
                 val noteInfo = NoteInfo(bundleTitle!!,bundleContent!!,
-                    bundleFnid!!,dateModified = bundleDateModified, nid = bundleNid!!)
-                noteViewModel.deleteNoteToDb(noteInfo)
+                    bundleFnid,dateModified = bundleDateModified, nid = bundleNid!!)
+                noteViewModel.deleteNoteToDb( requireContext(), noteInfo)
             }
         }
     }

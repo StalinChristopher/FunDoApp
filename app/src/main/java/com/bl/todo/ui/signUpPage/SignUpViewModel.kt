@@ -1,5 +1,6 @@
 package com.bl.todo.ui.signUpPage
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,12 +16,12 @@ class SignUpViewModel : ViewModel() {
     private val _signUpStatus = MutableLiveData<Boolean>()
     val signUpStatus = _signUpStatus as LiveData<Boolean>
 
-    fun signUpWithEmailAndPassword(userDetails: UserDetails, password: String){
+    fun signUpWithEmailAndPassword( context: Context, userDetails: UserDetails, password: String){
         Authentication.signUpWithEmailAndPassword(userDetails.email,password){
             if(it.loginStatus){
                 viewModelScope.launch {
                     userDetails.fUid = it.fUid
-                    var user = DatabaseService.addNewUserInfoDatabase(userDetails)
+                    var user = DatabaseService.addNewUserInfoDatabase( context, userDetails)
                     if(user != null){
                          SharedPref.addUserId(user.uid)
                         _signUpStatus.postValue(it.loginStatus)

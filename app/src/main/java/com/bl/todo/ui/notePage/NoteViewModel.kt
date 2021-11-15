@@ -1,5 +1,6 @@
 package com.bl.todo.ui.notePage
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,34 +26,33 @@ class NoteViewModel : ViewModel() {
     private val _profileData = MutableLiveData<UserDetails>()
     val profileData = _profileData as LiveData<UserDetails>
 
-    fun addNoteToDb(note : NoteInfo, user : UserDetails){
+    fun addNoteToDb(context : Context, note : NoteInfo, user : UserDetails){
         viewModelScope.launch {
             val cal = Calendar.getInstance()
             var dateTime = cal.time
             note.dateModified = dateTime
-            var result = DatabaseService.addNewNote(noteInfo = note,user)
+            var result = DatabaseService.addNewNote( context, noteInfo = note,user)
             if(result) {
                 _addNewNoteStatus.postValue(result)
             }
         }
     }
 
-    fun updateNoteToDb(noteInfo: NoteInfo,user: UserDetails){
+    fun updateNoteToDb( context: Context, noteInfo: NoteInfo,user: UserDetails){
         viewModelScope.launch {
-            var uid = SharedPref.getUserId()
             val cal = Calendar.getInstance()
             var dateTime = cal.time
             noteInfo.dateModified = dateTime
-            var resultStatus = DatabaseService.updateUserNotes(noteInfo,user)
+            var resultStatus = DatabaseService.updateUserNotes( context, noteInfo,user)
             if(resultStatus){
                 _updateNoteStatus.postValue(resultStatus)
             }
         }
     }
 
-    fun deleteNoteToDb(noteInfo: NoteInfo){
+    fun deleteNoteToDb(context: Context, noteInfo: NoteInfo){
         viewModelScope.launch {
-            var status = DatabaseService.deleteUserNotes(noteInfo)
+            var status = DatabaseService.deleteUserNotes(context, noteInfo)
             if(status)
                 _deleteNoteStatus.postValue(status)
         }

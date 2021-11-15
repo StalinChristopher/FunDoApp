@@ -1,5 +1,6 @@
 package com.bl.todo.ui.loginPage
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,14 +24,14 @@ class LoginViewModel : ViewModel() {
     private val _userData = MutableLiveData<Boolean>()
     val userData = _userData as LiveData<Boolean>
 
-    fun loginWithEmailAndPassword(email : String, password : String){
+    fun loginWithEmailAndPassword(context: Context, email : String, password : String){
         Authentication.loginWithEmailAndPassword(email, password){ user->
             if(user.loginStatus){
                 viewModelScope.launch {
-                    var user = DatabaseService.addUserInfoDatabase(user)
+                    var user = DatabaseService.addUserInfoDatabase(context, user)
                     if(user != null){
                         SharedPref.addUserId(user.uid)
-                        DatabaseService.addCloudDataToLocalDB(user)
+                        DatabaseService.addCloudDataToLocalDB(context, user)
                         _loginStatus.postValue(user)
                     }
                 }
@@ -40,15 +41,15 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun loginWithFacebook(token : AccessToken){
+    fun loginWithFacebook(context: Context, token : AccessToken){
         Authentication.handleFacebookLogin(token){ user->
             if(user.loginStatus){
                 viewModelScope.launch {
                     Log.i("Facebook","Reached")
-                    var user = DatabaseService.addUserInfoDatabase(user)
+                    var user = DatabaseService.addUserInfoDatabase(context, user)
                     if(user != null){
                         SharedPref.addUserId(user.uid)
-                        DatabaseService.addCloudDataToLocalDB(user)
+                        DatabaseService.addCloudDataToLocalDB(context, user)
                         _facebookLoginStatus.postValue(user)
                     }
                 }

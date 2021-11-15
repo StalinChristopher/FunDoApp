@@ -18,9 +18,8 @@ interface NoteDao {
     @Delete
     suspend fun deleteUserNotes(note: NoteEntity)
 
-//    @Query("update notes_table set fNoteId = :fnid where id = :id")
-//    suspend fun updateFirebaseId(fnid : String, id: Long) : NoteEntity
-
+    @Query( "delete from notes_table")
+    suspend fun clearNoteTable()
 
 
 

@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.bl.todo.authService.Authentication
 import com.bl.todo.data.services.DatabaseService
 import com.bl.todo.data.services.Storage
+import com.bl.todo.data.services.SyncDatabase
 import com.bl.todo.data.wrapper.NoteInfo
 import com.bl.todo.data.wrapper.UserDetails
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class HomeViewModel : ViewModel() {
 
     private val _profileData = MutableLiveData<UserDetails>()
     val profileData = _profileData as LiveData<UserDetails>
+
+    private val _syncStatus = MutableLiveData<Boolean>()
+    val syncStatus = _syncStatus as LiveData<Boolean>
 
     fun logOutFromHomePage(context : Context){
         viewModelScope.launch {
@@ -72,6 +76,14 @@ class HomeViewModel : ViewModel() {
             if(userDetails != null){
                 _profileData.postValue(userDetails)
             }
+        }
+    }
+
+    fun syncDatabase(user : UserDetails) {
+        viewModelScope.launch {
+            SyncDatabase.syncUp(user)
+            _syncStatus.postValue(true)
+
         }
     }
 }

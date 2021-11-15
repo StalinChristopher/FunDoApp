@@ -63,7 +63,8 @@ class LoginFragment : Fragment(R.layout.login_fragment){
         var email = binding.loginEmail
         var password = binding.loginPassword
         if(Utilities.loginCredentialsValidator(email,password,requireContext())) {
-            loginViewModel.loginWithEmailAndPassword(email.text.toString(), password.text.toString())
+            loginViewModel.loginWithEmailAndPassword(requireContext(),
+                email.text.toString(), password.text.toString())
         }
     }
 
@@ -82,7 +83,7 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
             override fun onSuccess(result: LoginResult) {
                 Log.d("Facebook-OAuth", "facebook:onSuccess:$result")
-                loginViewModel.loginWithFacebook(result.accessToken)
+                loginViewModel.loginWithFacebook(requireContext(), result.accessToken)
             }
         })
     }

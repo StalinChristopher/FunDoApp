@@ -5,10 +5,15 @@ import android.util.Log
 import com.bl.todo.authService.Authentication
 import com.bl.todo.data.models.DatabaseUser
 import com.bl.todo.data.room.LocalDatabase
+import com.bl.todo.data.room.dao.OpDao
 import com.bl.todo.data.room.entities.NoteEntity
+import com.bl.todo.data.room.entities.OpEntity
 import com.bl.todo.data.room.entities.UserEntity
 import com.bl.todo.data.wrapper.NoteInfo
 import com.bl.todo.data.wrapper.UserDetails
+import com.bl.todo.util.CREATE_OP_CODE
+import com.bl.todo.util.DELETE_OP_CODE
+import com.bl.todo.util.UPDATE_OP_CODE
 import com.bl.todo.util.Utilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,6 +25,7 @@ class RoomDatabaseService(context: Context) {
     private val localDatabase = LocalDatabase.getInstance(context)
     private val userDao = localDatabase.userDao()
     private val noteDao = localDatabase.noteDao()
+    private val opDao = localDatabase.opDao()
 
     suspend fun addUserInfoDatabase(user : UserDetails) : UserDetails{
         return withContext(Dispatchers.IO){
@@ -31,7 +37,6 @@ class RoomDatabaseService(context: Context) {
     }
 
     suspend fun getUserData(uid : Long) : UserDetails{
-        var userId = Authentication.getCurrentUser()?.uid.toString()
         return withContext(Dispatchers.IO){
             var userEntity = userDao.getUserData(uid)
             var user = UserDetails(userName = userEntity.userName,email = userEntity.email,phone = userEntity.phone
@@ -40,11 +45,15 @@ class RoomDatabaseService(context: Context) {
         }
     }
 
-    suspend fun addNewNote(noteInfo: NoteInfo) : NoteInfo{
+    suspend fun addNewNote(noteInfo: NoteInfo, onlineStatus : Boolean = true) : NoteInfo{
         return withContext(Dispatchers.IO){
             var noteEntity = NoteEntity(fNoteId = noteInfo.fnid,title = noteInfo.title,
                 content = noteInfo.content,dateModified = noteInfo.dateModified)
             noteInfo.nid = noteDao.addNewNote(noteEntity)
+            if(!onlineStatus){
+                var opEntity = OpEntity(fNid = noteInfo.fnid, opCode = CREATE_OP_CODE)
+                opDao.addOp(opEntity)
+            }
             noteInfo
         }
     }
@@ -62,22 +71,53 @@ class RoomDatabaseService(context: Context) {
         }
     }
 
-    suspend fun updateUserNotes(noteInfo: NoteInfo) : NoteInfo? {
+    suspend fun updateUserNotes(noteInfo: NoteInfo, onlineStatus: Boolean = true) : NoteInfo? {
         return withContext(Dispatchers.IO){
             Log.i("updateRoom","$noteInfo")
             var noteEntity = NoteEntity(fNoteId = noteInfo.fnid,title = noteInfo.title,
                 content = noteInfo.content,dateModified = noteInfo.dateModified,id = noteInfo.nid)
             noteDao.updateUserNotes(noteEntity)
+            if(!onlineStatus){
+                var opEntity = OpEntity(fNid = noteInfo.fnid, opCode = UPDATE_OP_CODE)
+                opDao.addOp(opEntity)
+            }
             noteInfo
         }
     }
 
-    suspend fun deleteUserNote(noteInfo: NoteInfo) : NoteInfo {
+    suspend fun deleteUserNote(noteInfo: NoteInfo, onlineStatus: Boolean = true) : NoteInfo {
         return withContext(Dispatchers.IO){
             var noteEntity = NoteEntity(fNoteId = noteInfo.fnid, title = noteInfo.title,
             content = noteInfo.content, dateModified = noteInfo.dateModified, id = noteInfo.nid)
             noteDao.deleteUserNotes(noteEntity)
+            if(!onlineStatus){
+                if(noteInfo.fnid.isNotEmpty()) {
+                    var opEntity = OpEntity(fNid = noteInfo.fnid, opCode = DELETE_OP_CODE)
+                    opDao.addOp(opEntity)
+                }
+            }
             noteInfo
         }
+    }
+
+    suspend fun getOperationCode(noteInfo: NoteInfo) : Int {
+        return withContext(Dispatchers.IO){
+            val opEntity = opDao.getOpCode(noteInfo.fnid!!)
+            var opCode : Int = if( opEntity != null) {
+                opEntity.opCode
+            }else {
+                -1
+            }
+            opCode
+        }
+    }
+
+    suspend fun clearNoteAndOp() {
+        noteDao.clearNoteTable()
+        opDao.deleteAllOps()
+    }
+
+    fun clearAllTables() {
+        localDatabase.clearAllTables()
     }
 }

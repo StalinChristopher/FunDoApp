@@ -113,7 +113,7 @@ object FirebaseDatabaseService {
          "dateModified" to dateTime
       )
       return suspendCoroutine { callback ->
-         db.child("Notes").child(user.fUid.toString()).child(noteInfo.fnid!!).updateChildren(noteMap)
+         db.child("Notes").child(user.fUid.toString()).child(noteInfo.fnid).updateChildren(noteMap)
             .addOnCompleteListener {
             if(it.isSuccessful){
                callback.resumeWith(Result.success(true))

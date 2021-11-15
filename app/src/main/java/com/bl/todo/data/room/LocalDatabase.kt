@@ -6,27 +6,34 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.bl.todo.data.room.dao.NoteDao
+import com.bl.todo.data.room.dao.OpDao
 import com.bl.todo.data.room.dao.UserDao
 import com.bl.todo.data.room.entities.NoteEntity
+import com.bl.todo.data.room.entities.OpEntity
 import com.bl.todo.data.room.entities.UserEntity
 
-@Database(entities = [UserEntity::class,NoteEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [UserEntity::class, NoteEntity::class, OpEntity::class],
+    version = 1,
+    exportSchema = false
+)
 @TypeConverters(DateTypeConverters::class)
-abstract class LocalDatabase : RoomDatabase(){
+abstract class LocalDatabase : RoomDatabase() {
 
-    abstract fun userDao() : UserDao
-    abstract fun noteDao() : NoteDao
+    abstract fun userDao(): UserDao
+    abstract fun noteDao(): NoteDao
+    abstract fun opDao() : OpDao
 
-    companion object{
+    companion object {
         @Volatile
-        private var INSTANCE : LocalDatabase? = null
+        private var INSTANCE: LocalDatabase? = null
 
-        fun getInstance(context : Context) : LocalDatabase{
+        fun getInstance(context: Context): LocalDatabase {
             val tempInstance = INSTANCE
-            if(tempInstance != null){
+            if (tempInstance != null) {
                 return tempInstance
             }
-            synchronized(this){
+            synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     LocalDatabase::class.java,

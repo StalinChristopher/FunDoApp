@@ -53,7 +53,7 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         var user = UserDetails(userName = userName.text.toString(),email = email.text.toString(),
             phone = phone.text.toString(), fUid = null)
         if(Utilities.signUpCredentialsValidator(userName, email, phone, password, confirmPassword,requireContext())){
-            signUpViewModel.signUpWithEmailAndPassword(user,password.text.toString())
+            signUpViewModel.signUpWithEmailAndPassword( requireContext(), user,password.text.toString())
         }else{
             dialog.dismiss()
         }

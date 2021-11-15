@@ -3,6 +3,7 @@ package com.bl.todo.authService
 import android.content.Context
 import android.util.Log
 import com.bl.todo.data.room.LocalDatabase
+import com.bl.todo.data.services.DatabaseService
 import com.bl.todo.data.wrapper.UserDetails
 import com.bl.todo.util.SharedPref
 import com.facebook.AccessToken
@@ -23,7 +24,7 @@ object Authentication {
         withContext(Dispatchers.Default){
             SharedPref.clearAll()
             LoginManager.getInstance().logOut()
-            LocalDatabase.getInstance(context).clearAllTables()
+            DatabaseService.clearAllTables()
             firebaseAuth.signOut()
         }
     }

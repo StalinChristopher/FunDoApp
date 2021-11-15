@@ -30,9 +30,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.SearchView
+import com.bl.todo.data.services.SyncDatabase
 import com.bl.todo.ui.homePage.adapter.MyAdapter
 import com.bl.todo.data.wrapper.NoteInfo
 import com.bl.todo.data.wrapper.UserDetails
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
@@ -66,13 +71,18 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         setHasOptionsMenu(true)
         profileDialog()
         userId = SharedPref.getUserId()
-
-        binding.homePageFloatingButton.setOnClickListener{
-            sharedViewModel.setNoteFragmentPageStatus(true)
-        }
         initializeRecyclerView()
         observers()
         setUserDetails()
+        homeViewModel.getUserData(userId)
+        allListeners()
+
+    }
+
+    private fun allListeners() {
+        binding.homePageFloatingButton.setOnClickListener{
+            sharedViewModel.setNoteFragmentPageStatus(true)
+        }
 
         myAdapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener{
             override fun onItemClick(position: Int) {
@@ -81,8 +91,19 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
                 sharedViewModel.setExistingNoteFragmentStatus(note)
             }
         })
-        homeViewModel.getUserData(userId)
 
+        binding.refreshLayoutId.setOnRefreshListener {
+            homeViewModel.syncDatabase(currentUser)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                try {
+//                    SyncDatabase.syncUp(currentUser)
+//                    binding.refreshLayoutId.isRefreshing = false
+//                    homeViewModel.getNotesFromUser()
+//                } catch (e:Exception){
+//                    e.printStackTrace()
+//                }
+//            }
+        }
     }
 
     private fun initializeRecyclerView() {
@@ -119,6 +140,11 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             currentUser = it
             setUserDetails()
         }
+
+        homeViewModel.syncStatus.observe(viewLifecycleOwner){
+            homeViewModel.getNotesFromUser()
+            binding.refreshLayoutId.isRefreshing = false
+        }
     }
 
     private fun profileDialog() {
@@ -126,11 +152,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         alertDialog = AlertDialog.Builder(requireContext()).setView(profileDialogView).create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         homeViewModel.getProfilePic()
-
-//        val userName  = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogName)
-//        val email = profileDialogView.findViewById<MaterialTextView>(R.id.profileDialogEmail)
-//        userName.text = currentUser?.userName
-//        email.text = currentUser?.email
 
         val closeProfile = profileDialogView.findViewById<ImageView>(R.id.profileDialogClose)
         closeProfile.setOnClickListener{

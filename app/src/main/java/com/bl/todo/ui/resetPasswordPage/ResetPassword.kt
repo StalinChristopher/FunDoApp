@@ -22,7 +22,7 @@ class ResetPassword : Fragment(R.layout.resetpassword_fragment) {
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         resetPasswordViewModel = ViewModelProvider(this)[ResetPasswordViewModel::class.java]
         binding.resetSendButton.setOnClickListener {
-            var email = binding.resetPasswordEditText.text.toString()
+            val email = binding.resetPasswordEditText.text.toString()
             resetPasswordViewModel.resetPasswordWithEmail(email)
         }
 

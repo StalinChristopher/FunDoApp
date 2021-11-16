@@ -49,8 +49,8 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         ) {
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
-                var navHeader = binding.navView.getHeaderView(0)
-                var navHeaderName = navHeader.findViewById<MaterialTextView>(R.id.nav_profile_name)
+                val navHeader = binding.navView.getHeaderView(0)
+                val navHeaderName = navHeader.findViewById<MaterialTextView>(R.id.nav_profile_name)
                 navHeaderName.text = getString(R.string.navHeader)
             }
         }
@@ -59,14 +59,17 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         toggle.isDrawerIndicatorEnabled = true
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        var firstMenuItem = binding.navView.menu.getItem(0)
+        firstMenuItem.isChecked = true
         binding.navView.setNavigationItemSelectedListener {
+            firstMenuItem.isChecked = false
             when (it.itemId) {
-                R.id.nav_notes_item -> Toast.makeText(
+                R.id.nav_notes_item -> {Toast.makeText(
                     this,
                     "Notes button clicked",
                     Toast.LENGTH_SHORT
                 ).show()
+                sharedViewModel.setGotoHomePageStatus(true)}
                 R.id.nav_remainders_item -> Toast.makeText(
                     this,
                     "reminder button clicked",
@@ -77,6 +80,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
                     sharedViewModel.setLoginPageStatus(true)
                 }
             }
+            it.isCheckable = true
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
@@ -117,7 +121,6 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
             if (it) {
                 gotoNotePage()
             }
-
         })
 
         sharedViewModel.gotoExistingNoteFragmentStatus.observe(this@MainActivity, {
@@ -154,8 +157,8 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
     }
 
     private fun gotoExistingNotePage(noteInfo: NoteInfo) {
-        var noteFragment = NoteFragment()
-        var bundle = Utilities.addNoteInfoToBundle(noteInfo)
+        val noteFragment = NoteFragment()
+        val bundle = Utilities.addNoteInfoToBundle(noteInfo)
         noteFragment.arguments = bundle
         Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, noteFragment)
     }

@@ -49,9 +49,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     companion object {
         const val STORAGE_PERMISSION_CODE = 111
         const val IMAGE_FROM_GALLERY_CODE = 100
-        private var noteList: ArrayList<NoteInfo> = ArrayList<NoteInfo>()
-        private var filteredArrayList = ArrayList<NoteInfo>()
-
+        private var noteList: ArrayList<NoteInfo> = ArrayList()
         var currentUser: UserDetails = UserDetails("name", "email", "phone", fUid = null)
     }
 
@@ -81,7 +79,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
 
         myAdapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                var note = filteredArrayList[position]
+                var note = noteList[position]
                 Log.i("HomeNote", "$note")
                 sharedViewModel.setExistingNoteFragmentStatus(note)
             }
@@ -93,7 +91,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     }
 
     private fun initializeRecyclerView() {
-        myAdapter = MyAdapter(filteredArrayList)
+        myAdapter = MyAdapter(noteList)
         recyclerView = binding.HomeRecyclerView
         recyclerView.layoutManager = StaggeredGridLayoutManager(2, 1)
         recyclerView.setHasFixedSize(true)
@@ -116,8 +114,6 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             if (it != null) {
                 noteList.clear()
                 noteList.addAll(it)
-                filteredArrayList.clear()
-                filteredArrayList.addAll(it)
                 myAdapter.notifyDataSetChanged()
             }
         }
@@ -229,23 +225,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                filteredArrayList.clear()
-                val searchText = newText!!.lowercase()
-                if (searchText.isNotEmpty()) {
-
-                    noteList.forEach {
-                        if (it.title.lowercase().contains(searchText) || it.content.lowercase()
-                                .contains(searchText)
-                        ) {
-                            filteredArrayList.add(it)
-                        }
-                    }
-                    myAdapter.notifyDataSetChanged()
-                } else {
-                    filteredArrayList.clear()
-                    filteredArrayList.addAll(noteList)
-                    myAdapter.notifyDataSetChanged()
-                }
+                myAdapter.filter.filter(newText)
+                myAdapter.notifyDataSetChanged()
                 return false
             }
         })

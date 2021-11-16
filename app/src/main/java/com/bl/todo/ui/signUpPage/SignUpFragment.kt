@@ -45,12 +45,12 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
     }
 
     private fun signup() {
-        var userName = binding.signupUsername
-        var email = binding.signupEmail
-        var phone = binding.signupMobile
-        var password = binding.signupPassword
-        var confirmPassword = binding.signupConfirmPassword
-        var user = UserDetails(
+        val userName = binding.signupUsername
+        val email = binding.signupEmail
+        val phone = binding.signupMobile
+        val password = binding.signupPassword
+        val confirmPassword = binding.signupConfirmPassword
+        val user = UserDetails(
             userName = userName.text.toString(), email = email.text.toString(),
             phone = phone.text.toString(), fUid = null
         )

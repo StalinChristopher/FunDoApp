@@ -24,8 +24,7 @@ class SplashScreen : Fragment(R.layout.splash_screen) {
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         binding.splashIcon.alpha = 0f
         binding.splashIcon.animate().setDuration(1500).alpha(1f).withEndAction {
-            var user = FirebaseAuthentication.getCurrentUser()
-            var userId = SharedPref.getUserId()
+            val userId = SharedPref.getUserId()
             if (userId > 0L) {
                 interactionListener?.onSplashScreenExit(true)
             } else {

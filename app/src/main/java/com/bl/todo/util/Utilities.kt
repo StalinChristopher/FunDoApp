@@ -71,7 +71,7 @@ object Utilities {
     }
 
     fun addInfoToBundle(newUser: UserDetails): Bundle {
-        var bundle = Bundle()
+        val bundle = Bundle()
         bundle.putString("name", newUser.userName)
         bundle.putString("email", newUser.email)
         bundle.putString("phone", newUser.phone)
@@ -93,8 +93,8 @@ object Utilities {
     }
 
     fun addNoteInfoToBundle(noteInfo: NoteInfo): Bundle {
-        var bundle = Bundle()
-        var dateTIme = DateTypeConverters().fromOffsetDateTime(noteInfo.dateModified)
+        val bundle = Bundle()
+        val dateTIme = DateTypeConverters().fromOffsetDateTime(noteInfo.dateModified)
         Log.i("Util", "$noteInfo")
         bundle.putString("title", noteInfo.title)
         bundle.putString("content", noteInfo.content)

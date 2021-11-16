@@ -27,9 +27,9 @@ class NoteViewModel : ViewModel() {
     fun addNoteToDb(context: Context, note: NoteInfo, user: UserDetails) {
         viewModelScope.launch {
             val cal = Calendar.getInstance()
-            var dateTime = cal.time
+            val dateTime = cal.time
             note.dateModified = dateTime
-            var result = DatabaseService.getInstance(context).addNewNote(noteInfo = note, user)
+            val result = DatabaseService.getInstance(context).addNewNote(noteInfo = note, user)
             if (result) {
                 _addNewNoteStatus.postValue(result)
             }
@@ -41,7 +41,7 @@ class NoteViewModel : ViewModel() {
             val cal = Calendar.getInstance()
             var dateTime = cal.time
             noteInfo.dateModified = dateTime
-            var resultStatus = DatabaseService.getInstance(context).updateUserNotes(noteInfo, user)
+            val resultStatus = DatabaseService.getInstance(context).updateUserNotes(noteInfo, user)
             if (resultStatus) {
                 _updateNoteStatus.postValue(resultStatus)
             }
@@ -50,7 +50,7 @@ class NoteViewModel : ViewModel() {
 
     fun deleteNoteToDb(context: Context, noteInfo: NoteInfo) {
         viewModelScope.launch {
-            var status = DatabaseService.getInstance(context).deleteUserNotes(noteInfo)
+            val status = DatabaseService.getInstance(context).deleteUserNotes(noteInfo)
             if (status)
                 _deleteNoteStatus.postValue(status)
         }
@@ -58,7 +58,7 @@ class NoteViewModel : ViewModel() {
 
     fun getUserData(context: Context, uid: Long) {
         viewModelScope.launch {
-            var userDetails = DatabaseService.getInstance(context).getUserData(uid)
+            val userDetails = DatabaseService.getInstance(context).getUserData(uid)
             if (userDetails != null) {
                 _profileData.postValue(userDetails)
             }

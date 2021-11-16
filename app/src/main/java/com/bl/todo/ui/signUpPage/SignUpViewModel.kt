@@ -20,7 +20,7 @@ class SignUpViewModel : ViewModel() {
             if (it.loginStatus) {
                 viewModelScope.launch {
                     userDetails.fUid = it.fUid
-                    var user = DatabaseService.getInstance(context)
+                    val user = DatabaseService.getInstance(context)
                         .addNewUserInfoDatabase(context, userDetails)
                     if (user != null) {
                         SharedPref.addUserId(user.uid)

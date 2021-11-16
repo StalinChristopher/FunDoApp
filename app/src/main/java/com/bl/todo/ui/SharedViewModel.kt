@@ -1,15 +1,15 @@
-package com.bl.todo.ui.mainActivity
+package com.bl.todo.ui
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bl.todo.authService.Authentication
-import com.bl.todo.data.wrapper.NoteInfo
+import com.bl.todo.auth.service.FirebaseAuthentication
+import com.bl.todo.ui.wrapper.NoteInfo
 import kotlinx.coroutines.launch
 
-class SharedViewModel : ViewModel(){
+class SharedViewModel : ViewModel() {
 
     private val _gotoHomePageStatus = MutableLiveData<Boolean>()
     val gotoHomePageStatus = _gotoHomePageStatus as LiveData<Boolean>
@@ -32,49 +32,37 @@ class SharedViewModel : ViewModel(){
     private val _gotoExistingNoteFragmentStatus = MutableLiveData<NoteInfo>()
     val gotoExistingNoteFragmentStatus = _gotoExistingNoteFragmentStatus as LiveData<NoteInfo>
 
-    fun setGotoHomePageStatus(status: Boolean){
+    fun setGotoHomePageStatus(status: Boolean) {
         _gotoHomePageStatus.value = status
     }
 
-    fun setLoginPageStatus(status : Boolean){
+    fun setLoginPageStatus(status: Boolean) {
         _gotoLoginPageStatus.value = status
     }
 
-    fun setSplashScreenStatus(status: Boolean){
+    fun setSplashScreenStatus(status: Boolean) {
         _gotoSplashScreenStatus.value = status
     }
 
-    fun setSignupPageStatus(status: Boolean){
+    fun setSignupPageStatus(status: Boolean) {
         _gotoSignupPageStatus.value = status
     }
 
-    fun setForgotPasswordPageStatus(status: Boolean){
+    fun setForgotPasswordPageStatus(status: Boolean) {
         _gotoForgotPasswordStatus.value = status
     }
 
-    fun setNoteFragmentPageStatus(status: Boolean){
+    fun setNoteFragmentPageStatus(status: Boolean) {
         _gotoNoteFragmentStatus.value = status
     }
 
-    fun setExistingNoteFragmentStatus(noteInfo: NoteInfo){
+    fun setExistingNoteFragmentStatus(noteInfo: NoteInfo) {
         _gotoExistingNoteFragmentStatus.value = noteInfo
     }
 
-    fun logOutFromApp(context : Context){
+    fun logOutFromApp(context: Context) {
         viewModelScope.launch {
-            Authentication.logOut(context)
+            FirebaseAuthentication.logOut(context)
         }
-
     }
-
-
-
-
-
-
-
-
-
-
-
 }

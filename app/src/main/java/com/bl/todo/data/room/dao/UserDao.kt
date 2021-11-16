@@ -10,9 +10,9 @@ import com.bl.todo.data.room.entities.UserEntity
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addUserData(user : UserEntity) : Long
+    suspend fun addUserData(user: UserEntity): Long
 
     @Query("select * from user_table where uid = :uid ")
-    suspend fun getUserData(uid : Long) : UserEntity
+    suspend fun getUserData(uid: Long): UserEntity
 
 }

@@ -12,18 +12,18 @@ import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
 import com.bl.todo.util.Utilities
-import com.bl.todo.ui.mainActivity.SharedViewModel
+import com.bl.todo.ui.SharedViewModel
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginResult
 
-class LoginFragment : Fragment(R.layout.login_fragment){
+class LoginFragment : Fragment(R.layout.login_fragment) {
     private lateinit var binding: LoginFragmentBinding
     private lateinit var callbackManager: CallbackManager
     private lateinit var sharedViewModel: SharedViewModel
-    private lateinit var loginViewModel : LoginViewModel
-    private lateinit var dialog  : Dialog
+    private lateinit var loginViewModel: LoginViewModel
+    private lateinit var dialog: Dialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -56,57 +56,76 @@ class LoginFragment : Fragment(R.layout.login_fragment){
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        callbackManager.onActivityResult(requestCode,resultCode,data)
+        callbackManager.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun login() {
         var email = binding.loginEmail
         var password = binding.loginPassword
-        if(Utilities.loginCredentialsValidator(email,password,requireContext())) {
-            loginViewModel.loginWithEmailAndPassword(requireContext(),
-                email.text.toString(), password.text.toString())
+        if (Utilities.loginCredentialsValidator(email, password, requireContext())) {
+            loginViewModel.loginWithEmailAndPassword(
+                requireContext(),
+                email.text.toString(), password.text.toString()
+            )
         }
     }
 
     private fun facebookLogin() {
         dialog.show()
         var facebookLoginButton = binding.loginFacebookButton
-        facebookLoginButton.setReadPermissions("email","public_profile")
-        facebookLoginButton.registerCallback(callbackManager,object : FacebookCallback<LoginResult> {
-            override fun onCancel() {
-                Log.d("Facebook-OAuth", "facebook:onCancel")
-            }
+        facebookLoginButton.setReadPermissions("email", "public_profile")
+        facebookLoginButton.registerCallback(callbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onCancel() {
+                    Log.d("Facebook-OAuth", "facebook:onCancel")
+                }
 
-            override fun onError(error: FacebookException) {
-                Log.d("Facebook-OAuth", "facebook:onError", error)
-            }
+                override fun onError(error: FacebookException) {
+                    Log.d("Facebook-OAuth", "facebook:onError", error)
+                }
 
-            override fun onSuccess(result: LoginResult) {
-                Log.d("Facebook-OAuth", "facebook:onSuccess:$result")
-                loginViewModel.loginWithFacebook(requireContext(), result.accessToken)
-            }
-        })
+                override fun onSuccess(result: LoginResult) {
+                    Log.d("Facebook-OAuth", "facebook:onSuccess:$result")
+                    loginViewModel.loginWithFacebook(requireContext(), result.accessToken)
+                }
+            })
     }
 
-    private fun loginObservers(){
-        loginViewModel.loginStatus.observe(viewLifecycleOwner){
-            if(it.loginStatus){
-                Toast.makeText(requireContext(),getString(R.string.toast_userLoggedIn_message), Toast.LENGTH_SHORT).show()
+    private fun loginObservers() {
+        loginViewModel.loginStatus.observe(viewLifecycleOwner) {
+            if (it.loginStatus) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toast_userLoggedIn_message),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)
-            }else {
-                Toast.makeText(requireContext(),getString(R.string.toastError_loginFailed_message), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toastError_loginFailed_message),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
             }
         }
 
-        loginViewModel.facebookLoginStatus.observe(viewLifecycleOwner){
-            if(it.loginStatus){
-                Toast.makeText(requireContext(),getString(R.string.toast_userLoggedIn_message), Toast.LENGTH_SHORT).show()
+        loginViewModel.facebookLoginStatus.observe(viewLifecycleOwner) {
+            if (it.loginStatus) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toast_userLoggedIn_message),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)
-            }else {
-                Toast.makeText(requireContext(),getString(R.string.toastError_facebookLogin_error), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toastError_facebookLogin_error),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
             }
 

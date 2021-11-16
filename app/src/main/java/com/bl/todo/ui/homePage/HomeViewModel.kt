@@ -7,18 +7,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bl.todo.authService.Authentication
+import com.bl.todo.auth.service.FirebaseAuthentication
 import com.bl.todo.data.services.DatabaseService
-import com.bl.todo.data.services.Storage
+import com.bl.todo.data.services.FirebaseImageStorage
 import com.bl.todo.data.services.SyncDatabase
-import com.bl.todo.data.wrapper.NoteInfo
-import com.bl.todo.data.wrapper.UserDetails
+import com.bl.todo.ui.wrapper.NoteInfo
+import com.bl.todo.ui.wrapper.UserDetails
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class HomeViewModel : ViewModel() {
 
-    private val _userProfilePic  = MutableLiveData<Bitmap>()
+    private val _userProfilePic = MutableLiveData<Bitmap>()
     val userProfilePic = _userProfilePic as LiveData<Bitmap>
 
     private val _userNotes = MutableLiveData<ArrayList<NoteInfo>>()
@@ -30,58 +30,58 @@ class HomeViewModel : ViewModel() {
     private val _syncStatus = MutableLiveData<Boolean>()
     val syncStatus = _syncStatus as LiveData<Boolean>
 
-    fun logOutFromHomePage(context : Context){
+    fun logOutFromHomePage(context: Context) {
         viewModelScope.launch {
-            Authentication.logOut(context)
+            FirebaseAuthentication.logOut(context)
         }
 
     }
 
-    fun setProfilePic(bitmap: Bitmap){
+    fun setProfilePic(bitmap: Bitmap) {
         viewModelScope.launch {
-            try{
-                Storage.addProfileImage(bitmap)
-                Log.i("Storage","Add profile image successful")
+            try {
+                FirebaseImageStorage.setProfileImage(bitmap)
+                Log.i("Storage", "Add profile image successful")
                 _userProfilePic.postValue(bitmap)
-            }catch (e : Exception){
-                Log.e("Storage","Add profile image failed")
+            } catch (e: Exception) {
+                Log.e("Storage", "Add profile image failed")
                 e.printStackTrace()
             }
         }
     }
 
-    fun getProfilePic(){
+    fun getProfilePic() {
         viewModelScope.launch {
-            try{
-                var resultBitmap = Storage.getProfileImage()
+            try {
+                var resultBitmap = FirebaseImageStorage.getProfileImage()
                 _userProfilePic.postValue(resultBitmap)
-            }catch (e : Exception){
-                Log.e("Storage","Get profile image failed")
+            } catch (e: Exception) {
+                Log.e("Storage", "Get profile image failed")
             }
         }
     }
 
-    fun getNotesFromUser(){
+    fun getNotesFromUser(context: Context) {
         viewModelScope.launch {
-            var resultNotes = DatabaseService.getUserNotes()
-            if(resultNotes != null){
+            var resultNotes = DatabaseService.getInstance(context).getUserNotes()
+            if (resultNotes != null) {
                 _userNotes.postValue(resultNotes)
             }
         }
     }
 
-    fun getUserData(uid : Long){
+    fun getUserData(context: Context, uid: Long) {
         viewModelScope.launch {
-            var userDetails = DatabaseService.getUserData(uid)
-            if(userDetails != null){
+            var userDetails = DatabaseService.getInstance(context).getUserData(uid)
+            if (userDetails != null) {
                 _profileData.postValue(userDetails)
             }
         }
     }
 
-    fun syncDatabase(user : UserDetails) {
+    fun syncDatabase(context: Context, user: UserDetails) {
         viewModelScope.launch {
-            SyncDatabase.syncUp(user)
+            SyncDatabase(context).syncUp(user)
             _syncStatus.postValue(true)
 
         }

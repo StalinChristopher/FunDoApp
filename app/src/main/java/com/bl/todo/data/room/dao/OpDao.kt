@@ -10,10 +10,10 @@ import com.bl.todo.data.room.entities.OpEntity
 interface OpDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addOp(opEntity : OpEntity)
+    suspend fun addOp(opEntity: OpEntity)
 
     @Query("select * from operation_table where fNid = :fNid")
-    suspend fun getOpCode(fNid : String) : OpEntity
+    suspend fun getOpCode(fNid: String): OpEntity
 
     @Query("delete from operation_table")
     suspend fun deleteAllOps()

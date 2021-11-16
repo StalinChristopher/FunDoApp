@@ -2,26 +2,26 @@ package com.bl.todo.data.services
 
 import android.content.Context
 import android.util.Log
-import com.bl.todo.data.wrapper.NoteInfo
-import com.bl.todo.data.wrapper.UserDetails
+import com.bl.todo.ui.wrapper.NoteInfo
+import com.bl.todo.ui.wrapper.UserDetails
+import com.bl.todo.util.NetworkService
 import com.google.firebase.FirebaseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object DatabaseService {
-    private lateinit var roomDb : RoomDatabaseService
-    fun initializeDbService(context : Context){
-        roomDb = RoomDatabaseService(context)
+class DatabaseService(private val context: Context) {
+    private var roomDb: RoomDatabaseService = RoomDatabaseService(context)
 
+    companion object {
+        private val instance: DatabaseService? by lazy { null }
+        fun getInstance(context: Context): DatabaseService = instance ?: DatabaseService(context)
     }
-    suspend fun addUserInfoDatabase( context: Context, user: UserDetails) : UserDetails?{
+
+    suspend fun addUserInfoDatabase(user: UserDetails): UserDetails? {
         return withContext(Dispatchers.IO) {
             try {
                 var userFromFirebase = FirebaseDatabaseService.getUserData(user.fUid.toString())
-                var userFromRoom : UserDetails? = null
-                if(userFromFirebase != null){
-                   userFromRoom =  roomDb.addUserInfoDatabase(userFromFirebase)
-                }
+                var userFromRoom: UserDetails = roomDb.addUserInfoDatabase(userFromFirebase)
                 userFromRoom
             } catch (e: Exception) {
                 Log.e("Database", "Database add error")
@@ -31,13 +31,13 @@ object DatabaseService {
         }
     }
 
-    suspend fun addNewUserInfoDatabase(context : Context, user : UserDetails) : UserDetails?{
-        return withContext(Dispatchers.IO){
-            try{
+    suspend fun addNewUserInfoDatabase(context: Context, user: UserDetails): UserDetails? {
+        return withContext(Dispatchers.IO) {
+            try {
                 FirebaseDatabaseService.addUserInfoDatabase(user)
                 var userFromRoom = roomDb.addUserInfoDatabase(user)
                 userFromRoom
-            }catch (e : Exception){
+            } catch (e: Exception) {
                 Log.e("Database", "Database add error")
                 e.printStackTrace()
                 null
@@ -45,7 +45,7 @@ object DatabaseService {
         }
     }
 
-    suspend fun getUserData(uid : Long) : UserDetails? {
+    suspend fun getUserData(uid: Long): UserDetails? {
         return withContext(Dispatchers.IO) {
             try {
                 var user = roomDb.getUserData(uid)
@@ -58,29 +58,29 @@ object DatabaseService {
         }
     }
 
-    suspend fun addCloudDataToLocalDB(context : Context , user: UserDetails) : Boolean {
-        return withContext(Dispatchers.IO){
-            if(NetworkService.isNetworkConnected(context)){
+    suspend fun addCloudDataToLocalDB(user: UserDetails): Boolean {
+        return withContext(Dispatchers.IO) {
+            if (NetworkService.isNetworkConnected(context)) {
                 val noteListFromCloud = FirebaseDatabaseService.getUserNotes(user)
                 if (noteListFromCloud != null) {
-                    for( i in noteListFromCloud){
+                    for (i in noteListFromCloud) {
                         roomDb.addNewNote(i)
                     }
                 }
                 true
-            }else{
+            } else {
                 false
             }
         }
     }
 
-    suspend fun addNewNote( context: Context, noteInfo: NoteInfo, user : UserDetails): Boolean {
+    suspend fun addNewNote(noteInfo: NoteInfo, user: UserDetails): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                if(NetworkService.isNetworkConnected(context)){
-                    var note =FirebaseDatabaseService.addNewNote(noteInfo, user)
+                if (NetworkService.isNetworkConnected(context)) {
+                    var note = FirebaseDatabaseService.addNewNote(noteInfo, user)
                     roomDb.addNewNote(note)
-                }else{
+                } else {
                     roomDb.addNewNote(noteInfo, false)
                 }
                 true
@@ -89,7 +89,6 @@ object DatabaseService {
                 e.printStackTrace()
                 false
             }
-
         }
     }
 
@@ -106,10 +105,10 @@ object DatabaseService {
         }
     }
 
-    suspend fun getNotesFromCloud( user : UserDetails):List<NoteInfo>? {
+    suspend fun getNotesFromCloud(user: UserDetails): List<NoteInfo>? {
         return try {
             return withContext(Dispatchers.IO) {
-                var notesList =  FirebaseDatabaseService.getUserNotes(user)
+                var notesList = FirebaseDatabaseService.getUserNotes(user)
                 notesList as List<NoteInfo>
             }
         } catch (ex: FirebaseException) {
@@ -118,10 +117,10 @@ object DatabaseService {
         }
     }
 
-    suspend fun updateUserNotes( context: Context, noteInfo: NoteInfo, user: UserDetails): Boolean {
+    suspend fun updateUserNotes(noteInfo: NoteInfo, user: UserDetails): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                if(NetworkService.isNetworkConnected(context)){
+                if (NetworkService.isNetworkConnected(context)) {
                     roomDb.updateUserNotes(noteInfo)
                     FirebaseDatabaseService.updateUserNotes(noteInfo, user)
                 } else {
@@ -136,10 +135,10 @@ object DatabaseService {
         }
     }
 
-    suspend fun deleteUserNotes( context: Context, noteInfo: NoteInfo): Boolean {
+    suspend fun deleteUserNotes(noteInfo: NoteInfo): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                if(NetworkService.isNetworkConnected(context)){
+                if (NetworkService.isNetworkConnected(context)) {
                     roomDb.deleteUserNote(noteInfo)
                     FirebaseDatabaseService.deleteUserNotes(noteInfo)
                 } else {
@@ -154,10 +153,10 @@ object DatabaseService {
     }
 
     suspend fun getOpCode(noteInfo: NoteInfo): Int {
-        return withContext(Dispatchers.IO){
-            var opCode : Int = try {
+        return withContext(Dispatchers.IO) {
+            var opCode: Int = try {
                 roomDb.getOperationCode(noteInfo)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 Log.e("DatabaseService", "OpCode fetch errorr")
                 -1
             }
@@ -166,27 +165,25 @@ object DatabaseService {
     }
 
     suspend fun clearNoteAndOpTable() {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             roomDb.clearNoteAndOp()
         }
-
     }
 
     suspend fun clearAllTables() {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             roomDb.clearAllTables()
         }
     }
 
-    suspend fun addNewNoteToRoomDb( noteInfo: NoteInfo, user: UserDetails) {
+    suspend fun addNewNoteToRoomDb(noteInfo: NoteInfo, user: UserDetails) {
         return withContext(Dispatchers.IO) {
             try {
-                    roomDb.addNewNote(noteInfo)
+                roomDb.addNewNote(noteInfo)
             } catch (e: Exception) {
                 Log.e("Database service", "Add new note failed")
                 e.printStackTrace()
             }
-
         }
     }
 }

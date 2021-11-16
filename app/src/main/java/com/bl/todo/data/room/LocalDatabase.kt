@@ -22,7 +22,7 @@ abstract class LocalDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun noteDao(): NoteDao
-    abstract fun opDao() : OpDao
+    abstract fun opDao(): OpDao
 
     companion object {
         @Volatile

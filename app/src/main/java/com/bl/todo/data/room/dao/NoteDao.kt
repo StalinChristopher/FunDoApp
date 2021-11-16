@@ -7,10 +7,10 @@ import com.bl.todo.data.room.entities.NoteEntity
 interface NoteDao {
 
     @Insert
-    suspend fun addNewNote(note : NoteEntity) : Long
+    suspend fun addNewNote(note: NoteEntity): Long
 
     @Query("select * from notes_table")
-    suspend fun getUserNotes() : List<NoteEntity>
+    suspend fun getUserNotes(): List<NoteEntity>
 
     @Update
     suspend fun updateUserNotes(note: NoteEntity)
@@ -18,9 +18,8 @@ interface NoteDao {
     @Delete
     suspend fun deleteUserNotes(note: NoteEntity)
 
-    @Query( "delete from notes_table")
+    @Query("delete from notes_table")
     suspend fun clearNoteTable()
-
 
 
 }

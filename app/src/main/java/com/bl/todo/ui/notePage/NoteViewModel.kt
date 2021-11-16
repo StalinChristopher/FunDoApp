@@ -5,11 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bl.todo.data.wrapper.NewNote
 import com.bl.todo.data.services.DatabaseService
-import com.bl.todo.data.wrapper.NoteInfo
-import com.bl.todo.data.wrapper.UserDetails
-import com.bl.todo.util.SharedPref
+import com.bl.todo.ui.wrapper.NoteInfo
+import com.bl.todo.ui.wrapper.UserDetails
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -26,42 +24,42 @@ class NoteViewModel : ViewModel() {
     private val _profileData = MutableLiveData<UserDetails>()
     val profileData = _profileData as LiveData<UserDetails>
 
-    fun addNoteToDb(context : Context, note : NoteInfo, user : UserDetails){
+    fun addNoteToDb(context: Context, note: NoteInfo, user: UserDetails) {
         viewModelScope.launch {
             val cal = Calendar.getInstance()
             var dateTime = cal.time
             note.dateModified = dateTime
-            var result = DatabaseService.addNewNote( context, noteInfo = note,user)
-            if(result) {
+            var result = DatabaseService.getInstance(context).addNewNote(noteInfo = note, user)
+            if (result) {
                 _addNewNoteStatus.postValue(result)
             }
         }
     }
 
-    fun updateNoteToDb( context: Context, noteInfo: NoteInfo,user: UserDetails){
+    fun updateNoteToDb(context: Context, noteInfo: NoteInfo, user: UserDetails) {
         viewModelScope.launch {
             val cal = Calendar.getInstance()
             var dateTime = cal.time
             noteInfo.dateModified = dateTime
-            var resultStatus = DatabaseService.updateUserNotes( context, noteInfo,user)
-            if(resultStatus){
+            var resultStatus = DatabaseService.getInstance(context).updateUserNotes(noteInfo, user)
+            if (resultStatus) {
                 _updateNoteStatus.postValue(resultStatus)
             }
         }
     }
 
-    fun deleteNoteToDb(context: Context, noteInfo: NoteInfo){
+    fun deleteNoteToDb(context: Context, noteInfo: NoteInfo) {
         viewModelScope.launch {
-            var status = DatabaseService.deleteUserNotes(context, noteInfo)
-            if(status)
+            var status = DatabaseService.getInstance(context).deleteUserNotes(noteInfo)
+            if (status)
                 _deleteNoteStatus.postValue(status)
         }
     }
 
-    fun getUserData(uid : Long){
+    fun getUserData(context: Context, uid: Long) {
         viewModelScope.launch {
-            var userDetails = DatabaseService.getUserData(uid)
-            if(userDetails != null){
+            var userDetails = DatabaseService.getInstance(context).getUserData(uid)
+            if (userDetails != null) {
                 _profileData.postValue(userDetails)
             }
         }

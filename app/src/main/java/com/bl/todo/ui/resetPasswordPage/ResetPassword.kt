@@ -8,12 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.ResetpasswordFragmentBinding
-import com.bl.todo.ui.mainActivity.SharedViewModel
+import com.bl.todo.ui.SharedViewModel
 
-class ResetPassword : Fragment(R.layout.resetpassword_fragment){
+class ResetPassword : Fragment(R.layout.resetpassword_fragment) {
     private lateinit var binding: ResetpasswordFragmentBinding
-    private lateinit var sharedViewModel : SharedViewModel
-    private lateinit var resetPasswordViewModel : ResetPasswordViewModel
+    private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var resetPasswordViewModel: ResetPasswordViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,11 +34,19 @@ class ResetPassword : Fragment(R.layout.resetpassword_fragment){
     }
 
     private fun resetPasswordObserver() {
-        resetPasswordViewModel.resetPasswordStatus.observe(viewLifecycleOwner){
-            if(it){
-                Toast.makeText(requireContext(),getString(R.string.toast_emailSent_resetPassword),Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(requireContext(),getString(R.string.toastError_noAccountAssociated),Toast.LENGTH_SHORT).show()
+        resetPasswordViewModel.resetPasswordStatus.observe(viewLifecycleOwner) {
+            if (it) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toast_emailSent_resetPassword),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toastError_noAccountAssociated),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

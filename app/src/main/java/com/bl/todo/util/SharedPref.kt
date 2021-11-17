@@ -5,38 +5,38 @@ import android.content.SharedPreferences
 
 object SharedPref {
 
-    private lateinit var sharedPreferences : SharedPreferences
-    private lateinit var sharedPrefEdit : SharedPreferences.Editor
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPrefEdit: SharedPreferences.Editor
 
-    fun initializePref(context: Context){
-        sharedPreferences = context.getSharedPreferences("sharedPrefFile",Context.MODE_PRIVATE)
+    fun initializePref(context: Context) {
+        sharedPreferences = context.getSharedPreferences("sharedPrefFile", Context.MODE_PRIVATE)
         sharedPrefEdit = sharedPreferences.edit()
     }
 
-    fun addKeyValue(key : String,value : String){
-        sharedPrefEdit.putString(key,value)
+    fun addKeyValue(key: String, value: String) {
+        sharedPrefEdit.putString(key, value)
         sharedPrefEdit.apply()
     }
 
-    fun addUserId(value : Long){
-        sharedPrefEdit.putLong("uid",value)
+    fun addUserId(value: Long) {
+        sharedPrefEdit.putLong("uid", value)
         sharedPrefEdit.apply()
     }
 
-    fun getUserId() : Long{
+    fun getUserId(): Long {
         return sharedPreferences.getLong("uid", 0L)
     }
 
-    fun getValue(key : String) : String? {
+    fun getValue(key: String): String? {
         return sharedPreferences.getString(key, key)
     }
 
-    fun removeKey(key: String){
+    fun removeKey(key: String) {
         sharedPrefEdit.remove(key)
         sharedPrefEdit.apply()
     }
 
-    fun clearAll(){
+    fun clearAll() {
         sharedPrefEdit.clear()
         sharedPrefEdit.apply()
     }

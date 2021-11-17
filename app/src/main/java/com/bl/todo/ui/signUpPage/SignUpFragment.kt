@@ -9,21 +9,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SignupFragmentBinding
-import com.bl.todo.data.wrapper.UserDetails
+import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.util.Utilities
-import com.bl.todo.ui.mainActivity.SharedViewModel
-import com.google.android.material.textfield.TextInputEditText
+import com.bl.todo.ui.SharedViewModel
 
 
 class SignUpFragment : Fragment(R.layout.signup_fragment) {
-    private lateinit var dialog  : Dialog
-    private lateinit var binding : SignupFragmentBinding
+    private lateinit var dialog: Dialog
+    private lateinit var binding: SignupFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var signUpViewModel: SignUpViewModel
 
-    companion object{
+    companion object {
 
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
@@ -45,29 +45,50 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
     }
 
     private fun signup() {
-        var userName = binding.signupUsername
-        var email = binding.signupEmail
-        var phone  = binding.signupMobile
-        var password = binding.signupPassword
-        var confirmPassword = binding.signupConfirmPassword
-        var user = UserDetails(userName = userName.text.toString(),email = email.text.toString(),
-            phone = phone.text.toString(), fUid = null)
-        if(Utilities.signUpCredentialsValidator(userName, email, phone, password, confirmPassword,requireContext())){
-            signUpViewModel.signUpWithEmailAndPassword(user,password.text.toString())
-        }else{
+        val userName = binding.signupUsername
+        val email = binding.signupEmail
+        val phone = binding.signupMobile
+        val password = binding.signupPassword
+        val confirmPassword = binding.signupConfirmPassword
+        val user = UserDetails(
+            userName = userName.text.toString(), email = email.text.toString(),
+            phone = phone.text.toString(), fUid = null
+        )
+        if (Utilities.signUpCredentialsValidator(
+                userName,
+                email,
+                phone,
+                password,
+                confirmPassword,
+                requireContext()
+            )
+        ) {
+            signUpViewModel.signUpWithEmailAndPassword(
+                requireContext(),
+                user,
+                password.text.toString()
+            )
+        } else {
             dialog.dismiss()
         }
     }
 
     private fun signUpObservers() {
-        signUpViewModel.signUpStatus.observe(viewLifecycleOwner){
-            if(it){
-                Toast.makeText(requireContext(),getString(R.string.toast_userSignedUp),Toast.LENGTH_SHORT).show()
+        signUpViewModel.signUpStatus.observe(viewLifecycleOwner) {
+            if (it) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toast_userSignedUp),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
                 sharedViewModel.setGotoHomePageStatus(true)
-            }
-            else{
-                Toast.makeText(requireContext(),getString(R.string.toastError_account_not_created),Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toastError_account_not_created),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
             }
         }

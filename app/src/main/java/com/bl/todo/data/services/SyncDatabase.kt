@@ -2,31 +2,36 @@ package com.bl.todo.data.services
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.util.DELETE_OP_CODE
+import com.bl.todo.util.NetworkService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class SyncDatabase(private val context: Context) {
 
     suspend fun syncUp(user: UserDetails) {
-        val latestNotes = getLatestNotesFromCloud(user)
-        DatabaseService.getInstance(context).clearNoteAndOpTable()
-        latestNotes.forEach {
-            DatabaseService.getInstance(context).addNewNoteToRoomDb(it, user)
+        if(NetworkService.isNetworkConnected(context)){
+            val latestNotes = getLatestNotesFromCloud(user)
+            DatabaseService.getInstance(context).clearNoteAndOpTable()
+            latestNotes.forEach {
+                DatabaseService.getInstance(context).addNewNoteToRoomDb(it, user)
+            }
+        } else {
+            Toast.makeText(context,"No internet connection", Toast.LENGTH_SHORT).show()
         }
+
     }
 
     private suspend fun getLatestNotesFromCloud(user: UserDetails): List<NoteInfo> {
         return withContext(Dispatchers.IO) {
-            Log.e("Sync", "getLatestMethod")
-            val roomNotesList = DatabaseService.getInstance(context).getUserNotes()
-            val tempNotesList = mutableListOf<NoteInfo>()
-            if (roomNotesList != null) {
-                tempNotesList.addAll(roomNotesList)
-            }
+            val tempNotesList = DatabaseService.getInstance(context)
+                .getUserNotes()?.toMutableList() ?: mutableListOf()
             val cloudNotesList = DatabaseService.getInstance(context).getNotesFromCloud(user)
+            Log.i("Sync", "temp : $tempNotesList")
+            Log.i("Sync", "cloud : $cloudNotesList")
             val latestNotes = mutableListOf<NoteInfo>()
             if (cloudNotesList != null) {
                 for (cloudNote in cloudNotesList) {

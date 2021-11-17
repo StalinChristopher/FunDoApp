@@ -24,10 +24,10 @@ class LoginViewModel : ViewModel() {
     val userData = _userData as LiveData<Boolean>
 
     fun loginWithEmailAndPassword(context: Context, email: String, password: String) {
-        FirebaseAuthentication.loginWithEmailAndPassword(email, password) { user ->
-            if (user.loginStatus) {
+        FirebaseAuthentication.loginWithEmailAndPassword(email, password) {
+            if (it.loginStatus) {
                 viewModelScope.launch {
-                    var user = DatabaseService.getInstance(context).addUserInfoDatabase(user)
+                    var user = DatabaseService.getInstance(context).addUserInfoDatabase(it)
                     if (user != null) {
                         SharedPref.addUserId(user.uid)
                         DatabaseService.getInstance(context).addCloudDataToLocalDB(user)
@@ -35,7 +35,7 @@ class LoginViewModel : ViewModel() {
                     }
                 }
             } else {
-                _loginStatus.value = user
+                _loginStatus.value = it
             }
         }
     }

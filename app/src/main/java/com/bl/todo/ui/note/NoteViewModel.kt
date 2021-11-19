@@ -1,4 +1,4 @@
-package com.bl.todo.ui.notePage
+package com.bl.todo.ui.note
 
 import android.content.Context
 import androidx.lifecycle.LiveData

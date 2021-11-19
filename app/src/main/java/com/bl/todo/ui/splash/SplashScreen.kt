@@ -1,4 +1,4 @@
-package com.bl.todo.ui.splashScreen
+package com.bl.todo.ui.splash
 
 import android.content.Context
 import android.os.Bundle
@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SplashScreenBinding
-import com.bl.todo.auth.service.FirebaseAuthentication
 import com.bl.todo.ui.SharedViewModel
 import com.bl.todo.util.SharedPref
 

@@ -2,6 +2,7 @@ package com.bl.todo.data.services
 
 import android.content.Context
 import android.util.Log
+import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.util.NetworkService
@@ -183,6 +184,55 @@ class DatabaseService(private val context: Context) {
             } catch (e: Exception) {
                 Log.e("Database service", "Add new note failed")
                 e.printStackTrace()
+            }
+        }
+    }
+
+    suspend fun addNewLabel(label: LabelDetails, userDetails: UserDetails): LabelDetails? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val labelFb =  FirebaseDatabaseService.addNewLabel(label,userDetails)
+                labelFb
+            } catch (e : java.lang.Exception) {
+                Log.e("Database service", "Add new label failed")
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun getAllLabels(user: UserDetails) : ArrayList<LabelDetails>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val labelList = FirebaseDatabaseService.getLabels(user)
+                labelList
+            } catch (e : Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun deleteLabel(label: LabelDetails, userDetails: UserDetails): LabelDetails? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val deletedLabel = FirebaseDatabaseService.deleteLabel(label, userDetails)
+                deletedLabel
+            } catch (e : Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun editLabel(label: LabelDetails, userDetails: UserDetails): LabelDetails? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val editLabel = userDetails?.let { FirebaseDatabaseService.updateLabel(label, it) }
+                editLabel
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
             }
         }
     }

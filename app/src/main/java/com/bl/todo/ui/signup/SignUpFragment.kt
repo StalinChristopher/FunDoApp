@@ -1,4 +1,4 @@
-package com.bl.todo.ui.signUpPage
+package com.bl.todo.ui.signup
 
 import android.app.Dialog
 import android.os.Bundle
@@ -20,10 +20,6 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var signUpViewModel: SignUpViewModel
 
-    companion object {
-
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
@@ -33,14 +29,14 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         signUpViewModel = ViewModelProvider(this)[SignUpViewModel::class.java]
         binding.signupLogin.setOnClickListener {
-            sharedViewModel.setLoginPageStatus(true)
+//            sharedViewModel.setLoginPageStatus(true)
+            activity?.supportFragmentManager?.popBackStack()
         }
 
         binding.signupSubmit.setOnClickListener {
             dialog.show()
             signup()
         }
-
         signUpObservers()
     }
 
@@ -93,6 +89,4 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
             }
         }
     }
-
-
 }

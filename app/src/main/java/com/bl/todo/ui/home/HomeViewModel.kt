@@ -1,4 +1,4 @@
-package com.bl.todo.ui.homePage
+package com.bl.todo.ui.home
 
 import android.content.Context
 import android.graphics.Bitmap

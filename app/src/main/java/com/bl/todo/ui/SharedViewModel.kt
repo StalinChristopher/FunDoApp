@@ -32,6 +32,9 @@ class SharedViewModel : ViewModel() {
     private val _gotoExistingNoteFragmentStatus = MutableLiveData<NoteInfo>()
     val gotoExistingNoteFragmentStatus = _gotoExistingNoteFragmentStatus as LiveData<NoteInfo>
 
+    private val _gotoLabelCreationFragmentStatus = MutableLiveData<Boolean>()
+    val gotoLabelCreationFragmentStatus = _gotoLabelCreationFragmentStatus as LiveData<Boolean>
+
     fun setGotoHomePageStatus(status: Boolean) {
         _gotoHomePageStatus.value = status
     }
@@ -64,5 +67,9 @@ class SharedViewModel : ViewModel() {
         viewModelScope.launch {
             FirebaseAuthentication.logOut(context)
         }
+    }
+
+    fun setLabelCreationFragmentStatus(status : Boolean) {
+        _gotoLabelCreationFragmentStatus.value = status
     }
 }

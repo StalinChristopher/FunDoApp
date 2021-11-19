@@ -1,4 +1,4 @@
-package com.bl.todo.ui.resetPasswordPage
+package com.bl.todo.ui.resetpassword
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

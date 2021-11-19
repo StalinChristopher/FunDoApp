@@ -1,4 +1,4 @@
-package com.bl.todo.ui.loginPage
+package com.bl.todo.ui.login
 
 import android.content.Context
 import android.util.Log

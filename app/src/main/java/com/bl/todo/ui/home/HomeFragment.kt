@@ -1,4 +1,4 @@
-package com.bl.todo.ui.homePage
+package com.bl.todo.ui.home
 
 import android.Manifest
 import android.app.Dialog
@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.SearchView
-import com.bl.todo.ui.homePage.adapter.MyAdapter
+import com.bl.todo.ui.home.adapter.NoteAdapter
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 
@@ -43,7 +43,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     private lateinit var pleaseWaitDialog: Dialog
     private var menu: Menu? = null
     private lateinit var recyclerView: RecyclerView
-    private lateinit var myAdapter: MyAdapter
+    private lateinit var noteAdapter: NoteAdapter
     private var userId = 0L
 
     companion object {
@@ -77,7 +77,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             sharedViewModel.setNoteFragmentPageStatus(true)
         }
 
-        myAdapter.setOnItemClickListener(object : MyAdapter.OnItemClickListener {
+        noteAdapter.setOnItemClickListener(object : NoteAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 var note = noteList[position]
                 Log.i("HomeNote", "$note")
@@ -91,11 +91,11 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     }
 
     private fun initializeRecyclerView() {
-        myAdapter = MyAdapter(noteList)
+        noteAdapter = NoteAdapter(noteList)
         recyclerView = binding.HomeRecyclerView
         recyclerView.layoutManager = StaggeredGridLayoutManager(2, 1)
         recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = myAdapter
+        recyclerView.adapter = noteAdapter
         homeViewModel.getNotesFromUser(requireContext())
     }
 
@@ -114,7 +114,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             if (it != null) {
                 noteList.clear()
                 noteList.addAll(it)
-                myAdapter.notifyDataSetChanged()
+                noteAdapter.notifyDataSetChanged()
             }
         }
 
@@ -225,8 +225,8 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                myAdapter.filter.filter(newText)
-                myAdapter.notifyDataSetChanged()
+                noteAdapter.filter.filter(newText)
+                noteAdapter.notifyDataSetChanged()
                 return false
             }
         })

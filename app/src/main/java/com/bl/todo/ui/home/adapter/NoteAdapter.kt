@@ -1,4 +1,4 @@
-package com.bl.todo.ui.homePage.adapter
+package com.bl.todo.ui.home.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +11,8 @@ import com.bl.todo.ui.wrapper.NoteInfo
 import com.google.android.material.textview.MaterialTextView
 import kotlin.collections.ArrayList
 
-class MyAdapter(private val notesList: ArrayList<NoteInfo>) :
-    RecyclerView.Adapter<MyAdapter.MyViewHolder>() , Filterable {
+class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
+    RecyclerView.Adapter<NoteAdapter.MyViewHolder>() , Filterable {
 
     private lateinit var mListener: OnItemClickListener
     private var adapterNotesList : ArrayList<NoteInfo> = ArrayList()

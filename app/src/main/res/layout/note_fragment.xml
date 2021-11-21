@@ -21,11 +21,21 @@
             android:src="@drawable/back_key" />
 
         <ImageButton
+            android:id="@+id/archiveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/noteDeleteButton"
+            android:background="@color/blue_200"
+            android:src="@drawable/archive_icon"
+            android:tag="archiveNotSet" />
+
+        <ImageButton
             android:id="@+id/noteDeleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/blue_200"
             android:layout_alignParentRight="true"
+            android:background="@color/blue_200"
             android:src="@drawable/delete_icon" />
     </RelativeLayout>
 

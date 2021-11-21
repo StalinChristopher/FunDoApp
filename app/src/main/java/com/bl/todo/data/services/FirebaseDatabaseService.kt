@@ -57,7 +57,7 @@ object FirebaseDatabaseService {
 
     suspend fun addNewNote(noteInfo: NoteInfo, userDetails: UserDetails): NoteInfo {
         var dateTime = DateTypeConverters().fromOffsetDateTime(noteInfo.dateModified)
-        var databaseNewNote = FirebaseNewNote(noteInfo.title, noteInfo.content, dateTime)
+        var databaseNewNote = FirebaseNewNote(noteInfo.title, noteInfo.content, dateTime, noteInfo.archived)
         return suspendCoroutine { callback ->
             val userId = userDetails.fUid.toString()
             val autoId = db.collection("users").document(userId)
@@ -89,10 +89,11 @@ object FirebaseDatabaseService {
                                 var title = noteMap["title"].toString()
                                 var content = noteMap["content"].toString()
                                 var dateModified = noteMap["dateModified"].toString()
+                                var archived = noteMap["archived"] as Boolean
                                 var dateTime = DateTypeConverters().toOffsetDateTime(dateModified)
                                 var key = item.id
                                 var note =
-                                    NoteInfo(title, content, fnid = key, dateModified = dateTime)
+                                    NoteInfo(title, content, fnid = key, dateModified = dateTime, archived = archived)
                                 noteList.add(note)
                             }
                             callback.resumeWith(Result.success(noteList))
@@ -114,7 +115,8 @@ object FirebaseDatabaseService {
         val noteMap = mapOf(
             "title" to noteInfo.title,
             "content" to noteInfo.content,
-            "dateModified" to dateTime
+            "dateModified" to dateTime,
+            "archived" to noteInfo.archived
         )
         return suspendCoroutine { callback ->
             db.collection("users").document(user.fUid.toString())

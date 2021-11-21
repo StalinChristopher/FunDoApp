@@ -13,6 +13,11 @@
             android:id="@+id/nav_remainders_item"
             android:title="@string/navbar_reminder_buttonText"
             android:icon="@drawable/nav_reminder_icon"/>
+
+        <item
+            android:id="@+id/nav_archived_item"
+            android:title="Archived"
+            android:icon="@drawable/archive_icon"/>
     </group>
 
     <group android:id="@+id/labelsNavGroup">
@@ -27,7 +32,5 @@
         android:id="@+id/nav_logout_item"
         android:title="@string/logout_buttonText"
         android:icon="@drawable/nav_logout_icon"/>
-
-
 
 </menu>

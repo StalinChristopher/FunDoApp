@@ -99,6 +99,7 @@ object Utilities {
         bundle.putString("noteKey", noteInfo.fnid)
         bundle.putLong("sqlNid", noteInfo.nid)
         bundle.putString("dateModified", dateTIme)
+        bundle.putBoolean("archived",noteInfo.archived)
         return bundle
     }
 

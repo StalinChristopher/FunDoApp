@@ -236,4 +236,17 @@ class DatabaseService(private val context: Context) {
             }
         }
     }
+
+    suspend fun getArchivedNotes(): ArrayList<NoteInfo>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                var noteList = roomDb.getArchivedNotes()
+                noteList
+            } catch (e: Exception) {
+                Log.e("Database", "Read archived notes for the user failed")
+                e.printStackTrace()
+                null
+            }
+        }
+    }
 }

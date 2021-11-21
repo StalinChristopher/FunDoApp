@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
@@ -25,6 +26,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     private var bundleFnid: String = ""
     private var bundleDateModified: Date? = null
     private var bundleNid: Long? = null
+    private var bundleArchived : Boolean? = null
     private var userId = 0L
 
     companion object {
@@ -42,6 +44,43 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         userId = SharedPref.getUserId()
         noteViewModel.getUserData(requireContext(), userId)
         setNoteContentFromBundle()
+        if(bundleNid == null) {
+            binding.archiveButton.visibility = View.GONE
+        }
+        archivedNote()
+    }
+
+    private fun archivedNote() {
+        if(bundleArchived == false) {
+            binding.archiveButton.setImageDrawable(
+                AppCompatResources.getDrawable( requireContext(), R.drawable.archive_icon))
+            binding.archiveButton.tag = "archiveNotSet"
+        } else {
+            binding.archiveButton.setImageDrawable(
+                AppCompatResources.getDrawable( requireContext(), R.drawable.unarchive_icon))
+            binding.archiveButton.tag = "archiveSet"
+        }
+        binding.archiveButton.setOnClickListener {
+            if(bundleArchived == false) {
+                val title = binding.noteTitle.text.toString()
+                val content = binding.noteNotes.text.toString()
+                var noteInfo = NoteInfo(
+                    title = title, content = content,
+                    fnid = bundleFnid, dateModified = bundleDateModified,
+                    nid = bundleNid!!, archived = true
+                )
+                noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
+            } else if(bundleArchived == true){
+                val title = binding.noteTitle.text.toString()
+                val content = binding.noteNotes.text.toString()
+                var noteInfo = NoteInfo(
+                    title = title, content = content,
+                    fnid = bundleFnid, dateModified = bundleDateModified,
+                    nid = bundleNid!!, archived = false
+                )
+                noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
+            }
+        }
     }
 
     private fun setNoteContentFromBundle() {
@@ -49,6 +88,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         bundleTitle = arguments?.getString("title")
         bundleContent = arguments?.getString("content")
         bundleFnid = arguments?.getString("noteKey").toString()
+        bundleArchived = arguments?.getBoolean("archived")
         var dateTime = DateTypeConverters().toOffsetDateTime(arguments?.getString("dateModified"))
         bundleDateModified = dateTime
         binding.noteTitle.setText(bundleTitle)
@@ -70,7 +110,11 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
 
         noteViewModel.updateNoteStatus.observe(viewLifecycleOwner) {
             if (it) {
-                sharedViewModel.setGotoHomePageStatus(true)
+                if(bundleArchived == true) {
+                    sharedViewModel.setArchivedFragmentStatus(true)
+                } else {
+                    sharedViewModel.setGotoHomePageStatus(true)
+                }
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -103,8 +147,8 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         }
 
         binding.noteSaveButton.setOnClickListener {
-            var title = binding.noteTitle.text.toString()
-            var content = binding.noteNotes.text.toString()
+            val title = binding.noteTitle.text.toString()
+            val content = binding.noteNotes.text.toString()
             if (bundleNid == null) {
                 if (title.isEmpty() && content.isEmpty()) {
                     Toast.makeText(
@@ -124,7 +168,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                 var noteInfo = NoteInfo(
                     title = title, content = content,
                     fnid = bundleFnid, dateModified = bundleDateModified,
-                    nid = bundleNid!!
+                    nid = bundleNid!!, archived = bundleArchived!!
                 )
                 noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
             }

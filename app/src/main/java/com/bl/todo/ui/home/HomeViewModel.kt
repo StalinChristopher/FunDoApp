@@ -30,6 +30,9 @@ class HomeViewModel : ViewModel() {
     private val _syncStatus = MutableLiveData<Boolean>()
     val syncStatus = _syncStatus as LiveData<Boolean>
 
+    private val _archivedNotes = MutableLiveData<ArrayList<NoteInfo>>()
+    val archivedNotes = _archivedNotes as LiveData<ArrayList<NoteInfo>>
+
     fun logOutFromHomePage(context: Context) {
         viewModelScope.launch {
             FirebaseAuthentication.logOut(context)
@@ -63,7 +66,7 @@ class HomeViewModel : ViewModel() {
 
     fun getNotesFromUser(context: Context) {
         viewModelScope.launch {
-            var resultNotes = DatabaseService.getInstance(context).getUserNotes()
+            val resultNotes = DatabaseService.getInstance(context).getUserNotes()
             if (resultNotes != null) {
                 _userNotes.postValue(resultNotes)
             }
@@ -84,6 +87,15 @@ class HomeViewModel : ViewModel() {
             SyncDatabase(context).syncUp(user)
             _syncStatus.postValue(true)
 
+        }
+    }
+
+    fun getArchivedNotes(context: Context) {
+        viewModelScope.launch {
+            val resultNotes = DatabaseService.getInstance(context).getArchivedNotes()
+            if(resultNotes != null) {
+                _archivedNotes.postValue(resultNotes)
+            }
         }
     }
 }

@@ -50,7 +50,8 @@ class RoomDatabaseService(context: Context) {
         return withContext(Dispatchers.IO) {
             var noteEntity = NoteEntity(
                 fNoteId = noteInfo.fnid, title = noteInfo.title,
-                content = noteInfo.content, dateModified = noteInfo.dateModified
+                content = noteInfo.content, dateModified = noteInfo.dateModified,
+                archived = noteInfo.archived
             )
             noteInfo.nid = noteDao.addNewNote(noteEntity)
             if (!onlineStatus) {
@@ -71,7 +72,8 @@ class RoomDatabaseService(context: Context) {
                     content = i.content,
                     fnid = i.fNoteId,
                     nid = i.id,
-                    dateModified = i.dateModified
+                    dateModified = i.dateModified,
+                    archived = i.archived
                 )
                 notesList.add(noteInfo)
             }
@@ -84,7 +86,8 @@ class RoomDatabaseService(context: Context) {
             Log.i("updateRoom", "$noteInfo")
             var noteEntity = NoteEntity(
                 fNoteId = noteInfo.fnid, title = noteInfo.title,
-                content = noteInfo.content, dateModified = noteInfo.dateModified, id = noteInfo.nid
+                content = noteInfo.content, dateModified = noteInfo.dateModified, id = noteInfo.nid,
+                archived = noteInfo.archived
             )
             noteDao.updateUserNotes(noteEntity)
             if (!onlineStatus) {
@@ -99,7 +102,8 @@ class RoomDatabaseService(context: Context) {
         return withContext(Dispatchers.IO) {
             var noteEntity = NoteEntity(
                 fNoteId = noteInfo.fnid, title = noteInfo.title,
-                content = noteInfo.content, dateModified = noteInfo.dateModified, id = noteInfo.nid
+                content = noteInfo.content, dateModified = noteInfo.dateModified, id = noteInfo.nid,
+                archived = noteInfo.archived
             )
             noteDao.deleteUserNotes(noteEntity)
             if (!onlineStatus) {
@@ -131,5 +135,24 @@ class RoomDatabaseService(context: Context) {
 
     fun clearAllTables() {
         localDatabase.clearAllTables()
+    }
+
+    suspend fun getArchivedNotes(): ArrayList<NoteInfo> {
+        var notesList: ArrayList<NoteInfo> = ArrayList()
+        return withContext(Dispatchers.IO) {
+            var resultList: ArrayList<NoteEntity> = noteDao.getArchivedNotes() as ArrayList<NoteEntity>
+            for (i in resultList) {
+                var noteInfo = NoteInfo(
+                    title = i.title,
+                    content = i.content,
+                    fnid = i.fNoteId,
+                    nid = i.id,
+                    dateModified = i.dateModified,
+                    archived = i.archived
+                )
+                notesList.add(noteInfo)
+            }
+            notesList
+        }
     }
 }

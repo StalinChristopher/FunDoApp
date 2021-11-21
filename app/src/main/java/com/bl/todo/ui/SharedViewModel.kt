@@ -35,6 +35,9 @@ class SharedViewModel : ViewModel() {
     private val _gotoLabelCreationFragmentStatus = MutableLiveData<Boolean>()
     val gotoLabelCreationFragmentStatus = _gotoLabelCreationFragmentStatus as LiveData<Boolean>
 
+    private val _gotoArchivedFragmentStatus = MutableLiveData<Boolean>()
+    val gotoArchivedFragmentStatus = _gotoArchivedFragmentStatus as LiveData<Boolean>
+
     fun setGotoHomePageStatus(status: Boolean) {
         _gotoHomePageStatus.value = status
     }
@@ -61,6 +64,10 @@ class SharedViewModel : ViewModel() {
 
     fun setExistingNoteFragmentStatus(noteInfo: NoteInfo) {
         _gotoExistingNoteFragmentStatus.value = noteInfo
+    }
+
+    fun setArchivedFragmentStatus(status : Boolean) {
+        _gotoArchivedFragmentStatus.value = status
     }
 
     fun logOutFromApp(context: Context) {

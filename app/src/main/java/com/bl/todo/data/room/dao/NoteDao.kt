@@ -9,7 +9,7 @@ interface NoteDao {
     @Insert
     suspend fun addNewNote(note: NoteEntity): Long
 
-    @Query("select * from notes_table")
+    @Query("select * from notes_table where archived = 0")
     suspend fun getUserNotes(): List<NoteEntity>
 
     @Update
@@ -20,6 +20,9 @@ interface NoteDao {
 
     @Query("delete from notes_table")
     suspend fun clearNoteTable()
+
+    @Query("select * from notes_table where archived = 1")
+    suspend fun getArchivedNotes() : List<NoteEntity>
 
 
 }

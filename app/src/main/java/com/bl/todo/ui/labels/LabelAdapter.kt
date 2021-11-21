@@ -57,6 +57,7 @@ class LabelAdapter(var context: Context, private val labelList : ArrayList<Label
                     currentItem.labelName = newLabelName.toString()
                     labelViewModel.editLabel(context, currentItem)
                 }
+                holder.labelEditText.clearFocus()
             }
         }
     }

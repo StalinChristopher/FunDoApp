@@ -34,7 +34,7 @@ import com.bl.todo.ui.home.adapter.NoteAdapter
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 
-class HomeFragment : Fragment(R.layout.home_fragment) {
+class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var homeViewModel: HomeViewModel
@@ -69,7 +69,9 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         setUserDetails()
         homeViewModel.getUserData(requireContext(), userId)
         allListeners()
-
+        if(archivedPage){
+            binding.homePageFloatingButton.visibility = View.GONE
+        }
     }
 
     private fun allListeners() {
@@ -96,7 +98,11 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         recyclerView.layoutManager = StaggeredGridLayoutManager(2, 1)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = noteAdapter
-        homeViewModel.getNotesFromUser(requireContext())
+        if(archivedPage) {
+            homeViewModel.getArchivedNotes(requireContext())
+        } else {
+            homeViewModel.getNotesFromUser(requireContext())
+        }
     }
 
     private fun observers() {
@@ -111,6 +117,14 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         }
 
         homeViewModel.userNotes.observe(viewLifecycleOwner) {
+            if (it != null) {
+                noteList.clear()
+                noteList.addAll(it)
+                noteAdapter.notifyDataSetChanged()
+            }
+        }
+
+        homeViewModel.archivedNotes.observe(viewLifecycleOwner) {
             if (it != null) {
                 noteList.clear()
                 noteList.addAll(it)

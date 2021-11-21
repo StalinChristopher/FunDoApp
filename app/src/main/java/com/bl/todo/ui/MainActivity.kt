@@ -89,12 +89,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         binding.navView.setNavigationItemSelectedListener {
             firstMenuItem.isChecked = false
             when (it.itemId) {
-                R.id.nav_notes_item -> {Toast.makeText(
-                    this,
-                    "Notes button clicked",
-                    Toast.LENGTH_SHORT
-                ).show()
-                sharedViewModel.setGotoHomePageStatus(true)}
+                R.id.nav_notes_item -> { sharedViewModel.setGotoHomePageStatus(true)}
                 R.id.nav_remainders_item -> Toast.makeText(
                     this,
                     "reminder button clicked",
@@ -103,6 +98,9 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
                 R.id.nav_logout_item -> {
                     sharedViewModel.logOutFromApp(this)
                     sharedViewModel.setLoginPageStatus(true)
+                }
+                R.id.nav_archived_item -> {
+                    sharedViewModel.setArchivedFragmentStatus(true)
                 }
                 R.id.createNewLabelNavItem -> {
                     sharedViewModel.setLabelCreationFragmentStatus(true)
@@ -156,6 +154,17 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
                 gotoLabelCreationPage()
             }
         })
+
+        sharedViewModel.gotoArchivedFragmentStatus.observe(this, {
+            if(it) {
+                gotoArchivedPage()
+            }
+        })
+    }
+
+    private fun gotoArchivedPage() {
+        Utilities.replaceFragment(supportFragmentManager,
+            R.id.fragmentContainerId, HomeFragment(true))
     }
 
     private fun gotoNotePage() {
@@ -172,7 +181,8 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
     }
 
     private fun gotoHomePage() {
-        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, HomeFragment())
+        Utilities.replaceFragment(supportFragmentManager,
+            R.id.fragmentContainerId, HomeFragment())
     }
 
     private fun gotoSplashScreen() {

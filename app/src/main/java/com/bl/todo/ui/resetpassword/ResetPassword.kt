@@ -1,4 +1,4 @@
-package com.bl.todo.ui.resetPasswordPage
+package com.bl.todo.ui.resetpassword
 
 import android.os.Bundle
 import android.view.View

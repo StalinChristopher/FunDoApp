@@ -1,4 +1,4 @@
-package com.bl.todo.ui.signUpPage
+package com.bl.todo.ui.signup
 
 import android.content.Context
 import androidx.lifecycle.LiveData

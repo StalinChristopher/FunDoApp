@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/singleItemCreateLabel"
+    android:background="@color/blue_200">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue_200"
+        android:tag="label"
+        android:src="@drawable/label_icon" />
+
+    <EditText
+        android:id="@+id/label_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@null"
+        android:layout_toStartOf="@id/editLabelButton"
+        android:layout_toEndOf="@id/deleteButton" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/editLabelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:backgroundTint="@color/blue_200"
+        android:tag="edit"
+        android:src="@drawable/edit_icon" />
+
+</RelativeLayout>

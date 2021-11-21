@@ -12,13 +12,11 @@ import com.bl.todo.data.room.DateTypeConverters
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.google.android.material.textfield.TextInputEditText
-import java.util.HashMap
+import java.util.*
 
 object Utilities {
     fun replaceFragment(fragmentManager: FragmentManager, fromFragment: Int, toFragment: Fragment) {
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(fromFragment, toFragment)
-        fragmentTransaction.commit()
+        fragmentManager.beginTransaction().replace(fromFragment, toFragment).commit()
     }
 
     fun signUpCredentialsValidator(
@@ -102,6 +100,10 @@ object Utilities {
         bundle.putLong("sqlNid", noteInfo.nid)
         bundle.putString("dateModified", dateTIme)
         return bundle
+    }
+
+    fun dateToString(date : Date?) : String {
+        return DateTypeConverters().fromOffsetDateTime(date).toString()
     }
 
 }

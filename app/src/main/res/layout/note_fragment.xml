@@ -44,10 +44,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/noteTitle"
-        android:textSize="16sp"
         android:layout_marginTop="17dp"
+        android:background="@color/blue_200"
         android:hint="@string/note_content_note"
-        android:background="@color/blue_200"/>
+        android:textSize="16sp" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/noteSaveButton"

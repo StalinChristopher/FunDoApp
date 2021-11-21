@@ -2,14 +2,14 @@ package com.bl.todo.data.services
 
 import android.util.Log
 import com.bl.todo.auth.service.FirebaseAuthentication
+import com.bl.todo.data.models.FirebaseLabel
 import com.bl.todo.data.models.FirebaseNewNote
 import com.bl.todo.data.models.FirebaseUser
 import com.bl.todo.data.room.DateTypeConverters
+import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.util.Utilities
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.suspendCoroutine
@@ -23,7 +23,6 @@ object FirebaseDatabaseService {
             var dbUser = FirebaseUser(user.userName, user.email, user.phone)
             db.collection("users").document(userId).set(dbUser).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    Utilities.addUserInfoToSharedPref(dbUser)
                     callback.resumeWith(Result.success(true))
                 } else {
                     callback.resumeWith(Result.failure(it.exception!!))
@@ -58,7 +57,6 @@ object FirebaseDatabaseService {
 
     suspend fun addNewNote(noteInfo: NoteInfo, userDetails: UserDetails): NoteInfo {
         var dateTime = DateTypeConverters().fromOffsetDateTime(noteInfo.dateModified)
-        Log.e("TimeDate", "$dateTime")
         var databaseNewNote = FirebaseNewNote(noteInfo.title, noteInfo.content, dateTime)
         return suspendCoroutine { callback ->
             val userId = userDetails.fUid.toString()
@@ -91,16 +89,12 @@ object FirebaseDatabaseService {
                                 var title = noteMap["title"].toString()
                                 var content = noteMap["content"].toString()
                                 var dateModified = noteMap["dateModified"].toString()
-                                Log.e("DateFb", dateModified)
                                 var dateTime = DateTypeConverters().toOffsetDateTime(dateModified)
                                 var key = item.id
-                                Log.e("NoteGet", "$key")
                                 var note =
                                     NoteInfo(title, content, fnid = key, dateModified = dateTime)
                                 noteList.add(note)
-                                Log.e("Sync", "noteLoop : $note")
                             }
-                            Log.e("Sync", "noteList cloud : $noteList")
                             callback.resumeWith(Result.success(noteList))
                         } else {
                             Log.e("Database", "No notes present for the current user")
@@ -148,6 +142,95 @@ object FirebaseDatabaseService {
                     } else {
                         Log.e("Database", "Delete note failed")
                         Log.e("Database", it.exception.toString())
+                        callback.resumeWith(Result.failure(it.exception!!))
+                    }
+                }
+        }
+    }
+
+    suspend fun addNewLabel(label : LabelDetails, user: UserDetails) : LabelDetails {
+        val userId = user.fUid.toString()
+        val dateTime = Utilities.dateToString(label.dateModified)
+        return suspendCoroutine { callback ->
+            val firebaseLabel = FirebaseLabel(label.labelName, dateTime)
+            val autoId = db.collection("users")
+                .document(userId).collection("labels").document().id
+            db.collection("users").document(userId).collection("labels")
+                .document(autoId).set(firebaseLabel).addOnCompleteListener {
+                if(it.isSuccessful) {
+                    label.labelFid = autoId
+                    callback.resumeWith(Result.success(label))
+                } else {
+                    callback.resumeWith(Result.failure(it.exception!!))
+                }
+            }
+        }
+    }
+
+    suspend fun getLabels(user: UserDetails): ArrayList<LabelDetails> {
+        val userID = user.fUid.toString()
+        return suspendCoroutine { callback ->
+            var labelList = ArrayList<LabelDetails>()
+            db.collection("users").document(userID)
+                .collection("labels").get().addOnCompleteListener {
+                if(it.isSuccessful) {
+                    val dataSnapshot = it.result
+                    if(dataSnapshot != null) {
+                        for( item in dataSnapshot.documents) {
+                            val labelMap = item.data as HashMap<*, *>
+                            val labelName = labelMap["labelName"].toString()
+                            val labelFid = item.id
+                            val dateModified = labelMap["labelModified"].toString()
+                            val dateTime = DateTypeConverters().toOffsetDateTime(dateModified)
+                            val labelItem = LabelDetails(labelName = labelName,
+                                labelFid = labelFid,dateModified = dateTime)
+                            labelList.add(labelItem)
+                            Log.e("Label","$labelItem")
+                        }
+                        callback.resumeWith(Result.success(labelList))
+                    }
+                } else {
+                    callback.resumeWith(Result.failure(it.exception!!))
+                }
+            }
+        }
+
+    }
+
+    suspend fun deleteLabel(label: LabelDetails, userDetails: UserDetails): LabelDetails {
+        val userId = userDetails.fUid.toString()
+        Log.e("Delete","$userId")
+        return suspendCoroutine { callback ->
+            db.collection("users").document(userId)
+                .collection("labels").document(label.labelFid).delete()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        callback.resumeWith(Result.success(label))
+                    } else {
+                        Log.e("Database", "Delete note failed")
+                        Log.e("Database", it.exception.toString())
+                        callback.resumeWith(Result.failure(it.exception!!))
+                    }
+                }
+        }
+    }
+
+    suspend fun updateLabel(label: LabelDetails, user: UserDetails) : LabelDetails {
+        val userId = user.fUid.toString()
+        var dateTime = DateTypeConverters().fromOffsetDateTime(label.dateModified)
+        val labelMap = mapOf(
+            "labelName" to label.labelName,
+            "labelModified" to dateTime
+        )
+        return suspendCoroutine { callback ->
+            db.collection("users").document(user.fUid.toString())
+                .collection("labels").document(label.labelFid)
+                .update(labelMap)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        callback.resumeWith(Result.success(label))
+                    } else {
+                        Log.e("Database", "Update label failed")
                         callback.resumeWith(Result.failure(it.exception!!))
                     }
                 }

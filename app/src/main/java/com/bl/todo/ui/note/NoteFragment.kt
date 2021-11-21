@@ -1,4 +1,4 @@
-package com.bl.todo.ui.notePage
+package com.bl.todo.ui.note
 
 import android.os.Bundle
 import android.util.Log

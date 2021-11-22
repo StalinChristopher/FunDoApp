@@ -49,6 +49,8 @@ class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
             val formatter = SimpleDateFormat("dd MMM, hh:mm aa")
             val date = formatter.format(currentItem.reminder)
             holder.reminderTextView.text = date
+        } else {
+            holder.reminderRecyclerLayout.visibility = View.GONE
         }
     }
 

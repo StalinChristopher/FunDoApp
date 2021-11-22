@@ -11,4 +11,5 @@
     <color name="material_blue_A200">#448AFF</color>
     <color name="blue_200">#E3F2FD</color>
     <color name="grey">#4A4A4A</color>
+    <color name="reminder_label">#bdbdbd</color>
 </resources>

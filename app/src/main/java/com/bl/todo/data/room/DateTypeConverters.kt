@@ -20,8 +20,8 @@ class DateTypeConverters {
         }
 
     @TypeConverter
-    fun fromOffsetDateTime(date: Date?): String? =
-        date?.let { formatter.format(date) }
+    fun fromOffsetDateTime(date: Date?): String =
+        date?.let { formatter.format(date) } ?: ""
 
     companion object {
         private const val DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"

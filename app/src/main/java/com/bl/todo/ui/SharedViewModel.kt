@@ -38,6 +38,9 @@ class SharedViewModel : ViewModel() {
     private val _gotoArchivedFragmentStatus = MutableLiveData<Boolean>()
     val gotoArchivedFragmentStatus = _gotoArchivedFragmentStatus as LiveData<Boolean>
 
+    private val _gotoReminderFragmentStatus = MutableLiveData<Boolean>()
+    val gotoReminderFragmentStatus = _gotoReminderFragmentStatus as LiveData<Boolean>
+
     fun setGotoHomePageStatus(status: Boolean) {
         _gotoHomePageStatus.value = status
     }
@@ -68,6 +71,10 @@ class SharedViewModel : ViewModel() {
 
     fun setArchivedFragmentStatus(status : Boolean) {
         _gotoArchivedFragmentStatus.value = status
+    }
+
+    fun setReminderFragmentStatus(status: Boolean) {
+        _gotoReminderFragmentStatus.value = status
     }
 
     fun logOutFromApp(context: Context) {

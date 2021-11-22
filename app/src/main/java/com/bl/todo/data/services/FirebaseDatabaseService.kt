@@ -10,6 +10,7 @@ import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.util.Utilities
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
+import com.facebook.internal.Utility
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.suspendCoroutine
@@ -90,10 +91,13 @@ object FirebaseDatabaseService {
                                 var content = noteMap["content"].toString()
                                 var dateModified = noteMap["dateModified"].toString()
                                 var archived = noteMap["archived"] as Boolean
+                                var reminderInString = noteMap["reminder"].toString()
+                                var reminder = Utilities.stringToDate(reminderInString as String?)
                                 var dateTime = DateTypeConverters().toOffsetDateTime(dateModified)
                                 var key = item.id
                                 var note =
-                                    NoteInfo(title, content, fnid = key, dateModified = dateTime, archived = archived)
+                                    NoteInfo(title, content, fnid = key, dateModified = dateTime,
+                                        archived = archived, reminder = reminder)
                                 noteList.add(note)
                             }
                             callback.resumeWith(Result.success(noteList))
@@ -116,7 +120,8 @@ object FirebaseDatabaseService {
             "title" to noteInfo.title,
             "content" to noteInfo.content,
             "dateModified" to dateTime,
-            "archived" to noteInfo.archived
+            "archived" to noteInfo.archived,
+            "reminder" to Utilities.dateToString(noteInfo.reminder)
         )
         return suspendCoroutine { callback ->
             db.collection("users").document(user.fUid.toString())
@@ -137,7 +142,7 @@ object FirebaseDatabaseService {
         var userId = FirebaseAuthentication.getCurrentUser()?.uid.toString()
         return suspendCoroutine { callback ->
             db.collection("users").document(userId)
-                .collection("notes").document(noteInfo.fnid.toString()).delete()
+                .collection("notes").document(noteInfo.fnid).delete()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         callback.resumeWith(Result.success(true))

@@ -14,5 +14,6 @@ data class NoteEntity(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "content") val content: String,
     @ColumnInfo(name = "dateModified") val dateModified: Date?,
-    @ColumnInfo(name = "archived") val archived : Boolean
+    @ColumnInfo(name = "archived") val archived : Boolean,
+    @ColumnInfo(name = "reminder") val reminder : Date? = null
 )

@@ -51,7 +51,7 @@ class RoomDatabaseService(context: Context) {
             var noteEntity = NoteEntity(
                 fNoteId = noteInfo.fnid, title = noteInfo.title,
                 content = noteInfo.content, dateModified = noteInfo.dateModified,
-                archived = noteInfo.archived
+                archived = noteInfo.archived, reminder = noteInfo.reminder
             )
             noteInfo.nid = noteDao.addNewNote(noteEntity)
             if (!onlineStatus) {
@@ -73,7 +73,8 @@ class RoomDatabaseService(context: Context) {
                     fnid = i.fNoteId,
                     nid = i.id,
                     dateModified = i.dateModified,
-                    archived = i.archived
+                    archived = i.archived,
+                    reminder = i.reminder
                 )
                 notesList.add(noteInfo)
             }
@@ -87,7 +88,7 @@ class RoomDatabaseService(context: Context) {
             var noteEntity = NoteEntity(
                 fNoteId = noteInfo.fnid, title = noteInfo.title,
                 content = noteInfo.content, dateModified = noteInfo.dateModified, id = noteInfo.nid,
-                archived = noteInfo.archived
+                archived = noteInfo.archived, reminder = noteInfo.reminder
             )
             noteDao.updateUserNotes(noteEntity)
             if (!onlineStatus) {
@@ -103,7 +104,7 @@ class RoomDatabaseService(context: Context) {
             var noteEntity = NoteEntity(
                 fNoteId = noteInfo.fnid, title = noteInfo.title,
                 content = noteInfo.content, dateModified = noteInfo.dateModified, id = noteInfo.nid,
-                archived = noteInfo.archived
+                archived = noteInfo.archived, reminder = noteInfo.reminder
             )
             noteDao.deleteUserNotes(noteEntity)
             if (!onlineStatus) {
@@ -148,7 +149,28 @@ class RoomDatabaseService(context: Context) {
                     fnid = i.fNoteId,
                     nid = i.id,
                     dateModified = i.dateModified,
-                    archived = i.archived
+                    archived = i.archived,
+                    reminder = i.reminder
+                )
+                notesList.add(noteInfo)
+            }
+            notesList
+        }
+    }
+
+    suspend fun getReminderNotes():ArrayList<NoteInfo> {
+        var notesList : ArrayList<NoteInfo> = ArrayList()
+        return withContext(Dispatchers.IO) {
+            var resultList: ArrayList<NoteEntity> = noteDao.getReminderNotes() as ArrayList<NoteEntity>
+            for (i in resultList) {
+                var noteInfo = NoteInfo(
+                    title = i.title,
+                    content = i.content,
+                    fnid = i.fNoteId,
+                    nid = i.id,
+                    dateModified = i.dateModified,
+                    archived = i.archived,
+                    reminder = i.reminder
                 )
                 notesList.add(noteInfo)
             }

@@ -37,27 +37,80 @@
             android:layout_alignParentRight="true"
             android:background="@color/blue_200"
             android:src="@drawable/delete_icon" />
+
+        <ImageButton
+            android:id="@+id/addReminderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/archiveButton"
+            android:layout_marginRight="8dp"
+            android:background="@color/blue_200"
+            android:src="@drawable/add_reminder" />
+
     </RelativeLayout>
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/noteTitle"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/noteToolbar"
-        android:layout_marginTop="30dp"
-        android:background="@color/blue_200"
-        android:hint="@string/note_title"
-        android:textSize="25sp" />
+        android:layout_below="@id/noteToolbar">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/noteNotes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/noteTitle"
-        android:layout_marginTop="17dp"
-        android:background="@color/blue_200"
-        android:hint="@string/note_content_note"
-        android:textSize="16sp" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/noteTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:background="@color/blue_200"
+                android:hint="@string/note_title"
+                android:textSize="25sp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/noteNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/noteTitle"
+                android:layout_marginTop="17dp"
+                android:background="@color/blue_200"
+                android:hint="@string/note_content_note"
+                android:textSize="16sp" />
+
+            <RelativeLayout
+                android:id="@+id/reminderNoteLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/noteNotes"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/toolbar"
+                android:backgroundTint="@color/reminder_label"
+                android:padding="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/clockIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/reminder_label_icon" />
+
+                <TextView
+                    android:id="@+id/reminderTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@id/clockIcon"
+                    android:text="Tomorrow, 8:00 am"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/noteSaveButton"

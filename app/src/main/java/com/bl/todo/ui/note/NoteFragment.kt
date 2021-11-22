@@ -1,9 +1,14 @@
 package com.bl.todo.ui.note
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.DatePicker
+import android.widget.TimePicker
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
@@ -15,6 +20,8 @@ import com.bl.todo.ui.SharedViewModel
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.util.SharedPref
+import com.bl.todo.util.Utilities
+import java.text.SimpleDateFormat
 import java.util.*
 
 class NoteFragment : Fragment(R.layout.note_fragment) {
@@ -27,7 +34,10 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     private var bundleDateModified: Date? = null
     private var bundleNid: Long? = null
     private var bundleArchived : Boolean? = null
+    private var bundleReminder : Date? = null
     private var userId = 0L
+    private lateinit var alertDialog: AlertDialog
+    private var reminder: Date? = null
 
     companion object {
         var currentUser: UserDetails = UserDetails("name", "email", "phone", fUid = null)
@@ -46,8 +56,10 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         setNoteContentFromBundle()
         if(bundleNid == null) {
             binding.archiveButton.visibility = View.GONE
+            binding.addReminderButton.visibility = View.GONE
         }
         archivedNote()
+        reminder()
     }
 
     private fun archivedNote() {
@@ -67,7 +79,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                 var noteInfo = NoteInfo(
                     title = title, content = content,
                     fnid = bundleFnid, dateModified = bundleDateModified,
-                    nid = bundleNid!!, archived = true
+                    nid = bundleNid!!, archived = true, reminder = bundleReminder
                 )
                 noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
             } else if(bundleArchived == true){
@@ -76,10 +88,51 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                 var noteInfo = NoteInfo(
                     title = title, content = content,
                     fnid = bundleFnid, dateModified = bundleDateModified,
-                    nid = bundleNid!!, archived = false
+                    nid = bundleNid!!, archived = false, reminder = bundleReminder
                 )
                 noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
             }
+        }
+    }
+
+    private fun reminder() {
+        if(bundleReminder != null) {
+            //Add reminder layout visibility here
+            binding.reminderNoteLayout.visibility = View.VISIBLE
+            val formatter = SimpleDateFormat("dd MMM, hh:mm aa")
+            val date = formatter.format(bundleReminder)
+            binding.reminderTextView.text = date
+            //set textView of reminder label here
+        }
+
+        binding.addReminderButton.setOnClickListener {
+            val currentDateTime = Calendar.getInstance()
+            val startYear = currentDateTime.get(Calendar.YEAR)
+            val startMonth = currentDateTime.get(Calendar.MONTH)
+            val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+            val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+            val startMinute = currentDateTime.get(Calendar.MINUTE)
+
+            DatePickerDialog(requireContext(), { _, year, month, day ->
+                TimePickerDialog(requireContext(), { _, hour, minute ->
+                    val pickedDate = Calendar.getInstance()
+                    pickedDate.set(year, month, day, hour, minute)
+                    reminder = pickedDate.time
+                    binding.reminderNoteLayout.visibility = View.VISIBLE
+                    val formatter = SimpleDateFormat("dd MMM, hh:mm aa")
+                    val date = formatter.format(reminder)
+                    binding.reminderTextView.text = date
+                    if(reminder != null) {
+                        val title = binding.noteTitle.text.toString()
+                        val content = binding.noteNotes.text.toString()
+                        var noteInfo = NoteInfo(
+                            title = title, content = content,
+                            fnid = bundleFnid, dateModified = bundleDateModified,
+                            nid = bundleNid!!, archived = bundleArchived!!, reminder = reminder)
+                        noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
+                    }
+                }, startHour, startMinute, false).show()
+            }, startYear, startMonth, startDay).show()
         }
     }
 
@@ -89,8 +142,10 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         bundleContent = arguments?.getString("content")
         bundleFnid = arguments?.getString("noteKey").toString()
         bundleArchived = arguments?.getBoolean("archived")
-        var dateTime = DateTypeConverters().toOffsetDateTime(arguments?.getString("dateModified"))
+        var dateTime = Utilities.stringToDate(arguments?.getString("dateModified"))
         bundleDateModified = dateTime
+        var reminderInDate = Utilities.stringToDate(arguments?.getString("reminder"))
+        bundleReminder = reminderInDate
         binding.noteTitle.setText(bundleTitle)
         binding.noteNotes.setText(bundleContent)
     }
@@ -112,7 +167,8 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             if (it) {
                 if(bundleArchived == true) {
                     sharedViewModel.setArchivedFragmentStatus(true)
-                } else {
+                }
+                else {
                     sharedViewModel.setGotoHomePageStatus(true)
                 }
             } else {
@@ -143,7 +199,8 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
 
     private fun allListeners() {
         binding.notBackButton.setOnClickListener {
-            sharedViewModel.setGotoHomePageStatus(true)
+//            sharedViewModel.setGotoHomePageStatus(true)
+            activity?.supportFragmentManager?.popBackStack()
         }
 
         binding.noteSaveButton.setOnClickListener {
@@ -168,7 +225,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                 var noteInfo = NoteInfo(
                     title = title, content = content,
                     fnid = bundleFnid, dateModified = bundleDateModified,
-                    nid = bundleNid!!, archived = bundleArchived!!
+                    nid = bundleNid!!, archived = bundleArchived!!, reminder = bundleReminder
                 )
                 noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
             }
@@ -191,5 +248,4 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             }
         }
     }
-
 }

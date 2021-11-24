@@ -90,11 +90,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
             firstMenuItem.isChecked = false
             when (it.itemId) {
                 R.id.nav_notes_item -> { sharedViewModel.setGotoHomePageStatus(true)}
-                R.id.nav_remainders_item -> Toast.makeText(
-                    this,
-                    "reminder button clicked",
-                    Toast.LENGTH_SHORT
-                ).show()
+                R.id.nav_remainders_item -> {sharedViewModel.setReminderFragmentStatus(true)}
                 R.id.nav_logout_item -> {
                     sharedViewModel.logOutFromApp(this)
                     sharedViewModel.setLoginPageStatus(true)
@@ -160,11 +156,28 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
                 gotoArchivedPage()
             }
         })
+
+        sharedViewModel.gotoReminderFragmentStatus.observe(this, {
+            if(it) {
+                gotoReminderPage()
+            }
+        })
+    }
+
+    private fun gotoReminderPage() {
+        var homeFragment = HomeFragment()
+        var bundle = Bundle()
+        bundle.putString("type", "reminder")
+        homeFragment.arguments = bundle
+        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId,homeFragment)
     }
 
     private fun gotoArchivedPage() {
-        Utilities.replaceFragment(supportFragmentManager,
-            R.id.fragmentContainerId, HomeFragment(true))
+        var homeFragment = HomeFragment()
+        var bundle = Bundle()
+        bundle.putString("type","archive")
+        homeFragment.arguments = bundle
+        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, homeFragment)
     }
 
     private fun gotoNotePage() {
@@ -181,8 +194,11 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
     }
 
     private fun gotoHomePage() {
-        Utilities.replaceFragment(supportFragmentManager,
-            R.id.fragmentContainerId, HomeFragment())
+        var homeFragment = HomeFragment()
+        var bundle = Bundle()
+        bundle.putString("type","home")
+        homeFragment.arguments = bundle
+        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, homeFragment)
     }
 
     private fun gotoSplashScreen() {
@@ -197,7 +213,8 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         val noteFragment = NoteFragment()
         val bundle = Utilities.addNoteInfoToBundle(noteInfo)
         noteFragment.arguments = bundle
-        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, noteFragment)
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,noteFragment)
+            .addToBackStack(null).commit()
     }
 
     private fun gotoLabelCreationPage() {

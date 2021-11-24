@@ -92,7 +92,8 @@ object Utilities {
 
     fun addNoteInfoToBundle(noteInfo: NoteInfo): Bundle {
         val bundle = Bundle()
-        val dateTIme = DateTypeConverters().fromOffsetDateTime(noteInfo.dateModified)
+        val dateTIme = dateToString(noteInfo.dateModified)
+        val reminderInString = dateToString(noteInfo.reminder)
         Log.i("Util", "$noteInfo")
         bundle.putString("title", noteInfo.title)
         bundle.putString("content", noteInfo.content)
@@ -100,11 +101,16 @@ object Utilities {
         bundle.putLong("sqlNid", noteInfo.nid)
         bundle.putString("dateModified", dateTIme)
         bundle.putBoolean("archived",noteInfo.archived)
+        bundle.putString("reminder",reminderInString)
         return bundle
     }
 
     fun dateToString(date : Date?) : String {
-        return DateTypeConverters().fromOffsetDateTime(date).toString()
+        return DateTypeConverters().fromOffsetDateTime(date)
+    }
+
+    fun stringToDate(date : String?) : Date? {
+        return DateTypeConverters().toOffsetDateTime(date)
     }
 
 }

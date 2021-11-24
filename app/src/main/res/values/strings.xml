@@ -51,6 +51,10 @@
     <string name="toast_userSignedUp">User signed up</string>
     <string name="toastError_account_not_created">Account not created</string>
     <string name="navHeader">FunDo</string>
+    <string name="reminder_delete_message">Do you want to delete the reminder?</string>
+    <string name="yes_word">Yes</string>
+    <string name="cancel_word">Cancel</string>
+    <string name="reminder_label_formatter_pattern">dd MMM, hh:mm aa</string>
 
 
 </resources>

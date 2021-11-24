@@ -34,7 +34,7 @@ import com.bl.todo.ui.home.adapter.NoteAdapter
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 
-class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layout.home_fragment) {
+class HomeFragment() : Fragment(R.layout.home_fragment) {
     private lateinit var binding: HomeFragmentBinding
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var homeViewModel: HomeViewModel
@@ -45,6 +45,7 @@ class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layo
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteAdapter: NoteAdapter
     private var userId = 0L
+    private var type : String = ""
 
     companion object {
         const val STORAGE_PERMISSION_CODE = 111
@@ -69,7 +70,7 @@ class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layo
         setUserDetails()
         homeViewModel.getUserData(requireContext(), userId)
         allListeners()
-        if(archivedPage){
+        if(type == "archive" || type == "reminder"){
             binding.homePageFloatingButton.visibility = View.GONE
         }
     }
@@ -82,7 +83,6 @@ class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layo
         noteAdapter.setOnItemClickListener(object : NoteAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 var note = noteList[position]
-                Log.i("HomeNote", "$note")
                 sharedViewModel.setExistingNoteFragmentStatus(note)
             }
         })
@@ -98,10 +98,17 @@ class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layo
         recyclerView.layoutManager = StaggeredGridLayoutManager(2, 1)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = noteAdapter
-        if(archivedPage) {
-            homeViewModel.getArchivedNotes(requireContext())
-        } else {
-            homeViewModel.getNotesFromUser(requireContext())
+        type = arguments?.getString("type").toString()
+        when (type) {
+            "archive" -> {
+                homeViewModel.getArchivedNotes(requireContext())
+            }
+            "reminder" -> {
+                homeViewModel.getReminderNotes(requireContext())
+            }
+            "home" -> {
+                homeViewModel.getNotesFromUser(requireContext())
+            }
         }
     }
 
@@ -125,6 +132,14 @@ class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layo
         }
 
         homeViewModel.archivedNotes.observe(viewLifecycleOwner) {
+            if (it != null) {
+                noteList.clear()
+                noteList.addAll(it)
+                noteAdapter.notifyDataSetChanged()
+            }
+        }
+
+        homeViewModel.reminderNotes.observe(viewLifecycleOwner) {
             if (it != null) {
                 noteList.clear()
                 noteList.addAll(it)
@@ -235,7 +250,7 @@ class HomeFragment(private val archivedPage : Boolean = false) : Fragment(R.layo
         val searchView = searchItem?.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                TODO("Not yet implemented")
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {

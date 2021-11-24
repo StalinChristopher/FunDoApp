@@ -5,10 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.todo.R
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.google.android.material.textview.MaterialTextView
+import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
 class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
@@ -41,7 +44,14 @@ class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
         val currentItem = adapterNotesList[position]
         holder.title.text = currentItem.title
         holder.content.text = currentItem.content
-
+        if(currentItem.reminder != null) {
+            holder.reminderRecyclerLayout.visibility = View.VISIBLE
+            val formatter = SimpleDateFormat("dd MMM, hh:mm aa")
+            val date = formatter.format(currentItem.reminder)
+            holder.reminderTextView.text = date
+        } else {
+            holder.reminderRecyclerLayout.visibility = View.GONE
+        }
     }
 
     override fun getItemCount(): Int {
@@ -53,6 +63,8 @@ class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
 
         val title: MaterialTextView = itemView.findViewById(R.id.cardTitle)
         val content: MaterialTextView = itemView.findViewById(R.id.cardContent)
+        val reminderRecyclerLayout : RelativeLayout = itemView.findViewById(R.id.reminderRecyclerLayout)
+        val reminderTextView : TextView = itemView.findViewById(R.id.reminderTextView)
 
         init {
             itemView.setOnClickListener {

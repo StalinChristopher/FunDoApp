@@ -33,6 +33,9 @@ class HomeViewModel : ViewModel() {
     private val _archivedNotes = MutableLiveData<ArrayList<NoteInfo>>()
     val archivedNotes = _archivedNotes as LiveData<ArrayList<NoteInfo>>
 
+    private val _reminderNotes = MutableLiveData<ArrayList<NoteInfo>>()
+    val reminderNotes = _reminderNotes as LiveData<ArrayList<NoteInfo>>
+
     fun logOutFromHomePage(context: Context) {
         viewModelScope.launch {
             FirebaseAuthentication.logOut(context)
@@ -95,6 +98,15 @@ class HomeViewModel : ViewModel() {
             val resultNotes = DatabaseService.getInstance(context).getArchivedNotes()
             if(resultNotes != null) {
                 _archivedNotes.postValue(resultNotes)
+            }
+        }
+    }
+
+    fun getReminderNotes(context: Context) {
+        viewModelScope.launch {
+            val resultNotes = DatabaseService.getInstance(context).getReminderNotes()
+            if(resultNotes != null) {
+                _reminderNotes.postValue(resultNotes)
             }
         }
     }

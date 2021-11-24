@@ -1,20 +1,24 @@
 package com.bl.todo.ui.note
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
-import com.bl.todo.data.room.DateTypeConverters
 import com.bl.todo.databinding.NoteFragmentBinding
 import com.bl.todo.ui.SharedViewModel
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.util.SharedPref
+import com.bl.todo.util.Utilities
+import java.text.SimpleDateFormat
 import java.util.*
 
 class NoteFragment : Fragment(R.layout.note_fragment) {
@@ -23,11 +27,14 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     private lateinit var noteViewModel: NoteViewModel
     private var bundleTitle: String? = null
     private var bundleContent: String? = null
-    private var bundleFnid: String = ""
+    private var bundleFnId: String = ""
     private var bundleDateModified: Date? = null
     private var bundleNid: Long? = null
     private var bundleArchived : Boolean? = null
+    private var bundleReminder : Date? = null
     private var userId = 0L
+    private lateinit var alertDialog: AlertDialog
+    private var reminder: Date? = null
 
     companion object {
         var currentUser: UserDetails = UserDetails("name", "email", "phone", fUid = null)
@@ -46,8 +53,10 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         setNoteContentFromBundle()
         if(bundleNid == null) {
             binding.archiveButton.visibility = View.GONE
+            binding.addReminderButton.visibility = View.GONE
         }
         archivedNote()
+        reminder()
     }
 
     private fun archivedNote() {
@@ -64,21 +73,87 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             if(bundleArchived == false) {
                 val title = binding.noteTitle.text.toString()
                 val content = binding.noteNotes.text.toString()
-                var noteInfo = NoteInfo(
+                val noteInfo = NoteInfo(
                     title = title, content = content,
-                    fnid = bundleFnid, dateModified = bundleDateModified,
-                    nid = bundleNid!!, archived = true
+                    fnid = bundleFnId, dateModified = bundleDateModified,
+                    nid = bundleNid!!, archived = true, reminder = bundleReminder
                 )
                 noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
             } else if(bundleArchived == true){
                 val title = binding.noteTitle.text.toString()
                 val content = binding.noteNotes.text.toString()
-                var noteInfo = NoteInfo(
+                val noteInfo = NoteInfo(
                     title = title, content = content,
-                    fnid = bundleFnid, dateModified = bundleDateModified,
-                    nid = bundleNid!!, archived = false
+                    fnid = bundleFnId, dateModified = bundleDateModified,
+                    nid = bundleNid!!, archived = false, reminder = bundleReminder
                 )
                 noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
+            }
+        }
+    }
+
+    private fun reminder() {
+        if(bundleReminder != null) {
+            binding.reminderNoteLayout.visibility = View.VISIBLE
+            val formatter = SimpleDateFormat(getString(R.string.reminder_label_formatter_pattern),
+                Locale.getDefault())
+            val date = formatter.format(bundleReminder)
+            binding.reminderTextView.text = date
+        }
+
+        binding.addReminderButton.setOnClickListener {
+            val currentDateTime = Calendar.getInstance()
+            val startYear = currentDateTime.get(Calendar.YEAR)
+            val startMonth = currentDateTime.get(Calendar.MONTH)
+            val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+            val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+            val startMinute = currentDateTime.get(Calendar.MINUTE)
+
+            val dateTimeDialog = DatePickerDialog(requireContext(), { _, year, month, day ->
+                TimePickerDialog(requireContext(), { _, hour, minute ->
+                    val pickedDate = Calendar.getInstance()
+                    pickedDate.set(year, month, day, hour, minute)
+                    reminder = pickedDate.time
+                    binding.reminderNoteLayout.visibility = View.VISIBLE
+                    val formatter =
+                        SimpleDateFormat(getString(R.string.reminder_label_formatter_pattern),
+                            Locale.getDefault())
+                    val date = formatter.format(reminder)
+                    binding.reminderTextView.text = date
+                    if(reminder != null) {
+                        val title = binding.noteTitle.text.toString()
+                        val content = binding.noteNotes.text.toString()
+                        val noteInfo = NoteInfo(
+                            title = title, content = content,
+                            fnid = bundleFnId, dateModified = bundleDateModified,
+                            nid = bundleNid!!, archived = bundleArchived!!, reminder = reminder)
+                        noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
+                    }
+                }, startHour, startMinute, false).show()
+            }, startYear, startMonth, startDay)
+
+            dateTimeDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+            dateTimeDialog.show()
+        }
+
+        binding.reminderNoteLayout.setOnClickListener {
+            if(bundleReminder != null) {
+                val title = binding.noteTitle.text.toString()
+                val content = binding.noteNotes.text.toString()
+                val alertDialog = AlertDialog.Builder(requireContext())
+                    .setMessage(getString(R.string.reminder_delete_message))
+                    .setPositiveButton(getString(R.string.yes_word)
+                    ) { _, _ ->
+                        val noteInfo = NoteInfo(
+                            title = title, content = content,
+                            fnid = bundleFnId, dateModified = bundleDateModified,
+                            nid = bundleNid!!, archived = bundleArchived!!, reminder = null
+                        )
+                        noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
+                        binding.reminderNoteLayout.visibility = View.GONE
+                    }.setNegativeButton(getString(R.string.cancel_word)
+                    ) { _, _ ->  }.create()
+                alertDialog.show()
             }
         }
     }
@@ -87,10 +162,12 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         bundleNid = arguments?.getLong("sqlNid")
         bundleTitle = arguments?.getString("title")
         bundleContent = arguments?.getString("content")
-        bundleFnid = arguments?.getString("noteKey").toString()
+        bundleFnId = arguments?.getString("noteKey").toString()
         bundleArchived = arguments?.getBoolean("archived")
-        var dateTime = DateTypeConverters().toOffsetDateTime(arguments?.getString("dateModified"))
+        var dateTime = Utilities.stringToDate(arguments?.getString("dateModified"))
         bundleDateModified = dateTime
+        var reminderInDate = Utilities.stringToDate(arguments?.getString("reminder"))
+        bundleReminder = reminderInDate
         binding.noteTitle.setText(bundleTitle)
         binding.noteNotes.setText(bundleContent)
     }
@@ -110,11 +187,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
 
         noteViewModel.updateNoteStatus.observe(viewLifecycleOwner) {
             if (it) {
-                if(bundleArchived == true) {
-                    sharedViewModel.setArchivedFragmentStatus(true)
-                } else {
-                    sharedViewModel.setGotoHomePageStatus(true)
-                }
+                activity?.supportFragmentManager?.popBackStack()
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -143,7 +216,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
 
     private fun allListeners() {
         binding.notBackButton.setOnClickListener {
-            sharedViewModel.setGotoHomePageStatus(true)
+            activity?.supportFragmentManager?.popBackStack()
         }
 
         binding.noteSaveButton.setOnClickListener {
@@ -158,17 +231,17 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                     ).show()
                     sharedViewModel.setGotoHomePageStatus(true)
                 } else {
-                    var note = NoteInfo(
+                    val note = NoteInfo(
                         title = title,
                         content = content, dateModified = null
                     )
                     noteViewModel.addNoteToDb(requireContext(), note, currentUser)
                 }
             } else {
-                var noteInfo = NoteInfo(
+                val noteInfo = NoteInfo(
                     title = title, content = content,
-                    fnid = bundleFnid, dateModified = bundleDateModified,
-                    nid = bundleNid!!, archived = bundleArchived!!
+                    fnid = bundleFnId, dateModified = bundleDateModified,
+                    nid = bundleNid!!, archived = bundleArchived!!, reminder = bundleReminder
                 )
                 noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
             }
@@ -182,14 +255,13 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                Log.i("Note", "$bundleNid, $bundleFnid, $bundleTitle, $bundleContent")
+                Log.i("Note", "$bundleNid, $bundleFnId, $bundleTitle, $bundleContent")
                 val noteInfo = NoteInfo(
                     bundleTitle!!, bundleContent!!,
-                    bundleFnid, dateModified = bundleDateModified, nid = bundleNid!!
+                    bundleFnId, dateModified = bundleDateModified, nid = bundleNid!!
                 )
                 noteViewModel.deleteNoteToDb(requireContext(), noteInfo)
             }
         }
     }
-
 }

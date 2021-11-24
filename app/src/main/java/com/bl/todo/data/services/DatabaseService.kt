@@ -243,10 +243,24 @@ class DatabaseService(private val context: Context) {
                 var noteList = roomDb.getArchivedNotes()
                 noteList
             } catch (e: Exception) {
-                Log.e("Database", "Read archived notes for the user failed")
+                Log.e("Database Service", "Read archived notes for the user failed")
                 e.printStackTrace()
                 null
             }
         }
+    }
+
+    suspend fun getReminderNotes(): ArrayList<NoteInfo>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                var noteList = roomDb.getReminderNotes()
+                noteList
+            } catch (e: Exception) {
+                Log.e("Database Service", "Read reminder notes for the user failed")
+                e.printStackTrace()
+                null
+            }
+        }
+
     }
 }

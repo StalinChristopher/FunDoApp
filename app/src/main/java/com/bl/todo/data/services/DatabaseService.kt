@@ -106,6 +106,19 @@ class DatabaseService(private val context: Context) {
         }
     }
 
+    suspend fun getPagedNotes(limit: Int, offset: Int): ArrayList<NoteInfo>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                var noteList = roomDb.getPagedNotes(limit, offset)
+                noteList
+            } catch (e: Exception) {
+                Log.e("Database", "Read notes for the user failed")
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
     suspend fun getNotesFromCloud(user: UserDetails): List<NoteInfo>? {
         return try {
             return withContext(Dispatchers.IO) {
@@ -262,5 +275,45 @@ class DatabaseService(private val context: Context) {
             }
         }
 
+    }
+
+    suspend fun getNotesCount(): Int {
+        return withContext(Dispatchers.IO) {
+            try{
+                val notesCount = roomDb.getNotesCount()
+                notesCount
+            } catch(e : Exception) {
+                Log.e("Database Service", "Read reminder notes for the user failed")
+                e.printStackTrace()
+                0
+            }
+        }
+
+    }
+
+    suspend fun getPagedArchivedNotes(limit: Int, offset: Int): ArrayList<NoteInfo>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                var noteList = roomDb.getPagedArchivedNotes(limit, offset)
+                noteList
+            } catch (e: Exception) {
+                Log.e("Database", "Read notes for the user failed")
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun getPagedReminderNotes(limit: Int, offset: Int): ArrayList<NoteInfo>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                var noteList = roomDb.getPagedReminderNotes(limit, offset)
+                noteList
+            } catch (e: Exception) {
+                Log.e("Database", "Read notes for the user failed")
+                e.printStackTrace()
+                null
+            }
+        }
     }
 }

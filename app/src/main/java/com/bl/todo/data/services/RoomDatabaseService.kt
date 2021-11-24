@@ -177,4 +177,73 @@ class RoomDatabaseService(context: Context) {
             notesList
         }
     }
+
+    suspend fun getPagedNotes(limit: Int, offset: Int): ArrayList<NoteInfo> {
+        var notesList: ArrayList<NoteInfo> = ArrayList()
+        return withContext(Dispatchers.IO) {
+            var resultList: ArrayList<NoteEntity> = noteDao.getPagedNotes(limit,offset) as ArrayList<NoteEntity>
+            for (i in resultList) {
+                var noteInfo = NoteInfo(
+                    title = i.title,
+                    content = i.content,
+                    fnid = i.fNoteId,
+                    nid = i.id,
+                    dateModified = i.dateModified,
+                    archived = i.archived,
+                    reminder = i.reminder
+                )
+                notesList.add(noteInfo)
+            }
+            notesList
+        }
+    }
+
+    suspend fun getNotesCount(): Int {
+        return withContext(Dispatchers.IO) {
+            var notesCount = noteDao.getNotesCount()
+            notesCount
+        }
+    }
+
+    suspend fun getPagedArchivedNotes(limit: Int, offset: Int): ArrayList<NoteInfo> {
+        var notesList: ArrayList<NoteInfo> = ArrayList()
+        return withContext(Dispatchers.IO) {
+            var resultList: ArrayList<NoteEntity> =
+                noteDao.getArchivedPaged(limit,offset) as ArrayList<NoteEntity>
+            for (i in resultList) {
+                var noteInfo = NoteInfo(
+                    title = i.title,
+                    content = i.content,
+                    fnid = i.fNoteId,
+                    nid = i.id,
+                    dateModified = i.dateModified,
+                    archived = i.archived,
+                    reminder = i.reminder
+                )
+                notesList.add(noteInfo)
+            }
+            notesList
+        }
+    }
+
+    suspend fun getPagedReminderNotes(limit: Int, offset: Int): ArrayList<NoteInfo> {
+        var notesList: ArrayList<NoteInfo> = ArrayList()
+        return withContext(Dispatchers.IO) {
+            var resultList: ArrayList<NoteEntity> =
+                noteDao.getReminderPaged(limit,offset) as ArrayList<NoteEntity>
+            for (i in resultList) {
+                var noteInfo = NoteInfo(
+                    title = i.title,
+                    content = i.content,
+                    fnid = i.fNoteId,
+                    nid = i.id,
+                    dateModified = i.dateModified,
+                    archived = i.archived,
+                    reminder = i.reminder
+                )
+                notesList.add(noteInfo)
+            }
+            notesList
+        }
+    }
 }

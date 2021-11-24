@@ -12,6 +12,12 @@ interface NoteDao {
     @Query("select * from notes_table where archived = 0")
     suspend fun getUserNotes(): List<NoteEntity>
 
+    @Query("select * from notes_table where archived = 0 LIMIT :limit OFFSET :offset")
+    suspend fun getPagedNotes(limit: Int, offset: Int): List<NoteEntity>
+
+    @Query("select COUNT(*) from notes_table where archived = 0")
+    suspend fun getNotesCount() : Int
+
     @Update
     suspend fun updateUserNotes(note: NoteEntity)
 
@@ -24,8 +30,14 @@ interface NoteDao {
     @Query("select * from notes_table where archived = 1")
     suspend fun getArchivedNotes() : List<NoteEntity>
 
+    @Query("select * from notes_table where archived = 1 LIMIT :limit OFFSET :offset")
+    suspend fun getArchivedPaged(limit: Int, offset: Int) : List<NoteEntity>
+
     @Query("select * from notes_table where NULLIF(reminder,'') is not NULL")
     suspend fun getReminderNotes() : List<NoteEntity>
+
+    @Query("select * from notes_table where NULLIF(reminder, '') is not NULL LIMIT :limit OFFSET :offset")
+    suspend fun getReminderPaged(limit: Int, offset: Int) : List<NoteEntity>
 
 
 }

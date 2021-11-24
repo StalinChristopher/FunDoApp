@@ -3,10 +3,7 @@ package com.bl.todo.ui.home.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.todo.R
 import com.bl.todo.ui.wrapper.NoteInfo
@@ -37,7 +34,7 @@ class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
             R.layout.single_list_item_layout,
             parent, false
         )
-        return MyViewHolder((itemView), mListener)
+        return MyViewHolder(itemView,mListener)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

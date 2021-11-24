@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.SearchView
+import com.bl.todo.data.services.DatabaseService
 import com.bl.todo.ui.home.adapter.NoteAdapter
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
@@ -46,6 +47,8 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
     private lateinit var noteAdapter: NoteAdapter
     private var userId = 0L
     private var type : String = ""
+    private var totalNotes : Int = 0
+    private var isLoading : Boolean = false
 
     companion object {
         const val STORAGE_PERMISSION_CODE = 111
@@ -73,6 +76,7 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
         if(type == "archive" || type == "reminder"){
             binding.homePageFloatingButton.visibility = View.GONE
         }
+        homeViewModel.getNotesCount(requireContext())
     }
 
     private fun allListeners() {
@@ -95,7 +99,7 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
     private fun initializeRecyclerView() {
         noteAdapter = NoteAdapter(noteList)
         recyclerView = binding.HomeRecyclerView
-        recyclerView.layoutManager = StaggeredGridLayoutManager(2, 1)
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2,1)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = noteAdapter
         type = arguments?.getString("type").toString()
@@ -110,6 +114,45 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
                 homeViewModel.getNotesFromUser(requireContext())
             }
         }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                lateinit var layoutManager : RecyclerView.LayoutManager
+                var firstVisibleItem : Int = 0
+                when(recyclerView.layoutManager) {
+                    is LinearLayoutManager -> {
+                        layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                        firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+                    }
+                    is StaggeredGridLayoutManager -> {
+                        layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
+                        val firstVisibleItemArray = layoutManager.findFirstVisibleItemPositions(null)
+                        firstVisibleItem = firstVisibleItemArray[0]
+                    }
+                }
+                val visibleCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                if (((visibleCount + firstVisibleItem) >= totalItemCount) &&
+                    (totalItemCount < totalNotes)) {
+                    isLoading = true
+                    when (type) {
+                        "archive" -> {
+                            homeViewModel.getPagedArchivedNotes(requireContext(),
+                                10, totalItemCount)
+                        }
+                        "reminder" -> {
+                            homeViewModel.getPagedReminderNotes(requireContext(),
+                                10, totalItemCount)
+                        }
+                        "home" -> {
+                            homeViewModel.getPagedNotes(requireContext()
+                                , 10, totalItemCount)
+                        }
+                    }
+                }
+            }
+        })
     }
 
     private fun observers() {
@@ -131,6 +174,17 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
             }
         }
 
+        homeViewModel.notesCount.observe(viewLifecycleOwner) {
+            totalNotes = it
+        }
+
+        homeViewModel.pagedNotes.observe(viewLifecycleOwner) {
+            isLoading = false
+            noteList.addAll(it)
+            noteAdapter.notifyItemRangeInserted(noteAdapter.itemCount, it.size)
+            loadProgressBar()
+        }
+
         homeViewModel.archivedNotes.observe(viewLifecycleOwner) {
             if (it != null) {
                 noteList.clear()
@@ -145,6 +199,20 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
                 noteList.addAll(it)
                 noteAdapter.notifyDataSetChanged()
             }
+        }
+
+        homeViewModel.pagedArchivedNotes.observe(viewLifecycleOwner) {
+            isLoading = false
+            noteList.addAll(it)
+            noteAdapter.notifyItemRangeInserted(noteAdapter.itemCount, it.size)
+            loadProgressBar()
+        }
+
+        homeViewModel.pagedReminderNotes.observe(viewLifecycleOwner) {
+            isLoading = false
+            noteList.addAll(it)
+            noteAdapter.notifyItemRangeInserted(noteAdapter.itemCount, it.size)
+            loadProgressBar()
         }
 
         homeViewModel.profileData.observe(viewLifecycleOwner) {
@@ -280,5 +348,13 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
             R.id.profileIcon -> alertDialog.show()
         }
         return true
+    }
+
+    private fun loadProgressBar() {
+        if ( isLoading) {
+            binding.paginationProgressBar.visibility = View.VISIBLE
+        } else {
+            binding.paginationProgressBar.visibility = View.GONE
+        }
     }
 }

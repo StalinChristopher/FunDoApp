@@ -24,6 +24,12 @@ class HomeViewModel : ViewModel() {
     private val _userNotes = MutableLiveData<ArrayList<NoteInfo>>()
     val userNotes = _userNotes as LiveData<ArrayList<NoteInfo>>
 
+    private val _pagedNotes = MutableLiveData<ArrayList<NoteInfo>>()
+    val pagedNotes = _pagedNotes as LiveData<ArrayList<NoteInfo>>
+
+    private val _notesCount = MutableLiveData<Int>()
+    val notesCount = _notesCount as LiveData<Int>
+
     private val _profileData = MutableLiveData<UserDetails>()
     val profileData = _profileData as LiveData<UserDetails>
 
@@ -33,8 +39,14 @@ class HomeViewModel : ViewModel() {
     private val _archivedNotes = MutableLiveData<ArrayList<NoteInfo>>()
     val archivedNotes = _archivedNotes as LiveData<ArrayList<NoteInfo>>
 
+    private val _pagedArchivedNotes = MutableLiveData<ArrayList<NoteInfo>>()
+    val pagedArchivedNotes = _pagedArchivedNotes as LiveData<ArrayList<NoteInfo>>
+
     private val _reminderNotes = MutableLiveData<ArrayList<NoteInfo>>()
     val reminderNotes = _reminderNotes as LiveData<ArrayList<NoteInfo>>
+
+    private val _pagedReminderNotes = MutableLiveData<ArrayList<NoteInfo>>()
+    val pagedReminderNotes = _pagedReminderNotes as LiveData<ArrayList<NoteInfo>>
 
     fun logOutFromHomePage(context: Context) {
         viewModelScope.launch {
@@ -69,7 +81,7 @@ class HomeViewModel : ViewModel() {
 
     fun getNotesFromUser(context: Context) {
         viewModelScope.launch {
-            val resultNotes = DatabaseService.getInstance(context).getUserNotes()
+            val resultNotes = DatabaseService.getInstance(context).getPagedNotes(10,0)
             if (resultNotes != null) {
                 _userNotes.postValue(resultNotes)
             }
@@ -95,7 +107,7 @@ class HomeViewModel : ViewModel() {
 
     fun getArchivedNotes(context: Context) {
         viewModelScope.launch {
-            val resultNotes = DatabaseService.getInstance(context).getArchivedNotes()
+            val resultNotes = DatabaseService.getInstance(context).getPagedArchivedNotes(10,0)
             if(resultNotes != null) {
                 _archivedNotes.postValue(resultNotes)
             }
@@ -104,9 +116,43 @@ class HomeViewModel : ViewModel() {
 
     fun getReminderNotes(context: Context) {
         viewModelScope.launch {
-            val resultNotes = DatabaseService.getInstance(context).getReminderNotes()
+            val resultNotes = DatabaseService.getInstance(context).getPagedReminderNotes(10,0)
             if(resultNotes != null) {
                 _reminderNotes.postValue(resultNotes)
+            }
+        }
+    }
+
+    fun getPagedNotes(context: Context, limit: Int, offset: Int) {
+        viewModelScope.launch {
+            val resultNotes = DatabaseService.getInstance(context).getPagedNotes(limit,offset)
+            if (resultNotes != null) {
+                _pagedNotes.postValue(resultNotes)
+            }
+        }
+    }
+
+    fun getNotesCount(context: Context) {
+        viewModelScope.launch {
+            val count = DatabaseService.getInstance(context).getNotesCount()
+            _notesCount.postValue(count)
+        }
+    }
+
+    fun getPagedArchivedNotes(context: Context, limit: Int, offset: Int) {
+        viewModelScope.launch {
+            val resultNotes = DatabaseService.getInstance(context).getPagedArchivedNotes(limit,offset)
+            if(resultNotes != null) {
+                _pagedArchivedNotes.postValue(resultNotes)
+            }
+        }
+    }
+
+    fun getPagedReminderNotes(context: Context, limit: Int, offset: Int) {
+        viewModelScope.launch {
+            val resultNotes = DatabaseService.getInstance(context).getPagedReminderNotes(limit,offset)
+            if(resultNotes != null) {
+                _pagedReminderNotes.postValue(resultNotes)
             }
         }
     }

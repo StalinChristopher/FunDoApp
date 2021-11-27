@@ -76,7 +76,16 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
         if(type == "archive" || type == "reminder"){
             binding.homePageFloatingButton.visibility = View.GONE
         }
-        homeViewModel.getNotesCount(requireContext())
+//        homeViewModel.getNotesCount(requireContext())
+        setTotalNotesCount()
+    }
+
+    private fun setTotalNotesCount() {
+        when(type) {
+            "archive" -> homeViewModel.getArchivedCount(requireContext())
+            "reminder" -> homeViewModel.getReminderCount(requireContext())
+            "home" -> homeViewModel.getNotesCount(requireContext())
+        }
     }
 
     private fun allListeners() {
@@ -175,6 +184,14 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
         }
 
         homeViewModel.notesCount.observe(viewLifecycleOwner) {
+            totalNotes = it
+        }
+
+        homeViewModel.archivedCount.observe(viewLifecycleOwner) {
+            totalNotes = it
+        }
+
+        homeViewModel.reminderCount.observe(viewLifecycleOwner) {
             totalNotes = it
         }
 

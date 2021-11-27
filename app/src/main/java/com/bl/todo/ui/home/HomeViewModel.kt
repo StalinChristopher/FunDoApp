@@ -48,6 +48,12 @@ class HomeViewModel : ViewModel() {
     private val _pagedReminderNotes = MutableLiveData<ArrayList<NoteInfo>>()
     val pagedReminderNotes = _pagedReminderNotes as LiveData<ArrayList<NoteInfo>>
 
+    private val _archivedCount = MutableLiveData<Int>()
+    val archivedCount = _archivedCount as LiveData<Int>
+
+    private val _reminderCount = MutableLiveData<Int>()
+    val reminderCount = _reminderCount as LiveData<Int>
+
     fun logOutFromHomePage(context: Context) {
         viewModelScope.launch {
             FirebaseAuthentication.logOut(context)
@@ -136,6 +142,20 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             val count = DatabaseService.getInstance(context).getNotesCount()
             _notesCount.postValue(count)
+        }
+    }
+
+    fun getArchivedCount(context: Context) {
+        viewModelScope.launch {
+            val count = DatabaseService.getInstance(context).getArchivedCount()
+            _archivedCount.postValue(count)
+        }
+    }
+
+    fun getReminderCount(context: Context) {
+        viewModelScope.launch {
+            val count = DatabaseService.getInstance(context).getReminderCount()
+            _reminderCount.postValue(count)
         }
     }
 

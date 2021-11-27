@@ -39,5 +39,11 @@ interface NoteDao {
     @Query("select * from notes_table where NULLIF(reminder, '') is not NULL LIMIT :limit OFFSET :offset")
     suspend fun getReminderPaged(limit: Int, offset: Int) : List<NoteEntity>
 
+    @Query("select count(*) from notes_table where archived = 1")
+    suspend fun getArchiveCount(): Int
+
+    @Query("select count(*) from notes_table where NULLIF(reminder,'') IS NOT NULL")
+    suspend fun getReminderCount(): Int
+
 
 }

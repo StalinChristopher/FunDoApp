@@ -246,4 +246,18 @@ class RoomDatabaseService(context: Context) {
             notesList
         }
     }
+
+    suspend fun getArchivedCount(): Int {
+        return withContext(Dispatchers.IO) {
+            var notesCount = noteDao.getArchiveCount()
+            notesCount
+        }
+    }
+
+    suspend fun getReminderCount() : Int {
+        return withContext(Dispatchers.IO) {
+            var notesCount = noteDao.getReminderCount()
+            notesCount
+        }
+    }
 }

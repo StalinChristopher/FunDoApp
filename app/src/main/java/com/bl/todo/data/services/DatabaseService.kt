@@ -316,4 +316,30 @@ class DatabaseService(private val context: Context) {
             }
         }
     }
+
+    suspend fun getArchivedCount(): Int? {
+        return withContext(Dispatchers.IO) {
+            try{
+                val notesCount = roomDb.getArchivedCount()
+                notesCount
+            } catch(e : Exception) {
+                Log.e("Database Service", "Read reminder notes for the user failed")
+                e.printStackTrace()
+                0
+            }
+        }
+    }
+
+    suspend fun getReminderCount() : Int? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val notesCount = roomDb.getReminderCount()
+                notesCount
+            } catch (e: Exception) {
+                Log.e("Database Service", "Read reminder notes for the user failed")
+                e.printStackTrace()
+                0
+            }
+        }
+    }
 }

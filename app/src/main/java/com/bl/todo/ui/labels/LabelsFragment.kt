@@ -1,7 +1,6 @@
 package com.bl.todo.ui.labels
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -13,8 +12,6 @@ import com.bl.todo.R
 import com.bl.todo.databinding.LabelFragmentBinding
 import com.bl.todo.ui.SharedViewModel
 import com.bl.todo.ui.wrapper.LabelDetails
-import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.SharedPref
 
 class LabelsFragment : Fragment(R.layout.label_fragment) {
     private lateinit var binding : LabelFragmentBinding

@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SplashScreenBinding
 import com.bl.todo.ui.SharedViewModel
-import com.bl.todo.util.SharedPref
+import com.bl.todo.common.SharedPref
 
 class SplashScreen : Fragment(R.layout.splash_screen) {
     private lateinit var binding: SplashScreenBinding

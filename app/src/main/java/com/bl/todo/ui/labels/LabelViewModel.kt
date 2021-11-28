@@ -6,11 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bl.todo.data.services.DatabaseService
-import com.bl.todo.data.services.FirebaseDatabaseService
 import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.SharedPref
-import com.facebook.share.Share
+import com.bl.todo.common.SharedPref
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList

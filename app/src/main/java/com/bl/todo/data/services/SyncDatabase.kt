@@ -5,8 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.DELETE_OP_CODE
-import com.bl.todo.util.NetworkService
+import com.bl.todo.common.DELETE_OP_CODE
+import com.bl.todo.common.NetworkService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -5,7 +5,7 @@ import android.util.Log
 import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.NetworkService
+import com.bl.todo.common.NetworkService
 import com.google.firebase.FirebaseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

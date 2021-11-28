@@ -8,9 +8,9 @@ import com.bl.todo.data.room.entities.OpEntity
 import com.bl.todo.data.room.entities.UserEntity
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.CREATE_OP_CODE
-import com.bl.todo.util.DELETE_OP_CODE
-import com.bl.todo.util.UPDATE_OP_CODE
+import com.bl.todo.common.CREATE_OP_CODE
+import com.bl.todo.common.DELETE_OP_CODE
+import com.bl.todo.common.UPDATE_OP_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.collections.ArrayList

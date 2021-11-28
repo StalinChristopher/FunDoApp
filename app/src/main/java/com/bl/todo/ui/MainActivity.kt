@@ -1,10 +1,8 @@
 package com.bl.todo.ui
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -22,9 +20,8 @@ import com.bl.todo.ui.signup.SignUpFragment
 import com.bl.todo.ui.splash.SplashScreen
 import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.ui.wrapper.NoteInfo
-import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.SharedPref
-import com.bl.todo.util.Utilities
+import com.bl.todo.common.SharedPref
+import com.bl.todo.common.Utilities
 import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {

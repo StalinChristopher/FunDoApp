@@ -1,4 +1,4 @@
-package com.bl.todo.util
+package com.bl.todo.common
 
 const val CREATE_OP_CODE = 0
 const val UPDATE_OP_CODE = 1

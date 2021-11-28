@@ -7,10 +7,9 @@ import com.bl.todo.data.models.FirebaseNewNote
 import com.bl.todo.data.models.FirebaseUser
 import com.bl.todo.data.room.DateTypeConverters
 import com.bl.todo.ui.wrapper.LabelDetails
-import com.bl.todo.util.Utilities
+import com.bl.todo.common.Utilities
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
-import com.facebook.internal.Utility
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.suspendCoroutine

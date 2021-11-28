@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SignupFragmentBinding
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.Utilities
+import com.bl.todo.common.Utilities
 import com.bl.todo.ui.SharedViewModel
 
 

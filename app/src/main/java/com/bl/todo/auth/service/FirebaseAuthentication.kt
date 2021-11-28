@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.bl.todo.data.services.DatabaseService
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.SharedPref
+import com.bl.todo.common.SharedPref
 import com.facebook.AccessToken
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FacebookAuthProvider

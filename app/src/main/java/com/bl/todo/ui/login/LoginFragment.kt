@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.LoginFragmentBinding
-import com.bl.todo.util.Utilities
+import com.bl.todo.common.Utilities
 import com.bl.todo.ui.SharedViewModel
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback

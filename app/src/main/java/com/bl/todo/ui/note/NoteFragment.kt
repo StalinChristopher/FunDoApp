@@ -18,6 +18,7 @@ import com.bl.todo.R
 import com.bl.todo.common.Notification
 import com.bl.todo.common.Notification.Companion.CHANNEL_ID
 import com.bl.todo.common.Notification.Companion.MESSAGE_EXTRA
+import com.bl.todo.common.Notification.Companion.NOTE
 import com.bl.todo.common.Notification.Companion.NOTIFICATION_ID
 import com.bl.todo.common.Notification.Companion.TITLE_EXTRA
 import com.bl.todo.databinding.NoteFragmentBinding
@@ -140,7 +141,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                             fnid = bundleFnId, dateModified = bundleDateModified,
                             nid = bundleNid!!, archived = bundleArchived!!, reminder = reminder)
                         noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
-                        scheduleNotification(bundleTitle!!,bundleContent!!,reminder)
+                        scheduleNotification(noteInfo, title,content,reminder)
                     }
                 }, startHour, startMinute, false).show()
             }, startYear, startMonth, startDay)
@@ -164,7 +165,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                         )
                         noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
                         binding.reminderNoteLayout.visibility = View.GONE
-                        scheduleNotification(bundleTitle!!,bundleContent!!,reminder, true)
+                        scheduleNotification(noteInfo, bundleTitle!!,bundleContent!!,reminder, true)
 
                     }.setNegativeButton(getString(R.string.cancel_word)
                     ) { _, _ ->  }.create()
@@ -174,16 +175,17 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun scheduleNotification(title: String, message: String, time: Date?, cancel: Boolean = false) {
+    private fun scheduleNotification(note: NoteInfo,title: String, message: String, time: Date?, cancel: Boolean = false) {
         val intent = Intent(requireContext().applicationContext, Notification::class.java)
         intent.putExtra(TITLE_EXTRA, title)
         intent.putExtra(MESSAGE_EXTRA, message)
+        intent.putExtra(NOTE,note)
 
         val pendingIntent = PendingIntent.getBroadcast(
             requireContext().applicationContext,
             NOTIFICATION_ID,
             intent,
-            PendingIntent.FLAG_MUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager

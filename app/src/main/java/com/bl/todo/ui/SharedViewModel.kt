@@ -86,4 +86,8 @@ class SharedViewModel : ViewModel() {
     fun setLabelCreationFragmentStatus(status : Boolean) {
         _gotoLabelCreationFragmentStatus.value = status
     }
+
+    fun checkUser() : Boolean{
+        return FirebaseAuthentication.getCurrentUser() != null
+    }
 }

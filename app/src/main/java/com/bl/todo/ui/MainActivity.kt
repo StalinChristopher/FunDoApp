@@ -42,17 +42,24 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         labelViewModel = ViewModelProvider(this@MainActivity)[LabelViewModel::class.java]
         observeAppNavigation()
         observers()
-//        sharedViewModel.setSplashScreenStatus(true)
         if (savedInstanceState == null) {
             gotoSplashScreen()
         }
         navDrawer()
         labelViewModel.getAllLabels(this)
+
+        when(intent.getStringExtra("destination")) {
+            "home" -> {
+                if(sharedViewModel.checkUser()){
+                    var note = intent.getSerializableExtra("noteInfo") as NoteInfo
+                    gotoExistingNotePage(note)
+                }
+            }
+        }
     }
 
     private fun observers() {
         labelViewModel.getAllLabelStatus.observe(this) {
-            Log.e("MainAct","$it")
             labelList = it
         }
     }

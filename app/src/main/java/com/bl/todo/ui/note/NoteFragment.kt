@@ -14,13 +14,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.bl.todo.R
-import com.bl.todo.common.Notification
-import com.bl.todo.common.Notification.Companion.CHANNEL_ID
-import com.bl.todo.common.Notification.Companion.MESSAGE_EXTRA
-import com.bl.todo.common.Notification.Companion.NOTE
-import com.bl.todo.common.Notification.Companion.NOTIFICATION_ID
-import com.bl.todo.common.Notification.Companion.TITLE_EXTRA
+import com.bl.todo.common.NotificationWorker
+import com.bl.todo.common.NotificationWorker.Companion.ARCHIVED
+import com.bl.todo.common.NotificationWorker.Companion.CHANNEL_ID
+import com.bl.todo.common.NotificationWorker.Companion.DATE
+import com.bl.todo.common.NotificationWorker.Companion.FNID
+import com.bl.todo.common.NotificationWorker.Companion.MESSAGE_EXTRA
+import com.bl.todo.common.NotificationWorker.Companion.NID
+import com.bl.todo.common.NotificationWorker.Companion.REMINDER
+import com.bl.todo.common.NotificationWorker.Companion.TITLE_EXTRA
 import com.bl.todo.databinding.NoteFragmentBinding
 import com.bl.todo.ui.SharedViewModel
 import com.bl.todo.ui.wrapper.NoteInfo
@@ -29,6 +36,7 @@ import com.bl.todo.common.SharedPref
 import com.bl.todo.common.Utilities
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class NoteFragment : Fragment(R.layout.note_fragment) {
     private lateinit var binding: NoteFragmentBinding
@@ -141,7 +149,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                             fnid = bundleFnId, dateModified = bundleDateModified,
                             nid = bundleNid!!, archived = bundleArchived!!, reminder = reminder)
                         noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
-                        scheduleNotification(noteInfo, title,content,reminder)
+                        scheduleNotification(noteInfo)
                     }
                 }, startHour, startMinute, false).show()
             }, startYear, startMonth, startDay)
@@ -165,7 +173,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                         )
                         noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
                         binding.reminderNoteLayout.visibility = View.GONE
-                        scheduleNotification(noteInfo, bundleTitle!!,bundleContent!!,reminder, true)
+                        scheduleNotification(noteInfo, true)
 
                     }.setNegativeButton(getString(R.string.cancel_word)
                     ) { _, _ ->  }.create()
@@ -175,41 +183,40 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun scheduleNotification(note: NoteInfo,title: String, message: String, time: Date?, cancel: Boolean = false) {
-        val intent = Intent(requireContext().applicationContext, Notification::class.java)
-        intent.putExtra(TITLE_EXTRA, title)
-        intent.putExtra(MESSAGE_EXTRA, message)
-        intent.putExtra(NOTE,note)
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            requireContext().applicationContext,
-            NOTIFICATION_ID,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    private fun scheduleNotification(note: NoteInfo, cancel: Boolean = false) {
+        val date = Utilities.dateToString(note.dateModified)
+        val reminderDate = Utilities.dateToString(note.reminder)
+        val inputData = Data.Builder()
+            .putString(TITLE_EXTRA, note.title)
+            .putString(MESSAGE_EXTRA,note.content)
+            .putString(FNID,note.fnid)
+            .putLong(NID,note.nid)
+            .putString(DATE,date)
+            .putBoolean(ARCHIVED,note.archived)
+            .putString(REMINDER,reminderDate)
+            .build()
 
         if(!cancel) {
-            time?.time?.let {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    it,
-                    pendingIntent
-                )
-            }
+            val notificationWork = OneTimeWorkRequestBuilder<NotificationWorker>()
+                .setInitialDelay(note.reminder!!.time - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .setInputData(inputData)
+                .addTag(note.title)
+                .build()
+            WorkManager.getInstance(requireContext()).enqueueUniqueWork(note.fnid,
+                ExistingWorkPolicy.REPLACE,notificationWork)
             Toast.makeText(requireContext(),
-                "Notification set at $time",Toast.LENGTH_SHORT).show()
+                "Notification set at ${note.reminder}",Toast.LENGTH_SHORT).show()
         }
         else {
-            alarmManager.cancel(pendingIntent)
+            WorkManager.getInstance(requireContext()).cancelUniqueWork(note.fnid)
         }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
-        val name = "Fundo Notify Channel"
-        val desc = "Fundo Notification"
+        val name = "Fundoo Notify Channel"
+        val desc = "Fundoo Notification"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(CHANNEL_ID, name, importance)
         val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -7,12 +7,11 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bl.todo.R
 import com.bl.todo.ui.wrapper.NoteInfo
-import com.google.android.material.textview.MaterialTextView
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
 class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
-    RecyclerView.Adapter<NoteAdapter.MyViewHolder>() , Filterable {
+    RecyclerView.Adapter<NoteViewHolder>() , Filterable {
 
     private lateinit var mListener: OnItemClickListener
     private var adapterNotesList : ArrayList<NoteInfo> = ArrayList()
@@ -20,54 +19,25 @@ class NoteAdapter(private val notesList: ArrayList<NoteInfo>) :
         adapterNotesList = notesList
     }
 
-    interface OnItemClickListener {
-
-        fun onItemClick(position: Int)
-    }
-
     fun setOnItemClickListener(listener: OnItemClickListener) {
         mListener = listener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
             R.layout.single_list_item_layout,
             parent, false
         )
-        return MyViewHolder(itemView,mListener)
+        return NoteViewHolder(itemView,mListener)
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val currentItem = adapterNotesList[position]
-        holder.title.text = currentItem.title
-        holder.content.text = currentItem.content
-        if(currentItem.reminder != null) {
-            holder.reminderRecyclerLayout.visibility = View.VISIBLE
-            val formatter = SimpleDateFormat("dd MMM, hh:mm aa")
-            val date = formatter.format(currentItem.reminder)
-            holder.reminderTextView.text = date
-        } else {
-            holder.reminderRecyclerLayout.visibility = View.GONE
-        }
+        holder.bind(currentItem)
     }
 
     override fun getItemCount(): Int {
         return adapterNotesList.size
-    }
-
-    class MyViewHolder(itemView: View, listener: OnItemClickListener) :
-        RecyclerView.ViewHolder(itemView) {
-
-        val title: MaterialTextView = itemView.findViewById(R.id.cardTitle)
-        val content: MaterialTextView = itemView.findViewById(R.id.cardContent)
-        val reminderRecyclerLayout : RelativeLayout = itemView.findViewById(R.id.reminderRecyclerLayout)
-        val reminderTextView : TextView = itemView.findViewById(R.id.reminderTextView)
-
-        init {
-            itemView.setOnClickListener {
-                listener.onItemClick(adapterPosition)
-            }
-        }
     }
 
     override fun getFilter(): Filter {

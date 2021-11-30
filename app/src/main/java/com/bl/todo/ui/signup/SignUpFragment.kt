@@ -29,7 +29,6 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         signUpViewModel = ViewModelProvider(this)[SignUpViewModel::class.java]
         binding.signupLogin.setOnClickListener {
-//            sharedViewModel.setLoginPageStatus(true)
             activity?.supportFragmentManager?.popBackStack()
         }
 

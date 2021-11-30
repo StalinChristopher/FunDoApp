@@ -2,17 +2,13 @@ package com.bl.todo.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
-import com.bl.todo.common.NotificationWorker
-import com.bl.todo.common.NotificationWorker.Companion.NOTIFICATION_ID
 import com.bl.todo.databinding.ActivityMainBinding
 import com.bl.todo.ui.home.HomeFragment
 import com.bl.todo.ui.labels.LabelViewModel
@@ -51,6 +47,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         }
         navDrawer()
         labelViewModel.getAllLabels(this)
+        sharedViewModel.subscribeToTopic()
     }
 
     override fun onNewIntent(intent: Intent?) {

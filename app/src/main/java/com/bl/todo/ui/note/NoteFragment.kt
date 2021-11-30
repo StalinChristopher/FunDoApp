@@ -2,7 +2,6 @@ package com.bl.todo.ui.note
 
 import android.app.*
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,15 +18,15 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bl.todo.R
-import com.bl.todo.common.NotificationWorker
-import com.bl.todo.common.NotificationWorker.Companion.ARCHIVED
-import com.bl.todo.common.NotificationWorker.Companion.CHANNEL_ID
-import com.bl.todo.common.NotificationWorker.Companion.DATE
-import com.bl.todo.common.NotificationWorker.Companion.FNID
-import com.bl.todo.common.NotificationWorker.Companion.MESSAGE_EXTRA
-import com.bl.todo.common.NotificationWorker.Companion.NID
-import com.bl.todo.common.NotificationWorker.Companion.REMINDER
-import com.bl.todo.common.NotificationWorker.Companion.TITLE_EXTRA
+import com.bl.todo.Notifications.NotificationWorker
+import com.bl.todo.Notifications.NotificationWorker.Companion.ARCHIVED
+import com.bl.todo.Notifications.NotificationWorker.Companion.CHANNEL_ID
+import com.bl.todo.Notifications.NotificationWorker.Companion.DATE
+import com.bl.todo.Notifications.NotificationWorker.Companion.FNID
+import com.bl.todo.Notifications.NotificationWorker.Companion.MESSAGE_EXTRA
+import com.bl.todo.Notifications.NotificationWorker.Companion.NID
+import com.bl.todo.Notifications.NotificationWorker.Companion.REMINDER
+import com.bl.todo.Notifications.NotificationWorker.Companion.TITLE_EXTRA
 import com.bl.todo.databinding.NoteFragmentBinding
 import com.bl.todo.ui.SharedViewModel
 import com.bl.todo.ui.wrapper.NoteInfo

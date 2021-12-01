@@ -41,7 +41,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         val intent = Intent(this, MainActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT)
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.nav_notes_icon)

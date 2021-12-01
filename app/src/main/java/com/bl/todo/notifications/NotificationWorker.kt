@@ -38,13 +38,15 @@ class NotificationWorker(val context: Context, workParams: WorkerParameters) :
 
         val dateModified = Utilities.stringToDate(noteDateModified)
         val reminder = Utilities.stringToDate(noteReminder)
-        val note = NoteInfo(noteTitle.toString(),noteContent.toString(), noteFnid.toString(), noteNid, dateModified, noteArchived, reminder)
+        val note = NoteInfo(noteTitle.toString(),noteContent.toString(),
+            noteFnid.toString(), noteNid, dateModified, noteArchived, reminder)
 
         val sendingIntent = Intent(context, MainActivity::class.java)
         sendingIntent.putExtra("destination", "home")
         sendingIntent.putExtra("noteInfo", note)
 
-        val pendingIntent = PendingIntent.getActivity(context, 0,sendingIntent, PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(context, 0,sendingIntent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.nav_notes_icon)

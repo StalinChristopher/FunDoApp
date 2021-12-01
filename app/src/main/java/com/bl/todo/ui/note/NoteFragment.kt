@@ -1,25 +1,41 @@
 package com.bl.todo.ui.note
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.bl.todo.R
+import com.bl.todo.notifications.NotificationWorker
+import com.bl.todo.notifications.NotificationWorker.Companion.ARCHIVED
+import com.bl.todo.notifications.NotificationWorker.Companion.CHANNEL_ID
+import com.bl.todo.notifications.NotificationWorker.Companion.DATE
+import com.bl.todo.notifications.NotificationWorker.Companion.FNID
+import com.bl.todo.notifications.NotificationWorker.Companion.MESSAGE_EXTRA
+import com.bl.todo.notifications.NotificationWorker.Companion.NID
+import com.bl.todo.notifications.NotificationWorker.Companion.REMINDER
+import com.bl.todo.notifications.NotificationWorker.Companion.TITLE_EXTRA
 import com.bl.todo.databinding.NoteFragmentBinding
 import com.bl.todo.ui.SharedViewModel
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.SharedPref
-import com.bl.todo.util.Utilities
+import com.bl.todo.common.SharedPref
+import com.bl.todo.common.Utilities
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class NoteFragment : Fragment(R.layout.note_fragment) {
     private lateinit var binding: NoteFragmentBinding
@@ -38,8 +54,10 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
 
     companion object {
         var currentUser: UserDetails = UserDetails("name", "email", "phone", fUid = null)
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
@@ -48,6 +66,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         allListeners()
         observers()
+        createNotificationChannel()
         userId = SharedPref.getUserId()
         noteViewModel.getUserData(requireContext(), userId)
         setNoteContentFromBundle()
@@ -92,6 +111,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun reminder() {
         if(bundleReminder != null) {
             binding.reminderNoteLayout.visibility = View.VISIBLE
@@ -112,7 +132,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
             val dateTimeDialog = DatePickerDialog(requireContext(), { _, year, month, day ->
                 TimePickerDialog(requireContext(), { _, hour, minute ->
                     val pickedDate = Calendar.getInstance()
-                    pickedDate.set(year, month, day, hour, minute)
+                    pickedDate.set(year, month, day, hour, minute,0)
                     reminder = pickedDate.time
                     binding.reminderNoteLayout.visibility = View.VISIBLE
                     val formatter =
@@ -128,6 +148,7 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                             fnid = bundleFnId, dateModified = bundleDateModified,
                             nid = bundleNid!!, archived = bundleArchived!!, reminder = reminder)
                         noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
+                        scheduleNotification(noteInfo)
                     }
                 }, startHour, startMinute, false).show()
             }, startYear, startMonth, startDay)
@@ -151,11 +172,54 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
                         )
                         noteViewModel.updateNoteToDb(requireContext(), noteInfo, currentUser)
                         binding.reminderNoteLayout.visibility = View.GONE
+                        scheduleNotification(noteInfo, true)
+
                     }.setNegativeButton(getString(R.string.cancel_word)
                     ) { _, _ ->  }.create()
                 alertDialog.show()
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun scheduleNotification(note: NoteInfo, cancel: Boolean = false) {
+        val date = Utilities.dateToString(note.dateModified)
+        val reminderDate = Utilities.dateToString(note.reminder)
+        val inputData = Data.Builder()
+            .putString(TITLE_EXTRA, note.title)
+            .putString(MESSAGE_EXTRA,note.content)
+            .putString(FNID,note.fnid)
+            .putLong(NID,note.nid)
+            .putString(DATE,date)
+            .putBoolean(ARCHIVED,note.archived)
+            .putString(REMINDER,reminderDate)
+            .build()
+
+        if(!cancel) {
+            val notificationWork = OneTimeWorkRequestBuilder<NotificationWorker>()
+                .setInitialDelay(note.reminder!!.time - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .setInputData(inputData)
+                .addTag(note.title)
+                .build()
+            WorkManager.getInstance(requireContext()).enqueueUniqueWork(note.fnid,
+                ExistingWorkPolicy.REPLACE,notificationWork)
+            Toast.makeText(requireContext(),
+                "Notification set at ${note.reminder}",Toast.LENGTH_SHORT).show()
+        }
+        else {
+            WorkManager.getInstance(requireContext()).cancelUniqueWork(note.fnid)
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel() {
+        val name = "Fundoo Notify Channel"
+        val desc = "Fundoo Notification"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, name, importance)
+        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 
     private fun setNoteContentFromBundle() {

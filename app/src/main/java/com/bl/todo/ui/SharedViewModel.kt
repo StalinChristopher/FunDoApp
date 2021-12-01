@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bl.todo.auth.service.FirebaseAuthentication
+import com.bl.todo.notifications.FirebaseTopicMessage
 import com.bl.todo.ui.wrapper.NoteInfo
 import kotlinx.coroutines.launch
 
@@ -85,5 +86,13 @@ class SharedViewModel : ViewModel() {
 
     fun setLabelCreationFragmentStatus(status : Boolean) {
         _gotoLabelCreationFragmentStatus.value = status
+    }
+
+    fun checkUser() : Boolean{
+        return FirebaseAuthentication.getCurrentUser() != null
+    }
+
+    fun subscribeToTopic() {
+        FirebaseTopicMessage.subscribeToTopic()
     }
 }

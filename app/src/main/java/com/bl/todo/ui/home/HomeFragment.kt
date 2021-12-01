@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.HomeFragmentBinding
-import com.bl.todo.util.SharedPref
+import com.bl.todo.common.SharedPref
 import com.bl.todo.ui.SharedViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
@@ -23,15 +23,15 @@ import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatToggleButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.SearchView
-import com.bl.todo.data.services.DatabaseService
+import com.bl.todo.common.NOTES_LIMIT
 import com.bl.todo.ui.home.adapter.NoteAdapter
+import com.bl.todo.ui.home.adapter.OnItemClickListener
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 
@@ -76,7 +76,6 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
         if(type == "archive" || type == "reminder"){
             binding.homePageFloatingButton.visibility = View.GONE
         }
-//        homeViewModel.getNotesCount(requireContext())
         setTotalNotesCount()
     }
 
@@ -86,6 +85,7 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
             "reminder" -> homeViewModel.getReminderCount(requireContext())
             "home" -> homeViewModel.getNotesCount(requireContext())
         }
+        noteAdapter.notifyDataSetChanged()
     }
 
     private fun allListeners() {
@@ -93,7 +93,7 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
             sharedViewModel.setNoteFragmentPageStatus(true)
         }
 
-        noteAdapter.setOnItemClickListener(object : NoteAdapter.OnItemClickListener {
+        noteAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(position: Int) {
                 var note = noteList[position]
                 sharedViewModel.setExistingNoteFragmentStatus(note)
@@ -108,7 +108,7 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
     private fun initializeRecyclerView() {
         noteAdapter = NoteAdapter(noteList)
         recyclerView = binding.HomeRecyclerView
-        recyclerView.layoutManager = StaggeredGridLayoutManager(2,1)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = noteAdapter
         type = arguments?.getString("type").toString()
@@ -148,15 +148,15 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
                     when (type) {
                         "archive" -> {
                             homeViewModel.getPagedArchivedNotes(requireContext(),
-                                10, totalItemCount)
+                                NOTES_LIMIT, totalItemCount)
                         }
                         "reminder" -> {
                             homeViewModel.getPagedReminderNotes(requireContext(),
-                                10, totalItemCount)
+                                NOTES_LIMIT, totalItemCount)
                         }
                         "home" -> {
                             homeViewModel.getPagedNotes(requireContext()
-                                , 10, totalItemCount)
+                                , NOTES_LIMIT, totalItemCount)
                         }
                     }
                 }
@@ -351,7 +351,7 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
         var view = toggleItem?.actionView
         var button = view?.findViewById<AppCompatToggleButton>(R.id.toggle_button)
         button?.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
+            if (!isChecked) {
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
             } else {
                 recyclerView.layoutManager = StaggeredGridLayoutManager(2, 1)
@@ -373,5 +373,10 @@ class HomeFragment() : Fragment(R.layout.home_fragment) {
         } else {
             binding.paginationProgressBar.visibility = View.GONE
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        noteAdapter.notifyDataSetChanged()
     }
 }

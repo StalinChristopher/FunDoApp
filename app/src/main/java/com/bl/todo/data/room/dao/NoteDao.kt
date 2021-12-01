@@ -9,10 +9,10 @@ interface NoteDao {
     @Insert
     suspend fun addNewNote(note: NoteEntity): Long
 
-    @Query("select * from notes_table where archived = 0")
+    @Query("select * from notes_table where archived = 0 ORDER BY dateModified")
     suspend fun getUserNotes(): List<NoteEntity>
 
-    @Query("select * from notes_table where archived = 0 LIMIT :limit OFFSET :offset")
+    @Query("select * from notes_table where archived = 0 ORDER BY dateModified DESC LIMIT :limit OFFSET :offset")
     suspend fun getPagedNotes(limit: Int, offset: Int): List<NoteEntity>
 
     @Query("select COUNT(*) from notes_table where archived = 0")
@@ -27,16 +27,16 @@ interface NoteDao {
     @Query("delete from notes_table")
     suspend fun clearNoteTable()
 
-    @Query("select * from notes_table where archived = 1")
+    @Query("select * from notes_table where archived = 1 ORDER BY dateModified DESC")
     suspend fun getArchivedNotes() : List<NoteEntity>
 
-    @Query("select * from notes_table where archived = 1 LIMIT :limit OFFSET :offset")
+    @Query("select * from notes_table where archived = 1 ORDER BY dateModified DESC LIMIT :limit OFFSET :offset")
     suspend fun getArchivedPaged(limit: Int, offset: Int) : List<NoteEntity>
 
-    @Query("select * from notes_table where NULLIF(reminder,'') is not NULL")
+    @Query("select * from notes_table where NULLIF(reminder,'') is not NULL ORDER BY dateModified DESC")
     suspend fun getReminderNotes() : List<NoteEntity>
 
-    @Query("select * from notes_table where NULLIF(reminder, '') is not NULL LIMIT :limit OFFSET :offset")
+    @Query("select * from notes_table where NULLIF(reminder, '') is not NULL ORDER BY dateModified DESC LIMIT :limit OFFSET :offset")
     suspend fun getReminderPaged(limit: Int, offset: Int) : List<NoteEntity>
 
     @Query("select count(*) from notes_table where archived = 1")

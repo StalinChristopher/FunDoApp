@@ -1,10 +1,8 @@
 package com.bl.todo.ui
 
+import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -22,9 +20,8 @@ import com.bl.todo.ui.signup.SignUpFragment
 import com.bl.todo.ui.splash.SplashScreen
 import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.ui.wrapper.NoteInfo
-import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.SharedPref
-import com.bl.todo.util.Utilities
+import com.bl.todo.common.SharedPref
+import com.bl.todo.common.Utilities
 import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
@@ -45,23 +42,30 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         labelViewModel = ViewModelProvider(this@MainActivity)[LabelViewModel::class.java]
         observeAppNavigation()
         observers()
-//        sharedViewModel.setSplashScreenStatus(true)
         if (savedInstanceState == null) {
             gotoSplashScreen()
         }
         navDrawer()
         labelViewModel.getAllLabels(this)
+        sharedViewModel.subscribeToTopic()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        when(intent?.getStringExtra("destination")) {
+            "home" -> {
+                if(sharedViewModel.checkUser()){
+                    var note = intent.getSerializableExtra("noteInfo") as NoteInfo
+                    gotoExistingNotePage(note)
+                }
+            }
+        }
     }
 
     private fun observers() {
         labelViewModel.getAllLabelStatus.observe(this) {
-            Log.e("MainAct","$it")
             labelList = it
         }
-    }
-
-    fun lockDrawerLayout() {
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
     private fun navDrawer() {
@@ -181,7 +185,8 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
     }
 
     private fun gotoNotePage() {
-        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, NoteFragment())
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,NoteFragment())
+            .addToBackStack(null).commit()
     }
 
     private fun gotoLoginPage() {

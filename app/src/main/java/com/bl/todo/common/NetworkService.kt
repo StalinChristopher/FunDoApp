@@ -1,4 +1,4 @@
-package com.bl.todo.util
+package com.bl.todo.common
 
 import android.content.Context
 import android.net.ConnectivityManager

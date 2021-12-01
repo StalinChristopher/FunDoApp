@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bl.todo.R
 import com.bl.todo.databinding.SignupFragmentBinding
 import com.bl.todo.ui.wrapper.UserDetails
-import com.bl.todo.util.Utilities
+import com.bl.todo.common.Utilities
 import com.bl.todo.ui.SharedViewModel
 
 
@@ -29,7 +29,6 @@ class SignUpFragment : Fragment(R.layout.signup_fragment) {
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         signUpViewModel = ViewModelProvider(this)[SignUpViewModel::class.java]
         binding.signupLogin.setOnClickListener {
-//            sharedViewModel.setLoginPageStatus(true)
             activity?.supportFragmentManager?.popBackStack()
         }
 

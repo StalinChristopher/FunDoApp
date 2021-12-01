@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.auth.service.FirebaseAuthentication
 import com.bl.todo.data.services.DatabaseService
-import com.bl.todo.util.SharedPref
+import com.bl.todo.common.SharedPref
 import com.facebook.AccessToken
 import kotlinx.coroutines.launch
 

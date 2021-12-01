@@ -39,7 +39,7 @@
         </activity>
 
         <service
-            android:name=".Notifications.FirebaseNotificationService"
+            android:name=".notifications.FirebaseNotificationService"
             android:exported="false"
             tools:ignore="Instantiatable">
             <intent-filter>

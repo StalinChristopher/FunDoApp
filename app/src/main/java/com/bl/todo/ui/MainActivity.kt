@@ -185,7 +185,8 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
     }
 
     private fun gotoNotePage() {
-        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, NoteFragment())
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,NoteFragment())
+            .addToBackStack(null).commit()
     }
 
     private fun gotoLoginPage() {

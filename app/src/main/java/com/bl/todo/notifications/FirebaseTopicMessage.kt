@@ -1,4 +1,4 @@
-package com.bl.todo.Notifications
+package com.bl.todo.notifications
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging

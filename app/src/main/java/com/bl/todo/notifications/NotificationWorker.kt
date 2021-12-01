@@ -1,4 +1,4 @@
-package com.bl.todo.Notifications
+package com.bl.todo.notifications
 
 import android.app.NotificationManager
 import android.app.PendingIntent

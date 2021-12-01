@@ -42,8 +42,8 @@
             android:id="@+id/addReminderButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/archiveButton"
             android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/archiveButton"
             android:background="@color/blue_200"
             android:src="@drawable/add_reminder" />
 

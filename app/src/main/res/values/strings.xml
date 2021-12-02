@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ToDoApp</string>
+    <string name="app_name">Fundoo</string>
     <string name="login">Login</string>
     <string name="signUp">Sign Up</string>
     <string name="facebook_app_id">1560891924260880</string>

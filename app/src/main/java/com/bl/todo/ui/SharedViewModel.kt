@@ -50,10 +50,6 @@ class SharedViewModel : ViewModel() {
         _gotoLoginPageStatus.value = status
     }
 
-    fun setSplashScreenStatus(status: Boolean) {
-        _gotoSplashScreenStatus.value = status
-    }
-
     fun setSignupPageStatus(status: Boolean) {
         _gotoSignupPageStatus.value = status
     }

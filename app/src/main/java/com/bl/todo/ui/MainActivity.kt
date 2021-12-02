@@ -1,7 +1,9 @@
 package com.bl.todo.ui
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +24,8 @@ import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.common.SharedPref
 import com.bl.todo.common.Utilities
+import com.bl.todo.ui.labels.LabelsFragment.Companion.ADD_LABEL
+import com.bl.todo.ui.labels.LabelsFragment.Companion.SELECT_LABEL
 import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
@@ -31,6 +35,7 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
     private var labelList = ArrayList<LabelDetails>()
+    private lateinit var dialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -40,6 +45,8 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
         SharedPref.initializePref(this)
         sharedViewModel = ViewModelProvider(this@MainActivity)[SharedViewModel::class.java]
         labelViewModel = ViewModelProvider(this@MainActivity)[LabelViewModel::class.java]
+        dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_loading)
         observeAppNavigation()
         observers()
         if (savedInstanceState == null) {
@@ -223,7 +230,12 @@ class MainActivity : AppCompatActivity(), SplashScreen.InteractionListener {
     }
 
     private fun gotoLabelCreationPage() {
-        Utilities.replaceFragment(supportFragmentManager, R.id.fragmentContainerId, LabelsFragment())
+        val createLabelFragment = LabelsFragment()
+        var bundle = Bundle()
+        bundle.putInt("MODE",ADD_LABEL)
+        createLabelFragment.arguments = bundle
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,createLabelFragment)
+            .addToBackStack(null).commit()
     }
 
     override fun onSplashScreenExit(loggedIn: Boolean) {

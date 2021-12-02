@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ToDoApp</string>
+    <string name="app_name">Fundoo</string>
     <string name="login">Login</string>
     <string name="signUp">Sign Up</string>
     <string name="facebook_app_id">1560891924260880</string>
@@ -7,7 +7,7 @@
     <string name="resetPasswordMessage">Enter your registered email address where the reset password link will be sent</string>
     <string name="open">open</string>
     <string name="close">close</string>
-    <string name="appName_toolbar">FunDo</string>
+    <string name="appName_toolbar">FunDoo</string>
     <string name="loadingScreen_please_wait">Please wait..</string>
     <string name="login_textView">Login</string>
     <string name="enter_your_email_editText">Enter your email</string>
@@ -50,7 +50,7 @@
     <string name="toastError_noAccountAssociated">No account is associated with the given email</string>
     <string name="toast_userSignedUp">User signed up</string>
     <string name="toastError_account_not_created">Account not created</string>
-    <string name="navHeader">FunDo</string>
+    <string name="navHeader">FunDoo Notes</string>
     <string name="reminder_delete_message">Do you want to delete the reminder?</string>
     <string name="yes_word">Yes</string>
     <string name="cancel_word">Cancel</string>

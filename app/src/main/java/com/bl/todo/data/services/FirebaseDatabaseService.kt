@@ -10,8 +10,13 @@ import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.common.Utilities
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.suspendCoroutine
 
 object FirebaseDatabaseService {
@@ -191,7 +196,6 @@ object FirebaseDatabaseService {
                             val labelItem = LabelDetails(labelName = labelName,
                                 labelFid = labelFid,dateModified = dateTime)
                             labelList.add(labelItem)
-                            Log.e("Label","$labelItem")
                         }
                         callback.resumeWith(Result.success(labelList))
                     }
@@ -237,6 +241,101 @@ object FirebaseDatabaseService {
                         callback.resumeWith(Result.success(label))
                     } else {
                         Log.e("Database", "Update label failed")
+                        callback.resumeWith(Result.failure(it.exception!!))
+                    }
+                }
+        }
+    }
+
+    suspend fun linkLabelAndNote(labelFid : String, noteFid : String, user: UserDetails) : Boolean {
+        val userId = user.fUid.toString()
+        val labelMap = mapOf(
+            "labelId" to labelFid,
+            "noteId" to noteFid
+        )
+        return suspendCoroutine { callback ->
+//            val autoId = db.collection("users").document(userId)
+//                .collection("noteLabels").document().id
+            db.collection("users").document(userId)
+                .collection("labelNote").
+                document("${noteFid}_${labelFid}").set(labelMap)
+                .addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        callback.resumeWith(Result.success(true))
+                    } else {
+                        callback.resumeWith(Result.failure(it.exception!!))
+                    }
+                }
+        }
+    }
+
+    suspend fun getLabelsForNote(noteInfo: NoteInfo, user: UserDetails) : ArrayList<LabelDetails> {
+        val userID = user.fUid.toString()
+        return suspendCoroutine {
+            val labelList = ArrayList<LabelDetails>()
+            db.collection("users").document(userID)
+                .collection("labelNote").whereEqualTo("noteId",noteInfo.fnid).get().addOnCompleteListener { task ->
+                    if(task.isSuccessful) {
+                        val dataSnapshot = task.result
+                        if(dataSnapshot != null) {
+                            CoroutineScope(Dispatchers.Default).launch {
+                                for( item in dataSnapshot.documents) {
+                                    val labelMap = item.data as HashMap<*, *>
+                                    val labelFid = labelMap["labelId"].toString()
+                                    val noteFid = labelMap["noteId"].toString()
+                                    val labelResult = withContext(Dispatchers.IO) {
+                                        kotlin.runCatching {
+                                            getLabelFromId(labelFid, user)
+                                        }
+                                    }
+                                    labelResult.getOrNull()?.let {
+                                        Log.i("FirebaseDatabaseService","label : $it")
+                                        labelList.add(it)
+                                    }
+                                }
+                                Log.i("FirebaseDatabaseService","listLabel : $labelList")
+                                it.resumeWith(Result.success(labelList))
+                            }
+
+                        }
+                    } else {
+                        it.resumeWith(Result.failure(task.exception ?: Exception("Something went wrong")))
+                    }
+                }
+        }
+    }
+
+    private suspend fun getLabelFromId(labelFid: String, user: UserDetails) = suspendCoroutine<LabelDetails> {
+        db.collection("users").document(user.fUid.toString()).collection("labels").document(labelFid).get().addOnCompleteListener { task ->
+            if(task.isSuccessful) {
+                val document = task.result
+                if(document != null) {
+                    var labelMap = document.data as HashMap<*, * >
+                    var labelName = labelMap["labelName"].toString()
+                    val labelModified = labelMap["labelModified"].toString()
+                    val labelModifiedDate = Utilities.stringToDate(labelModified)
+                    val label = LabelDetails(labelName, labelFid, labelModifiedDate)
+                    it.resumeWith(Result.success(label))
+                } else {
+                    it.resumeWith(Result.failure(Exception("No document associated with given ID")))
+                }
+            } else {
+                it.resumeWith(Result.failure(task.exception ?: Exception("Something went wrong")))
+            }
+        }
+    }
+
+    suspend fun removeLabelAndNoteLink(linkId : String, user: UserDetails) : Boolean {
+        val userId = user.fUid.toString()
+        return suspendCoroutine { callback ->
+            db.collection("users").document(userId)
+                .collection("labelNote").document(linkId).delete()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        callback.resumeWith(Result.success(true))
+                    } else {
+                        Log.e("FirebaseDatabase", "Delete labelLink failed")
+                        Log.e("FirebaseDatabase", it.exception.toString())
                         callback.resumeWith(Result.failure(it.exception!!))
                     }
                 }

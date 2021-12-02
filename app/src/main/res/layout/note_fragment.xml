@@ -24,7 +24,7 @@
             android:id="@+id/archiveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_toLeftOf="@id/noteDeleteButton"
             android:background="@color/blue_200"
             android:src="@drawable/archive_icon"
@@ -42,10 +42,19 @@
             android:id="@+id/addReminderButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_toLeftOf="@id/archiveButton"
             android:background="@color/blue_200"
             android:src="@drawable/add_reminder" />
+
+        <ImageButton
+            android:id="@+id/addLabelButton"
+            android:layout_toLeftOf="@+id/addReminderButton"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/add_label_button_icon"
+            android:background="@color/blue_200"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </RelativeLayout>
 

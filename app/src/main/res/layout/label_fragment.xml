@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="8dp"
     android:focusable="true"
     android:focusableInTouchMode="true">
@@ -20,10 +21,10 @@
             android:src="@drawable/back_key" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:layout_toRightOf="@id/labelPageBackButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_toRightOf="@id/labelPageBackButton"
             android:text="Labels"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -69,5 +70,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/createNewLabelLayout" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/labelPageFloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/create_label_button"
+        android:visibility="gone"
+        app:tint="@color/white" />
 
 </RelativeLayout>

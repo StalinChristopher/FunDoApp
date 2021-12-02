@@ -33,9 +33,13 @@ import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.common.SharedPref
 import com.bl.todo.common.Utilities
+import com.bl.todo.ui.labels.LabelViewModel
+import com.bl.todo.ui.labels.LabelsFragment
+import com.bl.todo.ui.wrapper.LabelDetails
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class NoteFragment : Fragment(R.layout.note_fragment) {
     private lateinit var binding: NoteFragmentBinding
@@ -51,10 +55,13 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
     private var userId = 0L
     private lateinit var alertDialog: AlertDialog
     private var reminder: Date? = null
+    private lateinit var labelViewModel: LabelViewModel
+    private var labelListFromDb = ArrayList<LabelDetails>()
+    private  var noteFromBundle : NoteInfo? = null
+    private lateinit var dialog: Dialog
 
     companion object {
         var currentUser: UserDetails = UserDetails("name", "email", "phone", fUid = null)
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -63,6 +70,10 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         noteViewModel = ViewModelProvider(this)[NoteViewModel::class.java]
         binding = NoteFragmentBinding.bind(view)
+        labelViewModel = ViewModelProvider(requireActivity())[LabelViewModel::class.java]
+        dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_loading)
+        dialog.show()
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         allListeners()
         observers()
@@ -73,9 +84,26 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         if(bundleNid == null) {
             binding.archiveButton.visibility = View.GONE
             binding.addReminderButton.visibility = View.GONE
+            binding.addLabelButton.visibility = View.GONE
+        }
+        else {
+            noteFromBundle = NoteInfo(bundleTitle!!, bundleContent!!, bundleFnId, bundleNid!!,
+                bundleDateModified, bundleArchived!!, bundleReminder)
+            labelViewModel.getLabelFromNote(requireContext(), noteFromBundle!!)
         }
         archivedNote()
         reminder()
+    }
+
+    private fun gotoLabelSelectionFragment(noteInfo: NoteInfo?, labelList: ArrayList<LabelDetails>) {
+        val selectLabelFragment = LabelsFragment()
+        var bundle = Bundle()
+        bundle.putInt("MODE", LabelsFragment.SELECT_LABEL)
+        bundle.putSerializable("NOTE",noteInfo)
+        bundle.putSerializable("NOTELIST",labelList)
+        selectLabelFragment.arguments = bundle
+        activity?.run { supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerId,selectLabelFragment)
+            .addToBackStack(null).commit() }
     }
 
     private fun archivedNote() {
@@ -276,9 +304,22 @@ class NoteFragment : Fragment(R.layout.note_fragment) {
         noteViewModel.profileData.observe(viewLifecycleOwner) {
             currentUser = it
         }
+
+        labelViewModel.labelFromNoteStatus.observe(viewLifecycleOwner) {
+            if(it != null) {
+                labelListFromDb.clear()
+                Log.i("NoteFragment","labelFromDB : $it")
+                labelListFromDb.addAll(it)
+                dialog.hide()
+            }
+        }
     }
 
     private fun allListeners() {
+        binding.addLabelButton.setOnClickListener {
+            gotoLabelSelectionFragment(noteFromBundle, labelListFromDb)
+        }
+
         binding.notBackButton.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
         }

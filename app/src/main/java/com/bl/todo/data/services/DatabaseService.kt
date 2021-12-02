@@ -342,4 +342,44 @@ class DatabaseService(private val context: Context) {
             }
         }
     }
+
+    suspend fun linkLabelAndNote(labelList: ArrayList<LabelDetails>, note: NoteInfo,
+                                 user: UserDetails) : ArrayList<LabelDetails>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                labelList.forEach { label ->
+                    FirebaseDatabaseService.linkLabelAndNote(label.labelFid, note.fnid, user)
+                }
+                labelList
+            } catch (e: Exception) {
+                Log.e("Database Service", "linking label and note failed")
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun getLabelsForNote(noteInfo: NoteInfo, user: UserDetails) : ArrayList<LabelDetails>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val labelList = FirebaseDatabaseService.getLabelsForNote(noteInfo, user)
+                labelList
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun removeLabelAndNoteLink(linkId : String, user: UserDetails) : Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val status = FirebaseDatabaseService.removeLabelAndNoteLink(linkId, user)
+                status
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
 }

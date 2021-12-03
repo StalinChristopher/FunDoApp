@@ -76,12 +76,11 @@ class LabelAdapter(var context: Context, private val labelList : ArrayList<Label
             labelListFromDb.forEach { label ->
                 if(label.labelFid == currentItem.labelFid) {
                     holder.checkBox.isChecked = true
+                    currentItem.isChecked = true
                 }
             }
             holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if(buttonView.isChecked) {
-                    currentItem.isChecked = true
-                }
+                currentItem.isChecked = isChecked
             }
         }
 

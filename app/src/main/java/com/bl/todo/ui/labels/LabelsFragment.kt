@@ -126,6 +126,10 @@ class LabelsFragment : Fragment(R.layout.label_fragment) {
             val tempLabels = ArrayList<LabelDetails>()
             tempLabels.addAll(labelsFromDbList)
             tempLabels.removeAll(checkedLabelList)
+            tempLabels.forEach {
+                var linkId = "${noteInfo?.fnid}_${it.labelFid}"
+                labelViewModel.removeLabelAndNoteLink(requireContext(), linkId)
+            }
             labelViewModel.linkLabelAndNote(requireContext(), checkedLabelList, noteInfo!!)
         }
 

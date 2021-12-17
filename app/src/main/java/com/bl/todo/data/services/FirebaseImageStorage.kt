@@ -21,10 +21,17 @@ object FirebaseImageStorage {
             val baos = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data = baos.toByteArray()
+            var url = ""
             profileImageRef.putBytes(data).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.i("Storage", "Upload successful")
 //                    listener(true)
+                    profileImageRef.downloadUrl.addOnSuccessListener { task->
+                        url = task.toString()
+                        Log.i("Storage", url)
+//                        callback.resumeWith(Result.success(true))
+                    }
+                    Log.i("Storage","before callback - $url")
                     callback.resumeWith(Result.success(true))
                 } else {
                     Log.i("Storage", "Upload failed")

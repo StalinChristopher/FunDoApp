@@ -6,6 +6,7 @@ import com.bl.todo.ui.wrapper.LabelDetails
 import com.bl.todo.ui.wrapper.NoteInfo
 import com.bl.todo.ui.wrapper.UserDetails
 import com.bl.todo.common.NetworkService
+import com.bl.todo.networking.users.UserService
 import com.google.firebase.FirebaseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +22,8 @@ class DatabaseService(private val context: Context) {
     suspend fun addUserInfoDatabase(user: UserDetails): UserDetails? {
         return withContext(Dispatchers.IO) {
             try {
-                var userFromFirebase = FirebaseDatabaseService.getUserData(user.fUid.toString())
+//                var userFromFirebase = FirebaseDatabaseService.getUserData(user.fUid.toString())
+                var userFromFirebase = UserService.getUser(user.fUid ?: "")
                 var userFromRoom: UserDetails = roomDb.addUserInfoDatabase(userFromFirebase)
                 userFromRoom
             } catch (e: Exception) {
@@ -35,7 +37,8 @@ class DatabaseService(private val context: Context) {
     suspend fun addNewUserInfoDatabase(context: Context, user: UserDetails): UserDetails? {
         return withContext(Dispatchers.IO) {
             try {
-                FirebaseDatabaseService.addUserInfoDatabase(user)
+//                FirebaseDatabaseService.addUserInfoDatabase(user)
+                UserService.addUser(user)
                 var userFromRoom = roomDb.addUserInfoDatabase(user)
                 userFromRoom
             } catch (e: Exception) {
